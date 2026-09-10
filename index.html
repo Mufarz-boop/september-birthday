@@ -8,6 +8,10 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✉️</text></svg>">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Cinzel:wght@400;600;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -463,7 +467,7 @@
 
     .letter-progress-bar {
       height: 100%;
-      width: 16.6%;
+      width: 20%;
       background: linear-gradient(90deg, var(--accent), var(--accent-glow));
       border-radius: 3px;
       transition: width 0.6s var(--transition-smooth);
@@ -742,187 +746,556 @@
       transform: translateY(-2px);
     }
 
-    /* ── VIDEO (BINGKAI BARU YANG LEBIH ELEGAN) ── */
-    .video-scene {
-      background: radial-gradient(ellipse at 50% 50%, #1a1410 0%, #060504 100%);
+    /* ══════════════════════════════════════════
+       LEMBARAN CERITA — SCENE 3 (STACKED SHEETS)
+    ══════════════════════════════════════════ */
+    .sheets-scene {
+      background:
+        radial-gradient(ellipse at 50% 45%, #2a1f18 0%, #0a0706 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 1.5rem;
     }
 
-    .video-wrapper {
-      width: 100%;
-      max-width: 820px;
+    .sheets-scene::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(201, 168, 124, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(201, 168, 124, 0.06) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .sheets-wrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2rem;
+      justify-content: center;
+      width: 100%;
+      max-width: 720px;
+      gap: 1.6rem;
       z-index: 5;
+      position: relative;
     }
 
-    /* Bingkai video baru — ornamen emas mewah dengan pola eksternal */
-    .video-frame-border {
+    .sheets-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.72rem, 2.5vw, 0.95rem);
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.75;
+      text-align: center;
+      padding-left: 0.5em;
+    }
+
+    /* Kontainer lembaran */
+    .sheets-container {
       position: relative;
       width: 100%;
-      border-radius: 1.4rem;
-      padding: 18px;
-      background:
-        /* lapisan pola emas dari placeholder eksternal */
-        linear-gradient(145deg, rgba(42, 34, 28, 0.95), rgba(26, 21, 18, 0.98)),
-        url('https://www.transparenttextures.com/patterns/diagmonds.png');
-      background-size: auto, 120px 120px;
-      background-blend-mode: overlay;
-      box-shadow:
-        /* bingkai berlapis emas */
-        0 0 0 1px rgba(201, 168, 124, 0.6),
-        0 0 0 5px rgba(14, 11, 10, 0.95),
-        0 0 0 6px rgba(201, 168, 124, 0.45),
-        0 0 0 11px rgba(14, 11, 10, 0.95),
-        0 0 0 12px rgba(201, 168, 124, 0.3),
-        0 0 0 18px rgba(14, 11, 10, 0.95),
-        /* bayangan luar */
-        0 40px 80px -20px rgba(0, 0, 0, 1),
-        0 0 60px rgba(201, 168, 124, 0.15);
-      transition: box-shadow 0.6s ease, transform 0.6s var(--transition-smooth);
+      max-width: 580px;
+      aspect-ratio: 3 / 4;
+      perspective: 1400px;
+      perspective-origin: 50% 30%;
     }
 
-    .video-frame-border:hover {
-      box-shadow:
-        0 0 0 1px rgba(230, 203, 170, 0.9),
-        0 0 0 5px rgba(14, 11, 10, 0.95),
-        0 0 0 6px rgba(230, 203, 170, 0.7),
-        0 0 0 11px rgba(14, 11, 10, 0.95),
-        0 0 0 12px rgba(230, 203, 170, 0.5),
-        0 0 0 18px rgba(14, 11, 10, 0.95),
-        0 40px 80px -20px rgba(0, 0, 0, 1),
-        0 0 90px rgba(201, 168, 124, 0.3);
-      transform: translateY(-3px);
-    }
-
-    /* Ornamen sudut berbentuk permata */
-    .video-frame-ornament {
+    /* Lembaran dasar (tumpukan di belakang) */
+    .sheet-stack {
       position: absolute;
-      color: var(--accent-glow);
-      font-size: 2rem;
-      line-height: 1;
-      text-shadow: 0 0 20px rgba(201, 168, 124, 0.9), 0 0 5px rgba(201, 168, 124, 1);
-      z-index: 10;
+      inset: 0;
+      border-radius: 0.9rem;
+      background: linear-gradient(135deg, #faf4e8 0%, #efe2c9 60%, #e6d7bb 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(201, 168, 124, 0.3),
+        inset 0 0 60px rgba(160, 130, 90, 0.15);
       pointer-events: none;
-      opacity: 0.95;
+      transform-origin: center;
     }
 
-    .video-frame-ornament.tl { top: -14px; left: -14px; }
-    .video-frame-ornament.tr { top: -14px; right: -14px; }
-    .video-frame-ornament.bl { bottom: -14px; left: -14px; }
-    .video-frame-ornament.br { bottom: -14px; right: -14px; }
+    .sheet-stack:nth-child(1) {
+      transform: translate(6px, 6px) rotate(0.6deg) scale(0.99);
+      opacity: 0.5;
+    }
+    .sheet-stack:nth-child(2) {
+      transform: translate(3px, 3px) rotate(0.3deg) scale(0.995);
+      opacity: 0.7;
+    }
+    .sheet-stack:nth-child(3) {
+      transform: translate(0, 0) rotate(0deg);
+      opacity: 0.9;
+    }
 
-    /* Garis dekoratif atas dan bawah */
-    .video-frame-border::before,
-    .video-frame-border::after {
+    /* Setiap lembaran aktif */
+    .sheet {
+      position: absolute;
+      inset: 0;
+      border-radius: 0.9rem;
+      background:
+        linear-gradient(135deg, #faf4e8 0%, #efe2c9 55%, #e6d7bb 100%);
+      box-shadow:
+        0 30px 60px -20px rgba(0, 0, 0, 0.85),
+        inset 0 0 0 1px rgba(201, 168, 124, 0.35),
+        inset 0 0 80px rgba(160, 130, 90, 0.15);
+      overflow: hidden;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform, opacity;
+      padding: clamp(1.6rem, 5vw, 2.6rem);
+      display: flex;
+      flex-direction: column;
+      color: var(--text);
+      transform-origin: center center;
+    }
+
+    /* Tekstur kertas */
+    .sheet::before {
       content: '';
       position: absolute;
+      inset: 0;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3"/></filter><rect width="200" height="200" filter="url(%23n)" opacity="0.05"/></svg>');
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Garis tepi dekoratif */
+    .sheet::after {
+      content: '';
+      position: absolute;
+      inset: 0.85rem;
+      border: 1px solid rgba(201, 168, 124, 0.35);
+      border-radius: 0.5rem;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* State animasi lembaran */
+    .sheet.enter {
+      animation: sheetEnter 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .sheet.exit-next {
+      animation: sheetExitNext 0.8s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+    }
+
+    .sheet.exit-prev {
+      animation: sheetExitPrev 0.8s cubic-bezier(0.55, 0, 0.45, 1) forwards;
+    }
+
+    @keyframes sheetEnter {
+      0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.92) rotateX(15deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+      }
+    }
+
+    @keyframes sheetExitNext {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(0.9) rotateX(-20deg);
+      }
+    }
+
+    @keyframes sheetExitPrev {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(80px) scale(0.9) rotateX(20deg);
+      }
+    }
+
+    /* ── KONTEN DALAM LEMBARAN ── */
+    .sheet-content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(201, 168, 124, 0.4);
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 4;
+    }
+
+    .sheet-chapter {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.55rem, 1.8vw, 0.72rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent-deep);
+      opacity: 0.85;
+    }
+
+    .sheet-page-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
+      color: var(--text-soft);
+      font-style: italic;
+      opacity: 0.7;
+    }
+
+    .sheet-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 4;
+      overflow: hidden;
+    }
+
+    .sheet-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 700;
+      color: #7a5a2f;
+      text-align: center;
+      margin-bottom: 1rem;
+      line-height: 1.15;
+      text-shadow: 0 1px 2px rgba(201, 168, 124, 0.3);
+    }
+
+    .sheet-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(0.9rem, 2.6vw, 1.12rem);
+      line-height: 1.8;
+      color: var(--text);
+      text-align: justify;
+      text-indent: 1.4em;
+    }
+
+    .sheet-text + .sheet-text {
+      margin-top: 0.75rem;
+    }
+
+    .sheet-text .drop-cap {
+      float: left;
+      font-family: 'Cinzel', serif;
+      font-size: 3em;
+      line-height: 0.85;
+      padding: 0.05em 0.12em 0 0;
+      color: var(--accent-deep);
+      font-weight: 700;
+    }
+
+    .sheet-signature {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+      color: #7a5a2f;
+      text-align: right;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+
+    /* Lembaran cover (lembaran pertama) */
+    .sheet.cover-sheet {
+      background:
+        linear-gradient(135deg, #3a2418 0%, #1f1208 50%, #100904 100%);
+      color: #f5e6c8;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sheet.cover-sheet::before {
+      background-image: url('https://www.transparenttextures.com/patterns/damask.png');
+      background-size: 220px;
+      opacity: 0.15;
+      filter: sepia(100%) hue-rotate(-15deg) saturate(2);
+    }
+
+    .sheet.cover-sheet::after {
+      border-color: rgba(201, 168, 124, 0.55);
+      inset: 1.1rem;
+    }
+
+    .cover-sheet-content {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.5rem;
+    }
+
+    .cover-sheet-top {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.55rem, 1.9vw, 0.75rem);
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.85;
+      padding-left: 0.5em;
+    }
+
+    .cover-sheet-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem, 8vw, 3.4rem);
+      font-weight: 700;
+      color: #f5e6c8;
+      line-height: 1.05;
+      text-shadow:
+        0 0 25px rgba(201, 168, 124, 0.6),
+        0 2px 5px rgba(0, 0, 0, 0.9);
+      letter-spacing: 0.02em;
+    }
+
+    .cover-sheet-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--accent);
+      font-size: 0.7rem;
+      opacity: 0.85;
+    }
+
+    .cover-sheet-divider::before,
+    .cover-sheet-divider::after {
+      content: '';
+      width: 45px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    .cover-sheet-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.8rem, 2.8vw, 1.05rem);
+      color: #e6cbaa;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    .cover-sheet-author {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.6rem, 2vw, 0.8rem);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.75;
+      margin-top: 0.4rem;
+    }
+
+    .cover-sheet-stamp {
+      margin-top: 0.6rem;
+      padding: 0.4rem 1rem;
+      border: 1px solid rgba(201, 168, 124, 0.6);
+      border-radius: 0.3rem;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.5rem, 1.7vw, 0.68rem);
+      letter-spacing: 0.3em;
+      color: var(--accent-glow);
+      text-transform: uppercase;
+      opacity: 0.9;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .cover-sheet-hint {
+      position: absolute;
+      bottom: 1.2rem;
       left: 50%;
       transform: translateX(-50%);
-      width: 60%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-glow), transparent);
-      z-index: 11;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.7rem, 2.2vw, 0.9rem);
+      color: var(--accent-glow);
+      letter-spacing: 0.1em;
+      opacity: 0.8;
+      z-index: 5;
+      animation: coverPulse 2.2s ease-in-out infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes coverPulse {
+      0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+    }
+
+    /* Ornamen sudut cover */
+    .cover-sheet-corner {
+      position: absolute;
+      color: var(--accent);
+      font-size: clamp(0.9rem, 2.8vw, 1.4rem);
+      opacity: 0.9;
+      text-shadow: 0 0 15px rgba(201, 168, 124, 0.8);
+      z-index: 6;
       pointer-events: none;
     }
 
-    .video-frame-border::before { top: 6px; }
-    .video-frame-border::after { bottom: 6px; }
+    .cover-sheet-corner.tl { top: 1rem; left: 1rem; }
+    .cover-sheet-corner.tr { top: 1rem; right: 1rem; }
+    .cover-sheet-corner.bl { bottom: 1rem; left: 1rem; }
+    .cover-sheet-corner.br { bottom: 1rem; right: 1rem; }
 
-    .video-frame {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #0a0807;
-      border-radius: 0.6rem;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 
-        inset 0 0 60px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(201, 168, 124, 0.3);
-    }
-
-    .video-frame video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      background: #000;
-    }
-
-    .video-placeholder {
-      color: rgba(255, 250, 240, 0.5);
-      font-family: var(--font-serif);
-      font-style: italic;
-      font-size: 0.95rem;
-      text-align: center;
-      padding: 2rem;
-      line-height: 1.6;
+    /* ── NAVIGASI LEMBARAN ── */
+    .sheets-nav {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100%;
-    }
-
-    .video-overlay-text {
-      font-family: var(--font-serif);
-      font-size: clamp(1rem, 3.5vw, 1.4rem);
-      color: var(--accent-glow);
-      opacity: 0.9;
-      letter-spacing: 0.08em;
-      text-align: center;
-      font-style: italic;
-      text-shadow: 0 0 20px rgba(201, 168, 124, 0.3);
-    }
-
-    .video-controls {
-      display: flex;
       gap: 1rem;
-      align-items: center;
-      justify-content: center;
+      margin-top: 0.4rem;
       flex-wrap: wrap;
-      margin-top: 0.5rem;
     }
 
-    .memory-btn {
-      background: transparent;
-      border: 1px solid rgba(201, 168, 124, 0.5);
+    .sheets-nav-btn {
+      background: rgba(20, 12, 8, 0.6);
+      border: 1px solid rgba(201, 168, 124, 0.55);
       color: var(--accent);
-      padding: 0.75rem 2.2rem;
+      padding: 0.7rem 1.9rem;
       border-radius: 3rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.2em;
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.65rem, 2vw, 0.78rem);
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.4s var(--transition-smooth);
-      font-family: var(--font-sans);
-      position: relative;
-      overflow: hidden;
+      backdrop-filter: blur(4px);
     }
 
-    .memory-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(201, 168, 124, 0.2), transparent);
-      transition: left 0.6s ease;
-    }
-
-    .memory-btn:hover::before { left: 100%; }
-
-    .memory-btn:hover {
-      background: rgba(201, 168, 124, 0.15);
-      border-color: var(--accent);
+    .sheets-nav-btn:hover:not(:disabled) {
+      background: rgba(201, 168, 124, 0.2);
+      border-color: var(--accent-glow);
+      color: var(--accent-glow);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(201, 168, 124, 0.15);
+      box-shadow: 0 8px 20px rgba(201, 168, 124, 0.25);
     }
 
-    .memory-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .sheets-nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .sheets-nav-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+
+    .sheets-nav-btn.primary {
+      background: rgba(201, 168, 124, 0.15);
+      border-color: var(--accent-glow);
+      color: var(--accent-glow);
+    }
+
+    /* Progress bar lembaran */
+    .sheets-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    .sheets-progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(201, 168, 124, 0.3);
+      transition: all 0.4s var(--transition-smooth);
+      cursor: pointer;
+      border: none;
+      padding: 0;
+    }
+
+    .sheets-progress-dot.active {
+      background: var(--accent-glow);
+      width: 26px;
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(201, 168, 124, 0.8);
+    }
+
+    .sheets-progress-dot:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .sheets-counter {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.75rem, 2.4vw, 0.9rem);
+      color: rgba(255, 250, 240, 0.65);
+      text-align: center;
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+    }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .sheets-container {
+        max-width: 100%;
+        aspect-ratio: 5 / 7;
+      }
+
+      .sheet {
+        padding: 1.4rem 1.2rem;
+      }
+
+      .sheet-text {
+        font-size: 0.85rem;
+        line-height: 1.7;
+        text-indent: 1em;
+      }
+
+      .sheet-title {
+        font-size: 1.4rem;
+        margin-bottom: 0.7rem;
+      }
+
+      .sheet-header {
+        margin-bottom: 0.7rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .cover-sheet-title {
+        font-size: 1.9rem;
+      }
+
+      .cover-sheet-subtitle {
+        font-size: 0.75rem;
+      }
+
+      .cover-sheet-author,
+      .cover-sheet-top {
+        font-size: 0.5rem;
+        letter-spacing: 0.28em;
+      }
+
+      .cover-sheet-stamp {
+        font-size: 0.45rem;
+        padding: 0.3rem 0.7rem;
+      }
+
+      .cover-sheet-hint {
+        font-size: 0.6rem;
+      }
+
+      .cover-sheet-corner { font-size: 0.85rem; }
+
+      .sheet-text .drop-cap {
+        font-size: 2.4em;
+      }
+    }
+
     @media (max-width: 480px) {
       .envelope { max-width: 280px; }
       .wax-seal { width: 3rem; height: 3rem; font-size: 1.3rem; }
@@ -931,8 +1304,7 @@
       .letter-text .letter-line.emphasis { font-size: 1.4rem; }
       .letter-text .letter-line.subtle { font-size: 0.9rem; }
       .letter-nav-btn { width: 2.6rem; height: 2.6rem; font-size: 0.9rem; }
-      .video-frame-border { padding: 12px; }
-      .video-frame-ornament { font-size: 1.5rem; }
+      .sheets-nav-btn { padding: 0.55rem 1.3rem; letter-spacing: 0.18em; }
     }
 
     @media (min-width: 1024px) {
@@ -954,6 +1326,8 @@
       .letter-text .letter-line { opacity: 1; transform: none; animation: none; }
       #particles-canvas { display: none; }
       .letter-hint { animation: none; }
+      .cover-sheet-hint { animation: none; }
+      .sheet { animation: none !important; }
     }
   </style>
 </head>
@@ -1019,7 +1393,7 @@
     </div>
   </section>
 
-  <!-- SCENE 2: LETTER SLIDES (1 paragraf + 5 kata + 1 foto) -->
+  <!-- SCENE 2: LETTER SLIDES -->
   <section class="scene letter-scene" id="scene-letter" aria-label="Slide surat pribadi">
     <div class="letter-container">
 
@@ -1029,10 +1403,9 @@
 
       <div class="letter-slider" id="letter-slider">
         <div class="letter-track" id="letter-track">
-          <!-- Slide 1: Paragraf surat -->
           <div class="letter-slide" data-index="0">
             <div class="letter-paper">
-              <div class="letter-slide-number">01 / 07</div>
+              <div class="letter-slide-number">01 / 05</div>
               <div class="letter-slide-ornament">✦</div>
               <div class="letter-text">
                 <span class="letter-line">Untukmu,</span>
@@ -1042,10 +1415,9 @@
             </div>
           </div>
 
-          <!-- Slide 2: Kata-kata 1 -->
           <div class="letter-slide" data-index="1">
             <div class="letter-paper">
-              <div class="letter-slide-number">02 / 07</div>
+              <div class="letter-slide-number">02 / 05</div>
               <div class="letter-slide-ornament">✦</div>
               <div class="letter-text">
                 <span class="letter-line emphasis">Selamat Ulang Tahun.</span>
@@ -1054,10 +1426,9 @@
             </div>
           </div>
 
-          <!-- Slide 3: Kata-kata 2 -->
           <div class="letter-slide" data-index="2">
             <div class="letter-paper">
-              <div class="letter-slide-number">03 / 07</div>
+              <div class="letter-slide-number">03 / 05</div>
               <div class="letter-slide-ornament">✦</div>
               <div class="letter-text">
                 <span class="letter-line emphasis">Kamu Luar Biasa.</span>
@@ -1066,22 +1437,9 @@
             </div>
           </div>
 
-          <!-- Slide 4: Kata-kata 3 -->
           <div class="letter-slide" data-index="3">
             <div class="letter-paper">
-              <div class="letter-slide-number">04 / 07</div>
-              <div class="letter-slide-ornament">✦</div>
-              <div class="letter-text">
-                <span class="letter-line emphasis">Terima Kasih.</span>
-                <span class="letter-line">Untuk semua hal kecil yang kamu lakukan.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 5: Kata-kata 4 -->
-          <div class="letter-slide" data-index="4">
-            <div class="letter-paper">
-              <div class="letter-slide-number">05 / 07</div>
+              <div class="letter-slide-number">04 / 05</div>
               <div class="letter-slide-ornament">✦</div>
               <div class="letter-text">
                 <span class="letter-line emphasis">Bahagia Selalu.</span>
@@ -1090,20 +1448,7 @@
             </div>
           </div>
 
-          <!-- Slide 6: Kata-kata 5 -->
-          <div class="letter-slide" data-index="5">
-            <div class="letter-paper">
-              <div class="letter-slide-number">06 / 07</div>
-              <div class="letter-slide-ornament">✦</div>
-              <div class="letter-text">
-                <span class="letter-line emphasis">Untukmu.</span>
-                <span class="letter-line">Hari ini dan seterusnya.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Slide 7: FOTO (TERAKHIR) -->
-          <div class="letter-slide" data-index="6">
+          <div class="letter-slide" data-index="4">
             <div class="letter-photo" id="letter-photo">
               <div class="letter-photo-placeholder">Foto</div>
             </div>
@@ -1119,27 +1464,34 @@
 
       <div class="letter-hint" id="letter-hint">Geser atau gunakan panah</div>
 
-      <button class="continue-btn" id="continue-btn" aria-label="Lanjut ke video">Lanjut</button>
+      <button class="continue-btn" id="continue-btn" aria-label="Lanjut ke lembaran cerita">Lanjut</button>
     </div>
   </section>
 
-  <!-- SCENE 3: VIDEO (BINGKAI BARU) -->
-  <section class="scene video-scene" id="scene-video" aria-label="Kenangan video">
-    <div class="video-wrapper">
-      <div class="video-frame-border">
-        <span class="video-frame-ornament tl">❖</span>
-        <span class="video-frame-ornament tr">❖</span>
-        <span class="video-frame-ornament bl">❖</span>
-        <span class="video-frame-ornament br">❖</span>
-        <div class="video-frame" id="video-frame">
-          <div class="video-placeholder" id="video-placeholder">
-            Memuat video...
-          </div>
-        </div>
+  <!-- SCENE 3: LEMBARAN CERITA -->
+  <section class="scene sheets-scene" id="scene-sheets" aria-label="Lembaran cerita interaktif">
+    <div class="sheets-wrapper">
+      <div class="sheets-subtitle">Sebuah Cerita Kecil</div>
+
+      <div class="sheets-container" id="sheets-container">
+        <!-- Tumpukan lembaran di belakang -->
+        <div class="sheet-stack"></div>
+        <div class="sheet-stack"></div>
+        <div class="sheet-stack"></div>
+
+        <!-- Lembaran-lembaran aktif akan di-render lewat JS -->
       </div>
-      <div class="video-overlay-text">Beberapa momen yang layak dikenang.</div>
-      <div class="video-controls">
-        <button class="memory-btn" id="replay-btn" aria-label="Putar ulang pengalaman">Putar Ulang</button>
+
+      <div class="sheets-nav">
+        <button class="sheets-nav-btn" id="sheets-prev" aria-label="Lembaran sebelumnya">← Sebelumnya</button>
+        <button class="sheets-nav-btn" id="sheets-next" aria-label="Lembaran berikutnya">Berikutnya →</button>
+      </div>
+
+      <div class="sheets-progress" id="sheets-progress" role="tablist" aria-label="Navigasi lembaran"></div>
+      <div class="sheets-counter" id="sheets-counter">Lembaran 1 dari 6</div>
+
+      <div class="sheets-nav" style="margin-top: 0.3rem;">
+        <button class="sheets-nav-btn primary" id="replay-btn" aria-label="Mulai dari awal">↺ Mulai dari Awal</button>
       </div>
     </div>
   </section>
@@ -1157,10 +1509,70 @@
           { src: '../assets/audio/birthday-2.mp3', volume: 0.35, loop: true, delay: 1500 }
         ],
 
-        videoSrc: '../assets/video/memory.mp4',
-        videoPoster: '../assets/video/poster.jpg',
+        letterPhoto: '../assets/images/letter-photo.jpg',
 
-        letterPhoto: '../assets/images/letter-photo.jpg'
+        // ── KONTEN LEMBARAN CERITA ──
+        sheets: [
+          {
+            type: 'cover',
+            chapter: 'Persembahan Kecil',
+            title: 'Cerita<br>Untukmu',
+            subtitle: 'Sebuah kisah tentang seseorang<br>yang luar biasa',
+            author: 'Edisi Spesial · September',
+            stamp: '✦ Ulang Tahun ✦'
+          },
+          {
+            type: 'story',
+            chapter: 'Bab I',
+            pageNum: '1',
+            title: 'Tentang Sebuah Permulaan',
+            paragraphs: [
+              { dropCap: 'D', text: 'i sebuah kota kecil yang tenang, hiduplah seseorang yang tidak pernah menyadari betapa besar pengaruhnya bagi orang lain. Setiap pagi ia bangun dengan senyum sederhana, dan setiap malam ia tidur dengan hati yang ringan. Tidak ada yang istimewa — begitulah pikirnya.' },
+              { text: 'Namun orang-orang di sekitarnya tahu: kehadirannya adalah alasan mengapa banyak hari terasa lebih hangat. Seperti matahari kecil yang bersinar tanpa pernah meminta imbalan.' }
+            ]
+          },
+          {
+            type: 'story',
+            chapter: 'Bab I',
+            pageNum: '2',
+            paragraphs: [
+              { text: 'Suatu hari, sang kota mengadakan perayaan kecil. Tidak ada alasan khusus, hanya karena seseorang berulang tahun. Dan di antara keramaian itu, semua orang tersenyum — karena ia ada di sana.' },
+              { text: 'Malam itu, langit dipenuhi bintang. Seseorang berbisik dalam hati, "Terima kasih telah lahir ke dunia." Dan dunia pun terasa lebih lengkap.' }
+            ],
+            signature: '~ Untukmu ~'
+          },
+          {
+            type: 'story',
+            chapter: 'Bab II',
+            pageNum: '3',
+            title: 'Tentang Perjalanan',
+            paragraphs: [
+              { dropCap: 'W', text: 'aktu berlalu seperti sungai yang tak pernah berhenti. Ada tawa, ada air mata, ada hari-hari yang terasa panjang dan malam-malam yang terlalu singkat. Namun satu hal yang tidak pernah berubah: kebaikan hati yang selalu menemani setiap langkah.' },
+              { text: 'Dalam perjalanan itu, banyak hal telah dipelajari: bahwa kesederhanaan adalah kemewahan sejati, dan bahwa kebahagiaan tidak pernah datang dari hal-hal besar — melainkan dari momen-momen kecil yang kita lupakan untuk syukuri.' }
+            ]
+          },
+          {
+            type: 'story',
+            chapter: 'Bab II',
+            pageNum: '4',
+            title: 'Tentang Harapan',
+            paragraphs: [
+              { dropCap: 'K', text: 'etika malam tiba dan lampu-lampu mulai menyala, ada satu doa yang selalu terucap diam-diam. Bukan tentang kekayaan, bukan tentang kejayaan — hanya tentang kebahagiaan sederhana yang tak pernah pudar.' },
+              { text: 'Semoga tahun ini dipenuhi hal-hal baik. Semoga setiap mimpi menemukan jalannya. Semoga tawa tidak pernah habis, dan semoga cinta selalu menemani ke mana pun kaki melangkah.' }
+            ],
+            signature: 'Selamat Ulang Tahun.'
+          },
+          {
+            type: 'closing',
+            chapter: 'Penutup',
+            pageNum: '✦',
+            title: 'Terima Kasih',
+            paragraphs: [
+              { text: 'Telah membaca cerita kecil ini hingga akhir. Semoga setiap lembarannya membawa kehangatan, seperti pelukan yang tak pernah pudar.' }
+            ],
+            signature: '~ Akhir ~'
+          }
+        ]
       };
 
       const STATE = {
@@ -1169,13 +1581,16 @@
         letterShown: false,
         reducedMotion: false,
         audioElements: [],
-        videoInitialized: false,
         letterSlideIndex: 0,
-        letterSlideCount: 7,
+        letterSlideCount: 5,
         isDragging: false,
         dragStartX: 0,
         dragCurrentX: 0,
-        dragStartTranslate: 0
+        dragStartTranslate: 0,
+        // Lembaran
+        sheetIndex: 0,
+        sheetCount: 0,
+        isAnimating: false
       };
 
       const DOM = {
@@ -1184,7 +1599,7 @@
           countdown: document.getElementById('scene-countdown'),
           envelope: document.getElementById('scene-envelope'),
           letter: document.getElementById('scene-letter'),
-          video: document.getElementById('scene-video')
+          sheets: document.getElementById('scene-sheets')
         },
         loadingBar: document.getElementById('loading-bar'),
         loadingPercent: document.getElementById('loading-percent'),
@@ -1207,10 +1622,14 @@
         letterDots: document.getElementById('letter-dots'),
         letterHint: document.getElementById('letter-hint'),
         letterPhoto: document.getElementById('letter-photo'),
-        videoFrame: document.getElementById('video-frame'),
-        videoPlaceholder: document.getElementById('video-placeholder'),
-        replayBtn: document.getElementById('replay-btn'),
-        particlesCanvas: document.getElementById('particles-canvas')
+        particlesCanvas: document.getElementById('particles-canvas'),
+        // Lembaran
+        sheetsContainer: document.getElementById('sheets-container'),
+        sheetsPrev: document.getElementById('sheets-prev'),
+        sheetsNext: document.getElementById('sheets-next'),
+        sheetsProgress: document.getElementById('sheets-progress'),
+        sheetsCounter: document.getElementById('sheets-counter'),
+        replayBtn: document.getElementById('replay-btn')
       };
 
       function prefersReducedMotion() {
@@ -1423,13 +1842,8 @@
         updateLetterSlide();
       }
 
-      function nextLetterSlide() {
-        goToLetterSlide(STATE.letterSlideIndex + 1);
-      }
-
-      function prevLetterSlide() {
-        goToLetterSlide(STATE.letterSlideIndex - 1);
-      }
+      function nextLetterSlide() { goToLetterSlide(STATE.letterSlideIndex + 1); }
+      function prevLetterSlide() { goToLetterSlide(STATE.letterSlideIndex - 1); }
 
       function getEventX(e) {
         if (e.touches && e.touches.length > 0) return e.touches[0].clientX;
@@ -1464,13 +1878,9 @@
         const deltaX = STATE.dragCurrentX - STATE.dragStartX;
         const threshold = 60;
 
-        if (deltaX < -threshold) {
-          nextLetterSlide();
-        } else if (deltaX > threshold) {
-          prevLetterSlide();
-        } else {
-          updateLetterSlide();
-        }
+        if (deltaX < -threshold) nextLetterSlide();
+        else if (deltaX > threshold) prevLetterSlide();
+        else updateLetterSlide();
       }
 
       function initLetterSliderEvents() {
@@ -1489,16 +1899,212 @@
 
         document.addEventListener('keydown', (e) => {
           if (STATE.currentScene !== 'letter') return;
-          if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            prevLetterSlide();
-          } else if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            nextLetterSlide();
-          }
+          if (e.key === 'ArrowLeft') { e.preventDefault(); prevLetterSlide(); }
+          else if (e.key === 'ArrowRight') { e.preventDefault(); nextLetterSlide(); }
         });
       }
 
+      // ══════════════════════════════════════
+      // LEMBARAN CERITA LOGIC
+      // ══════════════════════════════════════
+      function buildSheetProgress() {
+        if (!DOM.sheetsProgress) return;
+        DOM.sheetsProgress.innerHTML = '';
+        for (let i = 0; i < STATE.sheetCount; i++) {
+          const dot = document.createElement('button');
+          dot.className = 'sheets-progress-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('role', 'tab');
+          dot.setAttribute('aria-label', `Ke lembaran ${i + 1}`);
+          dot.addEventListener('click', () => goToSheet(i));
+          DOM.sheetsProgress.appendChild(dot);
+        }
+      }
+
+      function updateSheetProgress() {
+        const dots = DOM.sheetsProgress.querySelectorAll('.sheets-progress-dot');
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === STATE.sheetIndex);
+        });
+
+        if (DOM.sheetsCounter) {
+          DOM.sheetsCounter.textContent = `Lembaran ${STATE.sheetIndex + 1} dari ${STATE.sheetCount}`;
+        }
+
+        DOM.sheetsPrev.disabled = STATE.sheetIndex === 0;
+        DOM.sheetsNext.disabled = STATE.sheetIndex === STATE.sheetCount - 1;
+      }
+
+      function createSheetElement(sheetData, index) {
+        const sheet = document.createElement('div');
+        sheet.className = 'sheet';
+        sheet.dataset.index = index;
+
+        if (sheetData.type === 'cover') {
+          sheet.classList.add('cover-sheet');
+          sheet.innerHTML = `
+            <span class="cover-sheet-corner tl">❦</span>
+            <span class="cover-sheet-corner tr">❦</span>
+            <span class="cover-sheet-corner bl">❦</span>
+            <span class="cover-sheet-corner br">❦</span>
+            <div class="cover-sheet-content">
+              <div class="cover-sheet-top">${sheetData.chapter}</div>
+              <h2 class="cover-sheet-title">${sheetData.title}</h2>
+              <div class="cover-sheet-divider">✦</div>
+              <p class="cover-sheet-subtitle">${sheetData.subtitle}</p>
+              <div class="cover-sheet-author">${sheetData.author}</div>
+              <div class="cover-sheet-stamp">${sheetData.stamp}</div>
+            </div>
+            <div class="cover-sheet-hint">✦ Ketuk untuk membuka ✦</div>
+          `;
+          sheet.style.cursor = 'pointer';
+          sheet.addEventListener('click', () => {
+            if (STATE.sheetIndex === 0 && !STATE.isAnimating) {
+              goToSheet(1);
+            }
+          });
+        } else {
+          // Story atau closing
+          let paragraphsHTML = '';
+          sheetData.paragraphs.forEach((p, idx) => {
+            if (p.dropCap) {
+              paragraphsHTML += `<p class="sheet-text"><span class="drop-cap">${p.dropCap}</span>${p.text}</p>`;
+            } else {
+              paragraphsHTML += `<p class="sheet-text">${p.text}</p>`;
+            }
+          });
+
+          const titleHTML = sheetData.title ? `<h3 class="sheet-title">${sheetData.title}</h3>` : '';
+          const signatureHTML = sheetData.signature ? `<p class="sheet-signature">${sheetData.signature}</p>` : '';
+
+          sheet.innerHTML = `
+            <div class="sheet-content">
+              <div class="sheet-header">
+                <span class="sheet-chapter">${sheetData.chapter}</span>
+                <span class="sheet-page-num">${sheetData.pageNum}</span>
+              </div>
+              <div class="sheet-body">
+                ${titleHTML}
+                ${paragraphsHTML}
+                ${signatureHTML}
+              </div>
+            </div>
+          `;
+        }
+
+        return sheet;
+      }
+
+      function renderSheet(index, direction) {
+        if (!DOM.sheetsContainer) return;
+        if (STATE.isAnimating) return;
+        STATE.isAnimating = true;
+
+        // Hapus lembaran lama dengan animasi
+        const oldSheet = DOM.sheetsContainer.querySelector('.sheet');
+        if (oldSheet) {
+          oldSheet.classList.add(direction === 'next' ? 'exit-next' : 'exit-prev');
+          setTimeout(() => {
+            if (oldSheet.parentNode) {
+              oldSheet.parentNode.removeChild(oldSheet);
+            }
+          }, 800);
+        }
+
+        // Buat lembaran baru
+        const newSheet = createSheetElement(CONFIG.sheets[index], index);
+        newSheet.classList.add('enter');
+        DOM.sheetsContainer.appendChild(newSheet);
+
+        setTimeout(() => {
+          STATE.isAnimating = false;
+        }, 900);
+      }
+
+      function goToSheet(index) {
+        if (index < 0 || index >= STATE.sheetCount) return;
+        if (index === STATE.sheetIndex) return;
+
+        const direction = index > STATE.sheetIndex ? 'next' : 'prev';
+        STATE.sheetIndex = index;
+        updateSheetProgress();
+        renderSheet(index, direction);
+      }
+
+      function nextSheet() {
+        if (STATE.sheetIndex < STATE.sheetCount - 1) {
+          goToSheet(STATE.sheetIndex + 1);
+        }
+      }
+
+      function prevSheet() {
+        if (STATE.sheetIndex > 0) {
+          goToSheet(STATE.sheetIndex - 1);
+        }
+      }
+
+      function initSheets() {
+        STATE.sheetCount = CONFIG.sheets.length;
+        buildSheetProgress();
+
+        // Render lembaran pertama
+        if (DOM.sheetsContainer) {
+          // Hapus semua lembaran yang ada (kalau ada)
+          const existing = DOM.sheetsContainer.querySelectorAll('.sheet');
+          existing.forEach(s => s.remove());
+
+          const firstSheet = createSheetElement(CONFIG.sheets[0], 0);
+          firstSheet.classList.add('enter');
+          DOM.sheetsContainer.appendChild(firstSheet);
+        }
+
+        STATE.sheetIndex = 0;
+        updateSheetProgress();
+      }
+
+      function initSheetEvents() {
+        if (DOM.sheetsNext) DOM.sheetsNext.addEventListener('click', nextSheet);
+        if (DOM.sheetsPrev) DOM.sheetsPrev.addEventListener('click', prevSheet);
+
+        // Keyboard nav
+        document.addEventListener('keydown', (e) => {
+          if (STATE.currentScene !== 'sheets') return;
+          if (e.key === 'ArrowRight') { e.preventDefault(); nextSheet(); }
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSheet(); }
+        });
+
+        // Swipe di container
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchMoved = false;
+
+        DOM.sheetsContainer.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchMoved = false;
+          }
+        }, { passive: true });
+
+        DOM.sheetsContainer.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 1) {
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 15) {
+              touchMoved = true;
+            }
+          }
+        }, { passive: true });
+
+        DOM.sheetsContainer.addEventListener('touchend', (e) => {
+          if (!touchMoved) return;
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const threshold = 50;
+          if (dx < -threshold) nextSheet();
+          else if (dx > threshold) prevSheet();
+        });
+      }
+
+      // ── AUDIO ──
       function createAudioElements() {
         STATE.audioElements.forEach(audio => {
           try { audio.pause(); } catch(e) {}
@@ -1517,9 +2123,7 @@
       }
 
       function startAllMusic() {
-        if (STATE.audioElements.length === 0) {
-          createAudioElements();
-        }
+        if (STATE.audioElements.length === 0) createAudioElements();
 
         STATE.audioElements.forEach((audio, index) => {
           const trackConfig = CONFIG.audioTracks[index] || {};
@@ -1547,31 +2151,6 @@
             audio.currentTime = 0;
           } catch(e) {}
         });
-      }
-
-      function initVideo() {
-        if (!DOM.videoFrame) return;
-
-        const videoSrc = CONFIG.videoSrc;
-        if (!videoSrc) {
-          DOM.videoFrame.innerHTML = '<div class="video-placeholder">Sumber video tidak diatur.<br>Edit CONFIG.videoSrc.</div>';
-          return;
-        }
-
-        DOM.videoFrame.innerHTML = `
-          <video
-            controls
-            autoplay
-            playsinline
-            preload="metadata"
-            poster="${CONFIG.videoPoster || ''}"
-          >
-            <source src="${videoSrc}" type="video/mp4">
-            Browser Anda tidak mendukung tag video.
-          </video>
-        `;
-
-        STATE.videoInitialized = true;
       }
 
       function initParticles() {
@@ -1637,9 +2216,7 @@
         initParticleArray();
         draw();
         
-        window.addEventListener('resize', () => {
-          resize();
-        });
+        window.addEventListener('resize', () => resize());
       }
 
       async function init() {
@@ -1649,6 +2226,8 @@
         createAudioElements();
         buildDots();
         initLetterSliderEvents();
+        initSheets();
+        initSheetEvents();
         
         if (DOM.envelope) {
           DOM.envelope.addEventListener('click', openEnvelope);
@@ -1662,18 +2241,17 @@
         
         if (DOM.continueBtn) {
           DOM.continueBtn.addEventListener('click', () => {
-            showScene('video');
-            initVideo();
+            showScene('sheets');
+            // Reset ke lembaran pertama
+            STATE.sheetIndex = 0;
+            STATE.isAnimating = false;
+            initSheets();
           });
         }
         
-        if (DOM.letterPrev) {
-          DOM.letterPrev.addEventListener('click', prevLetterSlide);
-        }
-        if (DOM.letterNext) {
-          DOM.letterNext.addEventListener('click', nextLetterSlide);
-        }
-        
+        if (DOM.letterPrev) DOM.letterPrev.addEventListener('click', prevLetterSlide);
+        if (DOM.letterNext) DOM.letterNext.addEventListener('click', nextLetterSlide);
+
         if (DOM.replayBtn) {
           DOM.replayBtn.addEventListener('click', resetExperience);
         }
@@ -1696,16 +2274,12 @@
 
         STATE.envelopeOpened = false;
         STATE.letterShown = false;
-        STATE.videoInitialized = false;
         STATE.letterSlideIndex = 0;
+        STATE.sheetIndex = 0;
+        STATE.isAnimating = false;
 
-        if (DOM.envelope) {
-          DOM.envelope.classList.remove('open');
-        }
-        
-        if (DOM.continueBtn) {
-          DOM.continueBtn.classList.remove('visible');
-        }
+        if (DOM.envelope) DOM.envelope.classList.remove('open');
+        if (DOM.continueBtn) DOM.continueBtn.classList.remove('visible');
 
         if (DOM.letterTrack) {
           DOM.letterTrack.style.transition = 'none';
@@ -1714,17 +2288,12 @@
             DOM.letterTrack.style.transition = '';
           }, 50);
         }
-        if (DOM.letterProgressBar) {
-          DOM.letterProgressBar.style.width = '14.28%';
-        }
-        if (DOM.letterHint) {
-          DOM.letterHint.style.opacity = '';
-        }
+        if (DOM.letterProgressBar) DOM.letterProgressBar.style.width = '20%';
+        if (DOM.letterHint) DOM.letterHint.style.opacity = '';
         updateLetterSlide();
 
-        if (DOM.videoFrame) {
-          DOM.videoFrame.innerHTML = '<div class="video-placeholder">Memuat video...</div>';
-        }
+        // Reset sheets
+        initSheets();
         
         if (bigCountdownInterval) {
           clearInterval(bigCountdownInterval);
@@ -1733,9 +2302,7 @@
         showScene('countdown');
         startBigCountdown();
         
-        if (DOM.instruction) {
-          DOM.instruction.style.opacity = '0.7';
-        }
+        if (DOM.instruction) DOM.instruction.style.opacity = '0.7';
         
         setTimeout(() => {
           STATE.envelopeOpened = false;
