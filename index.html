@@ -7,11 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
-  <!-- GSAP + plugins -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
-  <!-- Lenis smooth scroll -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -50,7 +48,7 @@
     }
 
     /* ============================================================
-       ORGANIC MORPHING BLOB TRANSITION
+       ORGANIC BLOB TRANSITION
        ============================================================ */
     .blob-transition {
       position: fixed; inset: 0; z-index: 9999;
@@ -634,21 +632,95 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 25; pointer-events: none; padding: 2rem 1.5rem;
     }
+
+    /* ============================================================
+       NEW FLOWER — REAL BLOOM FROM SEED
+       ============================================================ */
     .flower-wrap {
       position: relative;
-      width: clamp(140px, 30vw, 260px); height: clamp(140px, 30vw, 260px);
-      margin-bottom: 2rem; opacity: 0; transform: scale(0.6);
-      will-change: transform, opacity; pointer-events: none;
+      width: clamp(180px, 38vw, 340px);
+      height: clamp(180px, 38vw, 340px);
+      margin-bottom: 2rem;
+      opacity: 0;
+      will-change: transform, opacity;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .flower-svg {
-      width: 100%; height: 100%; overflow: visible;
-      filter: drop-shadow(0 0 30px rgba(200, 220, 240, 0.3))
-              drop-shadow(0 0 60px rgba(180, 160, 200, 0.2));
+      width: 100%; height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 0 20px rgba(200, 220, 240, 0.35))
+              drop-shadow(0 0 50px rgba(180, 160, 210, 0.25));
     }
-    .flower-svg .stem { stroke-dasharray: 300; stroke-dashoffset: 300; }
-    .flower-svg .petal, .flower-svg .leaf, .flower-svg .center {
-      transform-origin: center; opacity: 0; transform: scale(0.2);
+    /* Stem — grows from bottom up */
+    .flower-svg .stem {
+      stroke-dasharray: 400;
+      stroke-dashoffset: 400;
+      stroke-linecap: round;
     }
+    /* Leaves — appear after stem */
+    .flower-svg .leaf {
+      transform-origin: center;
+      opacity: 0;
+      transform: scale(0.2) rotate(-20deg);
+    }
+    /* Bud — forms after leaves */
+    .flower-svg .bud {
+      transform-origin: 100px 100px;
+      opacity: 0;
+      transform: scale(0.1);
+    }
+    /* Petals — bloom one by one */
+    .flower-svg .petal {
+      transform-origin: 100px 100px;
+      opacity: 0;
+      transform: scale(0.1) rotate(0deg);
+    }
+    /* Center of flower */
+    .flower-svg .flower-center {
+      transform-origin: 100px 100px;
+      opacity: 0;
+      transform: scale(0.1);
+    }
+    /* Pollen dots around flower (magic aura) */
+    .flower-svg .pollen {
+      transform-origin: center;
+      opacity: 0;
+      transform: scale(0);
+    }
+    /* Magic ring aura */
+    .flower-aura {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 120%; height: 120%;
+      transform: translate(-50%, -50%) scale(0.3);
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(200, 220, 250, 0.15) 0%,
+        rgba(180, 200, 240, 0.08) 40%,
+        transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+    .flower-aura::before {
+      content: '';
+      position: absolute;
+      inset: 15%;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 220, 250, 0.3);
+      box-shadow: 0 0 20px rgba(180, 200, 240, 0.4);
+    }
+    .flower-aura::after {
+      content: '';
+      position: absolute;
+      inset: 30%;
+      border-radius: 50%;
+      border: 1px dashed rgba(220, 230, 255, 0.25);
+    }
+
     .hb-line {
       font-family: 'Cormorant Garamond', serif; font-weight: 300;
       font-size: clamp(2.8rem, 13vw, 7rem); line-height: 1;
@@ -742,6 +814,9 @@
       .central-light { opacity: 1 !important; }
       .finale-content { opacity: 1 !important; }
       .flower-wrap { opacity: 1 !important; transform: none !important; }
+      .flower-svg .stem { stroke-dashoffset: 0 !important; }
+      .flower-svg .leaf, .flower-svg .petal, .flower-svg .bud,
+      .flower-svg .flower-center, .flower-svg .pollen { opacity: 1 !important; transform: none !important; }
       .hb-line, .hb-name, .hb-message { opacity: 1 !important; transform: none !important; }
       .hb-footer { opacity: 1 !important; }
       .blob-transition .blob-layer { animation: none !important; }
@@ -766,7 +841,7 @@
       .envelope-scene { width: min(80vw, 460px); }
       #scene-garden .top-label { top: 6%; }
       .letter-card { max-width: 600px; }
-      .flower-wrap { width: clamp(130px, 22vw, 220px); height: clamp(130px, 22vw, 220px); }
+      .flower-wrap { width: clamp(160px, 30vw, 280px); height: clamp(160px, 30vw, 280px); }
       .hb-line { font-size: clamp(2.5rem, 9vw, 5rem); }
     }
     @media (max-width: 768px) {
@@ -794,7 +869,7 @@
       .letter-signature { font-size: 0.95rem; }
       .signature-name { font-size: 1.6rem; }
       .next-btn { padding: 0.8rem 1.8rem; font-size: 0.62rem; letter-spacing: 0.3em; }
-      .flower-wrap { width: 110px; height: 110px; margin-bottom: 1rem; }
+      .flower-wrap { width: 160px; height: 160px; margin-bottom: 1rem; }
       .hb-line { font-size: clamp(1.8rem, 12vw, 3rem); letter-spacing: 0.04em; }
       .hb-name { font-size: clamp(1.3rem, 7vw, 2rem); margin-top: 0.5rem; }
       .hb-message { font-size: 0.88rem; margin-top: 1rem; line-height: 1.55; }
@@ -817,6 +892,7 @@
       .hb-name { font-size: 1.2rem; }
       .hb-message { font-size: 0.82rem; }
       .replay-btn { padding: 0.6rem 1.4rem; font-size: 0.55rem; }
+      .flower-wrap { width: 140px; height: 140px; }
     }
     @media (max-width: 320px) {
       #scene-ocean .main-text { font-size: 1.35rem; }
@@ -825,7 +901,7 @@
       .continue-btn { padding: 0.65rem 1.2rem; font-size: 0.58rem; }
       .letter-card { padding: 1.5rem 1rem; }
       .letter-body { font-size: 0.92rem; }
-      .flower-wrap { width: 90px; height: 90px; }
+      .flower-wrap { width: 120px; height: 120px; }
       .hb-line { font-size: 1.4rem; }
       .hb-message { font-size: 0.78rem; }
     }
@@ -844,7 +920,7 @@
       .letter-card { padding: 1.5rem 1.25rem; }
       .letter-header { margin-bottom: 1.5rem; }
       .letter-divider { margin-top: 1rem; }
-      .flower-wrap { width: 90px; height: 90px; margin-bottom: 0.6rem; }
+      .flower-wrap { width: 130px; height: 130px; margin-bottom: 0.6rem; }
       .hb-line { font-size: clamp(1.6rem, 8vw, 2.6rem); }
       .hb-name { font-size: clamp(1.1rem, 5vw, 1.8rem); margin-top: 0.4rem; }
       .hb-message { font-size: 0.85rem; margin-top: 0.8rem; }
@@ -969,7 +1045,7 @@
   </div>
 
   <!-- ============================================================
-       SCENE 4 · THE GARDEN IN BLOOM (FINALE)
+       SCENE 4 · THE GARDEN IN BLOOM (FINALE) — NEW FLOWER
        ============================================================ -->
   <div class="scene-container" id="scene-finale">
     <canvas id="starfield-canvas"></canvas>
@@ -981,22 +1057,69 @@
     <div class="text-scene" id="countdownScene"><div class="countdown-text" id="countdownText">3</div></div>
     <div class="finale-content" id="finaleContent">
       <div class="flower-wrap" id="flowerWrap">
+        <!-- Magic aura ring -->
+        <div class="flower-aura" id="flowerAura"></div>
+        <!-- NEW FLOWER: grows from seed -->
         <svg class="flower-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path class="stem" d="M 100 200 Q 100 160 100 130" stroke="#7a9a6a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <ellipse class="leaf" cx="88" cy="160" rx="12" ry="6" fill="#8aaa78" transform="rotate(-30 88 160)"/>
-          <ellipse class="leaf" cx="114" cy="150" rx="11" ry="5.5" fill="#8aaa78" transform="rotate(25 114 150)"/>
-          <g class="petal-group">
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f5e6ec" opacity="0.95"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f0dce0" opacity="0.95" transform="rotate(45 100 100)"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f5e6ec" opacity="0.95" transform="rotate(90 100 100)"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f0dce0" opacity="0.95" transform="rotate(135 100 100)"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f5e6ec" opacity="0.95" transform="rotate(180 100 100)"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f0dce0" opacity="0.95" transform="rotate(225 100 100)"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f5e6ec" opacity="0.95" transform="rotate(270 100 100)"/>
-            <ellipse class="petal" cx="100" cy="70" rx="14" ry="24" fill="#f0dce0" opacity="0.95" transform="rotate(315 100 100)"/>
+          <!-- Stem — grows from bottom -->
+          <path class="stem"
+                d="M 100 200 Q 98 175 100 150 Q 102 125 100 100"
+                stroke="#7a9a6a" stroke-width="2.8" fill="none"/>
+          <!-- Leaves — appear after stem -->
+          <g class="leaf-group">
+            <ellipse class="leaf" cx="82" cy="165" rx="14" ry="7" fill="#8aaa78" transform="rotate(-35 82 165)"/>
+            <ellipse class="leaf" cx="118" cy="150" rx="13" ry="6.5" fill="#8aaa78" transform="rotate(30 118 150)"/>
+            <ellipse class="leaf" cx="85" cy="130" rx="11" ry="5.5" fill="#8aaa78" transform="rotate(-45 85 130)"/>
           </g>
-          <circle class="center" cx="100" cy="100" r="10" fill="#f0c98a"/>
-          <circle class="center" cx="100" cy="100" r="6" fill="#e8b070" opacity="0.8"/>
+          <!-- Bud — forms before petals -->
+          <g class="bud">
+            <ellipse cx="100" cy="100" rx="14" ry="18" fill="#d8c8b0"/>
+            <ellipse cx="100" cy="100" rx="10" ry="13" fill="#e8d8c0"/>
+          </g>
+          <!-- OUTER PETALS (8) — first to bloom -->
+          <g class="petal-group outer">
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(45 100 100)"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95" transform="rotate(90 100 100)"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(135 100 100)"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95" transform="rotate(180 100 100)"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(225 100 100)"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95" transform="rotate(270 100 100)"/>
+            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(315 100 100)"/>
+          </g>
+          <!-- MIDDLE PETALS (6) — bloom after outer -->
+          <g class="petal-group middle">
+            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#f0d0d8" opacity="0.95"/>
+            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#ecc8d0" opacity="0.95" transform="rotate(60 100 100)"/>
+            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#f0d0d8" opacity="0.95" transform="rotate(120 100 100)"/>
+            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#ecc8d0" opacity="0.95" transform="rotate(180 100 100)"/>
+            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#f0d0d8" opacity="0.95" transform="rotate(240 100 100)"/>
+            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#ecc8d0" opacity="0.95" transform="rotate(300 100 100)"/>
+          </g>
+          <!-- INNER PETALS (4) — bloom last -->
+          <g class="petal-group inner">
+            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f8e8e0" opacity="0.95"/>
+            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f4dcd8" opacity="0.95" transform="rotate(90 100 100)"/>
+            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f8e8e0" opacity="0.95" transform="rotate(180 100 100)"/>
+            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f4dcd8" opacity="0.95" transform="rotate(270 100 100)"/>
+          </g>
+          <!-- FLOWER CENTER -->
+          <g class="flower-center">
+            <circle cx="100" cy="100" r="12" fill="#f0c98a"/>
+            <circle cx="100" cy="100" r="8" fill="#e8b070" opacity="0.85"/>
+            <circle cx="100" cy="100" r="4" fill="#d89858" opacity="0.9"/>
+          </g>
+          <!-- POLLEN DOTS (magic particles around flower) -->
+          <g class="pollen-group">
+            <circle class="pollen" cx="60" cy="70" r="1.8" fill="#fff8e0"/>
+            <circle class="pollen" cx="140" cy="65" r="1.5" fill="#f8e8d0"/>
+            <circle class="pollen" cx="55" cy="110" r="1.3" fill="#fff5e0"/>
+            <circle class="pollen" cx="145" cy="120" r="1.6" fill="#f8e8d0"/>
+            <circle class="pollen" cx="70" cy="145" r="1.4" fill="#fff8e0"/>
+            <circle class="pollen" cx="130" cy="150" r="1.5" fill="#fff0d8"/>
+            <circle class="pollen" cx="45" cy="90" r="1.2" fill="#f8e8d0"/>
+            <circle class="pollen" cx="155" cy="95" r="1.3" fill="#fff8e0"/>
+          </g>
         </svg>
       </div>
       <div class="hb-line" id="hbHappy">HAPPY</div>
@@ -1050,12 +1173,10 @@
       const gsapAvailable = typeof gsap !== 'undefined';
       const lenisAvailable = typeof Lenis !== 'undefined';
 
-      // Register GSAP plugins
       if (gsapAvailable) {
         if (typeof MotionPathPlugin !== 'undefined') gsap.registerPlugin(MotionPathPlugin);
         if (typeof CustomEase !== 'undefined') {
           gsap.registerPlugin(CustomEase);
-          // Custom "silky" ease — lebih halus dari power4.out
           CustomEase.create("silky", "M0,0 C0.16,1 0.3,1 1,1");
           CustomEase.create("organic", "M0,0 C0.25,0.1 0.25,1 1,1");
           CustomEase.create("bloomEase", "M0,0 C0.34,1.56 0.64,1 1,1");
@@ -1079,7 +1200,6 @@
 
       function playBlobTransition(onSwitch, onComplete) {
         if (prefersReducedMotion || !gsapAvailable) {
-          // Simple fade fallback
           blobVeil.style.transition = 'opacity 0.9s ease';
           blobVeil.style.opacity = '0.95';
           setTimeout(() => {
@@ -1091,44 +1211,17 @@
           return;
         }
 
-        const tl = gsap.timeline({
-          onComplete: () => {
-            if (onComplete) onComplete();
-          }
-        });
-
-        // Reset layers
+        const tl = gsap.timeline({ onComplete: () => { if (onComplete) onComplete(); } });
         gsap.set(blobLayers, { scale: 0, opacity: 0 });
         gsap.set(blobVeil, { opacity: 0 });
 
-        // Blob layers scale up organically
-        tl.to(blobLayers[0], {
-          scale: 1, opacity: 1, duration: 1.4,
-          ease: "power3.inOut"
-        }, 0)
-        .to(blobLayers[1], {
-          scale: 1.05, opacity: 0.9, duration: 1.5,
-          ease: "power3.inOut"
-        }, 0.15)
-        .to(blobLayers[2], {
-          scale: 1.1, opacity: 0.8, duration: 1.6,
-          ease: "power3.inOut"
-        }, 0.3)
-        .to(blobVeil, {
-          opacity: 1, duration: 0.6, ease: "power2.in"
-        }, 0.4)
-        // Di titik ini, scene switching dilakukan
-        .add(() => {
-          if (onSwitch) onSwitch();
-        }, 0.7)
-        // Blob keluar — fade + scale sedikit turun
-        .to(blobVeil, {
-          opacity: 0, duration: 1.2, ease: "power2.out"
-        }, 1.4)
-        .to(blobLayers, {
-          scale: 0.3, opacity: 0, duration: 1.4,
-          ease: "power3.inOut", stagger: 0.08
-        }, 1.4);
+        tl.to(blobLayers[0], { scale: 1, opacity: 1, duration: 1.4, ease: "power3.inOut" }, 0)
+          .to(blobLayers[1], { scale: 1.05, opacity: 0.9, duration: 1.5, ease: "power3.inOut" }, 0.15)
+          .to(blobLayers[2], { scale: 1.1, opacity: 0.8, duration: 1.6, ease: "power3.inOut" }, 0.3)
+          .to(blobVeil, { opacity: 1, duration: 0.6, ease: "power2.in" }, 0.4)
+          .add(() => { if (onSwitch) onSwitch(); }, 0.7)
+          .to(blobVeil, { opacity: 0, duration: 1.2, ease: "power2.out" }, 1.4)
+          .to(blobLayers, { scale: 0.3, opacity: 0, duration: 1.4, ease: "power3.inOut", stagger: 0.08 }, 1.4);
       }
 
       // ============================================================
@@ -1163,7 +1256,6 @@
           void toScene.offsetWidth;
           currentScene = sceneName;
 
-          // Init scene setelah switch
           setTimeout(() => {
             if (sceneName === 'garden') initGardenScene();
             else if (sceneName === 'letter') {
@@ -1184,7 +1276,7 @@
       }
 
       // ============================================================
-      // LENIS SMOOTH SCROLL (letter only)
+      // LENIS SMOOTH SCROLL
       // ============================================================
       let lenis = null;
       function initLenisForLetter() {
@@ -1270,8 +1362,7 @@
           oceanDate.style.opacity = '1'; oceanMainText.style.opacity = '1';
           oceanSubtitle.style.opacity = '1'; oceanBtn.style.opacity = '1'; oceanBtn.style.transform = 'scale(1)';
         } else if (gsapAvailable) {
-          const easeOut = "expo.out";
-          const tl = gsap.timeline({ defaults: { ease: easeOut } });
+          const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
           gsap.set(oceanContent, { opacity: 0, y: 30 });
           gsap.set(oceanDate, { opacity: 0, y: 12 });
           gsap.set(oceanMainText, { opacity: 0, y: 24 });
@@ -1281,10 +1372,7 @@
           tl.to(oceanDate, { opacity: 1, y: 0, duration: 1.6, delay: 1.2 })
             .to(oceanMainText, { opacity: 1, y: 0, duration: 2.0 }, "-=0.9")
             .to(oceanSubtitle, { opacity: 1, y: 0, duration: 1.6 }, "-=1.1")
-            .to(oceanBtn, {
-              opacity: 1, scale: 1, duration: 1.6,
-              ease: "back.out(1.4)"
-            }, "-=0.9")
+            .to(oceanBtn, { opacity: 1, scale: 1, duration: 1.6, ease: "back.out(1.4)" }, "-=0.9")
             .to(oceanContent, { opacity: 1, y: 0, duration: 1.4 }, "-=1.4");
         } else {
           setTimeout(() => {
@@ -1318,7 +1406,7 @@
       }
 
       // ============================================================
-      // SCENE 2 · HIDDEN MOONLIT GARDEN
+      // SCENE 2 · HIDDEN MOONLIT GARDEN (ENVELOPE)
       // ============================================================
       let gardenInitialized = false;
       function initGardenScene() {
@@ -1339,7 +1427,6 @@
         let particleAnimId = null;
         const sealShards = [];
 
-        // Buat shard elemen
         for (let i = 0; i < 14; i++) {
           const shard = document.createElement('div');
           shard.className = 'seal-shard';
@@ -1348,7 +1435,6 @@
           sealShards.push(shard);
         }
 
-        // Fireflies particles
         if (canvas && !deviceInfo.prefersReducedData) {
           const ctx = canvas.getContext('2d');
           let w, h;
@@ -1396,9 +1482,7 @@
           animateParticles();
         }
 
-        // ============================================================
-        // ENTRANCE: amplop muncul dengan MotionPath (jalur melengkung)
-        // ============================================================
+        // Entrance
         if (prefersReducedMotion) {
           topLabel.style.opacity = '1'; instruction.style.opacity = '0.6'; waxSeal.style.opacity = '1';
           envelope.style.opacity = '1'; envelope.style.transform = 'none'; envelope.style.filter = 'none';
@@ -1407,22 +1491,14 @@
           gsap.set(waxSeal, { opacity: 0, scale: 0.6, rotate: -20 });
           gsap.set(instruction, { opacity: 0 });
           gsap.set(envelope, {
-            opacity: 0,
-            scale: 0.7,
-            rotateX: 30,
-            filter: 'blur(24px)',
-            transformPerspective: 1200
+            opacity: 0, scale: 0.7, rotateX: 30,
+            filter: 'blur(24px)', transformPerspective: 1200
           });
 
           const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-
-          // Amplop muncul dengan MotionPath (jalur melengkung dari bawah)
           if (typeof MotionPathPlugin !== 'undefined') {
             tl.to(envelope, {
-              opacity: 1,
-              scale: 1,
-              rotateX: 0,
-              filter: 'blur(0px)',
+              opacity: 1, scale: 1, rotateX: 0, filter: 'blur(0px)',
               duration: 2.4,
               motionPath: {
                 path: [
@@ -1437,26 +1513,17 @@
               ease: "power3.out"
             }, 0.3);
           } else {
-            // Fallback jika MotionPathPlugin gagal load
             gsap.set(envelope, { x: -40, y: 120 });
             tl.to(envelope, {
               opacity: 1, scale: 1, rotateX: 0, filter: 'blur(0px)',
               x: 0, y: 0, duration: 2.4, ease: "power3.out"
             }, 0.3);
           }
-
-          // Wax seal muncul dengan rotasi
-          tl.to(waxSeal, {
-            opacity: 1, scale: 1, rotate: 0,
-            duration: 1.4, ease: "back.out(1.7)"
-          }, "-=1.3")
-          // Label atas
-          .to(topLabel, { opacity: 1, y: 0, duration: 1.4 }, "-=1.0")
-          // Instruksi
-          .to(instruction, { opacity: 0.6, duration: 1.8 }, "-=0.8")
-          // Settle bounce organic
-          .to(envelope, { y: -8, duration: 0.7, ease: "sine.inOut" }, "-=1.6")
-          .to(envelope, { y: 0, duration: 0.9, ease: "sine.inOut" });
+          tl.to(waxSeal, { opacity: 1, scale: 1, rotate: 0, duration: 1.4, ease: "back.out(1.7)" }, "-=1.3")
+            .to(topLabel, { opacity: 1, y: 0, duration: 1.4 }, "-=1.0")
+            .to(instruction, { opacity: 0.6, duration: 1.8 }, "-=0.8")
+            .to(envelope, { y: -8, duration: 0.7, ease: "sine.inOut" }, "-=1.6")
+            .to(envelope, { y: 0, duration: 0.9, ease: "sine.inOut" });
         } else {
           envelope.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
           envelope.style.opacity = '1'; envelope.style.transform = 'scale(1) translateY(0)';
@@ -1469,13 +1536,9 @@
           }, 1400);
         }
 
-        // ============================================================
-        // OPEN: wax seal pecah + flap terbuka + letter floating
-        // ============================================================
         function openEnvelope() {
           if (isOpening || isOpened) return;
           isOpening = true;
-
           if (gsapAvailable) gsap.to(instruction, { opacity: 0, duration: 0.6, ease: "power2.in" });
 
           if (prefersReducedMotion) {
@@ -1494,13 +1557,10 @@
 
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => { isOpened = true; isOpening = false; } });
-
-            // 1. Wax seal berdenyut (heartbeat)
             tl.to(waxSeal, { scale: 1.18, duration: 0.28, ease: "power2.out" })
               .to(waxSeal, { scale: 0.92, duration: 0.22, ease: "power2.in" })
               .to(waxSeal, { scale: 1.08, duration: 0.22, ease: "power2.out" });
 
-            // 2. Shards pecah — hitung posisi seal relatif ke envelope
             const sealRect = waxSeal.getBoundingClientRect();
             const envRect = envelope.getBoundingClientRect();
             const sealCX = sealRect.left + sealRect.width / 2 - envRect.left;
@@ -1512,69 +1572,40 @@
               const tx = Math.cos(angle) * distance;
               const ty = Math.sin(angle) * distance - 30;
               gsap.set(shard, {
-                left: sealCX + 'px',
-                top: sealCY + 'px',
-                opacity: 0.95,
-                scale: 1,
-                x: 0, y: 0, rotation: 0
+                left: sealCX + 'px', top: sealCY + 'px',
+                opacity: 0.95, scale: 1, x: 0, y: 0, rotation: 0
               });
               tl.to(shard, {
-                x: tx,
-                y: ty,
+                x: tx, y: ty,
                 rotation: Math.random() * 540 - 270,
-                scale: 0.2,
-                opacity: 0,
+                scale: 0.2, opacity: 0,
                 duration: 1.6 + Math.random() * 0.8,
                 ease: "power3.out"
               }, "-=0.9");
             });
 
-            // 3. Wax seal menghilang
-            tl.to(waxSeal, {
-              scale: 1.4, opacity: 0, duration: 0.7, ease: "power2.in"
-            }, "-=1.1");
-
-            // 4. Flap terbuka dengan overshoot organik
-            tl.to(envelopeFlap, {
-              rotateX: -180,
-              duration: 1.6,
-              ease: "power3.inOut"
-            }, "-=0.5");
-
-            // 5. Letter mengambang naik
-            tl.to(letter, {
-              opacity: 1,
-              y: -60,
-              rotate: -3,
-              duration: 2.2,
-              ease: "expo.out"
-            }, "-=1.0")
-            .add(() => { letter.classList.add('revealed'); }, "-=1.4")
-            // 6. Continuous floating — hidup terus-menerus
-            .add(() => {
-              gsap.to(letter, {
-                y: -70,
-                rotate: 1,
-                duration: 3.4,
-                ease: "sine.inOut",
-                yoyo: true,
-                repeat: -1
-              });
-              gsap.to(letter, {
-                rotate: -3,
-                duration: 4.2,
-                ease: "sine.inOut",
-                yoyo: true,
-                repeat: -1
-              });
-            }, "-=0.6")
-            // 7. Continue button
-            .to(continueBtn, {
-              opacity: 1, y: 0, duration: 1.4, ease: "expo.out",
-              onStart: () => { continueBtn.classList.add('visible'); }
-            }, "-=1.0");
+            tl.to(waxSeal, { scale: 1.4, opacity: 0, duration: 0.7, ease: "power2.in" }, "-=1.1")
+              .to(envelopeFlap, { rotateX: -180, duration: 1.6, ease: "power3.inOut" }, "-=0.5")
+              .to(letter, {
+                opacity: 1, y: -60, rotate: -3,
+                duration: 2.2, ease: "expo.out"
+              }, "-=1.0")
+              .add(() => { letter.classList.add('revealed'); }, "-=1.4")
+              .add(() => {
+                gsap.to(letter, {
+                  y: -70, rotate: 1, duration: 3.4,
+                  ease: "sine.inOut", yoyo: true, repeat: -1
+                });
+                gsap.to(letter, {
+                  rotate: -3, duration: 4.2,
+                  ease: "sine.inOut", yoyo: true, repeat: -1
+                });
+              }, "-=0.6")
+              .to(continueBtn, {
+                opacity: 1, y: 0, duration: 1.4, ease: "expo.out",
+                onStart: () => { continueBtn.classList.add('visible'); }
+              }, "-=1.0");
           } else {
-            // Fallback
             waxSeal.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             waxSeal.style.opacity = '0';
             waxSeal.style.transform = 'translate(-50%, -50%) scale(1.4)';
@@ -1618,10 +1649,7 @@
                 duration: 1.4, ease: "power2.in"
               }, "-=0.4")
               .to(letter, { scale: 1.5, y: -30, duration: 1.8, ease: "power3.in" }, "-=1.2")
-              .to(envelopeScene, {
-                opacity: 0, filter: 'blur(12px)',
-                duration: 1.0, ease: "power2.in"
-              }, "-=1.0");
+              .to(envelopeScene, { opacity: 0, filter: 'blur(12px)', duration: 1.0, ease: "power2.in" }, "-=1.0");
           } else {
             continueBtn.style.transition = 'opacity 0.6s ease'; continueBtn.style.opacity = '0';
             letter.style.transition = 'transform 1.2s ease';
@@ -1708,13 +1736,10 @@
           scrollHint.classList.add('visible');
         } else if (gsapAvailable) {
           const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-          tl.to(letterCard, {
-            opacity: 1, y: 0, filter: 'blur(0px)',
-            duration: 2.4, delay: 0.4
-          })
-          .add(() => { revealLetterParagraphs(); }, "-=1.0")
-          .add(() => { scrollHint.classList.add('visible'); }, "-=0.6")
-          .add(() => { letterFinalSection.classList.add('visible'); }, "+=2.8");
+          tl.to(letterCard, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 2.4, delay: 0.4 })
+            .add(() => { revealLetterParagraphs(); }, "-=1.0")
+            .add(() => { scrollHint.classList.add('visible'); }, "-=0.6")
+            .add(() => { letterFinalSection.classList.add('visible'); }, "+=2.8");
         } else {
           setTimeout(() => {
             letterCard.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
@@ -1729,21 +1754,12 @@
           if (prefersReducedMotion) { ps.forEach(p => { p.classList.remove('reveal-init'); p.classList.add('reveal-in'); }); return; }
 
           if (gsapAvailable) {
-            // Stagger reveal per paragraph dengan delay
             gsap.to(ps, {
-              opacity: 1,
-              y: 0,
-              filter: 'blur(0px)',
+              opacity: 1, y: 0, filter: 'blur(0px)',
               duration: 1.8,
-              stagger: {
-                each: 0.18,
-                from: "start",
-                ease: "power2.inOut"
-              },
+              stagger: { each: 0.18, from: "start", ease: "power2.inOut" },
               ease: "expo.out",
-              onStart: () => {
-                ps.forEach(p => p.classList.remove('reveal-init'));
-              }
+              onStart: () => { ps.forEach(p => p.classList.remove('reveal-init')); }
             });
           } else if ('IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries) => {
@@ -1816,6 +1832,7 @@
         const countdownText = document.getElementById('countdownText');
         const finaleContent = document.getElementById('finaleContent');
         const flowerWrap = document.getElementById('flowerWrap');
+        const flowerAura = document.getElementById('flowerAura');
         const hbHappy = document.getElementById('hbHappy');
         const hbBirthday = document.getElementById('hbBirthday');
         const hbName = document.getElementById('hbName');
@@ -1833,7 +1850,6 @@
         const petalsCanvas = document.getElementById('petals-canvas');
         const fireworksCanvas = document.getElementById('fireworks-canvas');
 
-        // Starfield
         let starfieldAnim = null, starfield = null;
         if (starfieldCanvas && !deviceInfo.prefersReducedData) {
           const ctx = starfieldCanvas.getContext('2d');
@@ -1894,7 +1910,6 @@
           };
         }
 
-        // Petals
         let petalsAnim = null, petalsActive = false, petals = null;
         if (petalsCanvas && !deviceInfo.prefersReducedData) {
           const ctx = petalsCanvas.getContext('2d');
@@ -1947,7 +1962,6 @@
           };
         }
 
-        // Fireworks
         let fireworksAnim = null, fwActive = false, fireworks = null;
         if (fireworksCanvas && !deviceInfo.prefersReducedData) {
           const ctx = fireworksCanvas.getContext('2d');
@@ -2005,11 +2019,14 @@
           if (prefersReducedMotion) {
             centralLight.style.opacity = '1';
             finaleContent.style.opacity = '1';
-            flowerWrap.style.opacity = '1'; flowerWrap.style.transform = 'scale(1)';
+            flowerWrap.style.opacity = '1';
+            flowerAura.style.opacity = '1'; flowerAura.style.transform = 'translate(-50%, -50%) scale(1)';
             document.querySelectorAll('.flower-svg .stem').forEach(el => el.style.strokeDashoffset = '0');
-            document.querySelectorAll('.flower-svg .leaf').forEach(el => el.style.opacity = '1');
-            document.querySelectorAll('.flower-svg .petal').forEach(el => el.style.opacity = '0.95');
-            document.querySelectorAll('.flower-svg .center').forEach(el => el.style.opacity = '1');
+            document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+            document.querySelectorAll('.flower-svg .bud').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+            document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0.95'; el.style.transform = 'none'; });
+            document.querySelectorAll('.flower-svg .flower-center').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+            document.querySelectorAll('.flower-svg .pollen').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
             hbHappy.style.opacity = '1'; hbBirthday.style.opacity = '1';
             hbName.style.opacity = '1'; hbMessage.style.opacity = '1'; hbFooter.style.opacity = '1';
             replayBtn.classList.add('visible');
@@ -2017,7 +2034,6 @@
           }
 
           if (!gsapAvailable) {
-            // Fallback sederhana
             centralLight.style.transition = 'opacity 2s ease'; centralLight.style.opacity = '1';
             if (starfield) starfield.burst(2500);
             setTimeout(() => { whisperWait.style.opacity = '1'; }, 3000);
@@ -2034,11 +2050,14 @@
             }, 18400);
             setTimeout(() => {
               finaleContent.style.opacity = '1';
-              flowerWrap.style.opacity = '1'; flowerWrap.style.transform = 'scale(1)';
+              flowerWrap.style.opacity = '1';
+              flowerAura.style.opacity = '1'; flowerAura.style.transform = 'translate(-50%, -50%) scale(1)';
               document.querySelectorAll('.flower-svg .stem').forEach(el => el.style.strokeDashoffset = '0');
-              document.querySelectorAll('.flower-svg .leaf').forEach(el => el.style.opacity = '1');
-              document.querySelectorAll('.flower-svg .petal').forEach(el => el.style.opacity = '0.95');
-              document.querySelectorAll('.flower-svg .center').forEach(el => el.style.opacity = '1');
+              document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+              document.querySelectorAll('.flower-svg .bud').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+              document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0.95'; el.style.transform = 'none'; });
+              document.querySelectorAll('.flower-svg .flower-center').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+              document.querySelectorAll('.flower-svg .pollen').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
               if (petals) petals.start();
             }, 20200);
             setTimeout(() => { hbHappy.style.opacity = '1'; }, 25500);
@@ -2054,22 +2073,19 @@
           }
 
           // ============================================================
-          // MAIN GSAP TIMELINE — dengan position parameter yang presisi
+          // MAIN TIMELINE — NEW FLOWER BLOOM
           // ============================================================
           const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
           tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.4 }, 0)
             .add(() => { if (starfield) starfield.burst(2800); }, 0.6)
 
-            // Whisper 1
             .to(whisperWait, { opacity: 1, duration: 1.6, ease: "expo.out" }, 3.0)
             .to(whisperWait, { opacity: 0, y: -20, duration: 1.4, ease: "expo.in" }, 5.4)
 
-            // Whisper 2
             .to(whisperMore, { opacity: 1, y: 0, duration: 1.8, ease: "expo.out" }, 7.2)
             .to(whisperMore, { opacity: 0, y: -20, duration: 1.4, ease: "expo.in" }, 10.4)
 
-            // Countdown 3
             .to(countdownScene, { opacity: 1, duration: 0.8, ease: "power2.out" }, 11.8)
             .fromTo(countdownText,
               { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
@@ -2080,7 +2096,6 @@
               onStart: () => { countdownText.textContent = '2'; }
             }, 13.2)
 
-            // Countdown 2
             .fromTo(countdownText,
               { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
               { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.2, ease: "expo.out" }, 14.2)
@@ -2090,7 +2105,6 @@
               onStart: () => { countdownText.textContent = '1'; }
             }, 15.6)
 
-            // Countdown 1
             .fromTo(countdownText,
               { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
               { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.2, ease: "expo.out" }, 16.6)
@@ -2099,90 +2113,174 @@
               duration: 1.1, ease: "power2.in"
             }, 18.0)
 
-            // Flash + light burst
             .to(countdownScene, { opacity: 0, duration: 0.5, ease: "power2.in" }, 18.5)
             .to(centralLight, { scale: 90, opacity: 1, duration: 1.5, ease: "power3.in" }, 18.5)
             .to(flashOverlay, { opacity: 0.95, duration: 0.7, ease: "power2.in" }, 19.0)
             .to(flashOverlay, { opacity: 0, duration: 1.6, ease: "expo.out" }, 19.8)
 
-            // Finale content appear
-            .add(() => { finaleContent.style.opacity = '1'; }, 19.9)
+            .add(() => { finaleContent.style.opacity = '1'; }, 19.9);
 
-            // Flower bloom — STAGGER RADIAL dari center
-            .to(flowerWrap, {
-              opacity: 1, scale: 1,
-              duration: 2.4, ease: "expo.out"
-            }, 20.3)
-            .to('.flower-svg .stem', {
-              strokeDashoffset: 0,
-              duration: 2.4,
-              ease: "power3.inOut"
-            }, 20.3)
-            .to('.flower-svg .leaf', {
-              opacity: 1, scale: 1,
-              duration: 1.6,
-              stagger: {
-                each: 0.5,
-                from: "start",
-                ease: "power2.inOut"
-              },
-              ease: "back.out(1.6)"
-            }, 21.2)
-            .to('.flower-svg .petal', {
-              opacity: 0.95, scale: 1,
-              duration: 1.8,
-              stagger: {
-                each: 0.14,
-                from: "center",
-                ease: "power2.inOut"
-              },
-              ease: "back.out(1.5)"
-            }, 22.0)
-            .to('.flower-svg .center', {
-              opacity: 1, scale: 1,
-              duration: 1.4,
-              ease: "back.out(2.0)"
-            }, 23.4)
+          // ============================================================
+          // NEW FLOWER BLOOM SEQUENCE
+          // ============================================================
+          // 1. Flower wrap fade in
+          tl.to(flowerWrap, {
+            opacity: 1,
+            duration: 1.0,
+            ease: "power2.out"
+          }, 20.3)
 
-            // Petals start
-            .add(() => { if (petals) petals.start(); }, 23.8)
+          // 2. STEM GROWS from bottom up
+          .to('.flower-svg .stem', {
+            strokeDashoffset: 0,
+            duration: 2.4,
+            ease: "power2.inOut"
+          }, 20.5)
 
-            // Text reveals — sequential
-            .to(hbHappy, {
-              opacity: 1, y: 0,
-              duration: 2.0, ease: "expo.out"
-            }, 25.8)
-            .to(hbBirthday, {
-              opacity: 1, y: 0,
-              duration: 2.0, ease: "expo.out"
-            }, 27.4)
-            .to(hbName, {
-              opacity: 1, y: 0,
-              duration: 2.0, ease: "expo.out"
-            }, 29.0)
-            .to(hbMessage, {
-              opacity: 1, y: 0,
-              duration: 2.2, ease: "expo.out"
-            }, 30.6)
+          // 3. LEAVES appear one by one (after stem is halfway)
+          .to('.flower-svg .leaf', {
+            opacity: 1,
+            scale: 1,
+            rotation: 0,
+            duration: 1.2,
+            stagger: {
+              each: 0.4,
+              from: "start",
+              ease: "power2.inOut"
+            },
+            ease: "back.out(1.8)"
+          }, 21.8)
 
-            // Fireworks launch
-            .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 32.2)
-            .add(() => { if (fireworks) fireworks.launch(); }, 33.6)
-            .add(() => { if (fireworks) fireworks.launch(); }, 35.0)
+          // 4. BUD forms (after leaves)
+          .to('.flower-svg .bud', {
+            opacity: 1,
+            scale: 1,
+            duration: 1.4,
+            ease: "back.out(1.6)"
+          }, 23.2)
 
-            // Flower glow
-            .to(flowerWrap, {
-              filter: 'drop-shadow(0 0 70px rgba(200, 220, 240, 0.6)) drop-shadow(0 0 140px rgba(180, 200, 230, 0.4))',
-              duration: 2.6, ease: "power2.inOut"
-            }, 36.0)
+          // 5. Bud fades as petals start
+          .to('.flower-svg .bud', {
+            opacity: 0,
+            scale: 0.7,
+            duration: 1.2,
+            ease: "power2.in"
+          }, 24.2)
 
-            // Footer
-            .to(hbFooter, {
-              opacity: 1, duration: 2.4, ease: "expo.out"
-            }, 37.2)
+          // 6. OUTER PETALS bloom — radial from center
+          .to('.flower-svg .petal.outer', {
+            opacity: 0.95,
+            scale: 1,
+            rotation: 0,
+            duration: 2.0,
+            stagger: {
+              each: 0.14,
+              from: "center",
+              ease: "power2.inOut"
+            },
+            ease: "back.out(1.6)"
+          }, 24.4)
 
-            // Replay button
-            .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3200); }, 39.0);
+          // 7. MIDDLE PETALS bloom
+          .to('.flower-svg .petal.middle', {
+            opacity: 0.95,
+            scale: 1,
+            rotation: 0,
+            duration: 1.8,
+            stagger: {
+              each: 0.16,
+              from: "center",
+              ease: "power2.inOut"
+            },
+            ease: "back.out(1.6)"
+          }, 25.8)
+
+          // 8. INNER PETALS bloom
+          .to('.flower-svg .petal.inner', {
+            opacity: 0.95,
+            scale: 1,
+            rotation: 0,
+            duration: 1.6,
+            stagger: {
+              each: 0.18,
+              from: "center",
+              ease: "power2.inOut"
+            },
+            ease: "back.out(1.6)"
+          }, 27.2)
+
+          // 9. FLOWER CENTER appears with pop
+          .to('.flower-svg .flower-center', {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "back.out(2.2)"
+          }, 28.4)
+
+          // 10. MAGIC AURA appears
+          .to(flowerAura, {
+            opacity: 1,
+            scale: 1,
+            duration: 2.0,
+            ease: "expo.out"
+          }, 28.6)
+
+          // 11. POLLEN DOTS scatter
+          .to('.flower-svg .pollen', {
+            opacity: 1,
+            scale: 1,
+            duration: 1.4,
+            stagger: {
+              each: 0.08,
+              from: "random",
+              ease: "power2.out"
+            },
+            ease: "back.out(2.0)"
+          }, 29.2)
+
+          // 12. CONTINUOUS — flower gently sways
+          .add(() => {
+            gsap.to(flowerWrap, {
+              y: -10,
+              rotation: 1,
+              duration: 4.0,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1
+            });
+            gsap.to(flowerAura, {
+              rotation: 360,
+              duration: 28,
+              ease: "none",
+              repeat: -1
+            });
+            // Pollen slow orbit
+            gsap.to('.flower-svg .pollen', {
+              rotation: -360,
+              duration: 35,
+              ease: "none",
+              repeat: -1,
+              transformOrigin: "100px 100px"
+            });
+          }, 29.8)
+
+          // 13. Petals falling in background
+          .add(() => { if (petals) petals.start(); }, 30.2)
+
+          // 14. Birthday text reveals
+          .to(hbHappy, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 30.6)
+          .to(hbBirthday, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 32.2)
+          .to(hbName, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 33.8)
+          .to(hbMessage, { opacity: 1, y: 0, duration: 2.2, ease: "expo.out" }, 35.4)
+
+          // 15. Fireworks launch
+          .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 37.0)
+          .add(() => { if (fireworks) fireworks.launch(); }, 38.4)
+          .add(() => { if (fireworks) fireworks.launch(); }, 39.8)
+
+          // 16. Footer
+          .to(hbFooter, { opacity: 1, duration: 2.4, ease: "expo.out" }, 41.0)
+          .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3200); }, 42.5);
 
           masterTimeline = tl;
         }
@@ -2199,11 +2297,26 @@
           whisperMore.style.opacity = '0'; whisperMore.style.transform = '';
           countdownScene.style.opacity = '0'; countdownText.textContent = '3';
           finaleContent.style.opacity = '0';
-          flowerWrap.style.opacity = '0'; flowerWrap.style.transform = 'scale(0.6)'; flowerWrap.style.filter = 'none';
-          document.querySelectorAll('.flower-svg .stem').forEach(el => { el.style.strokeDashoffset = '300'; });
-          document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.3)'; });
-          document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.2)'; });
-          document.querySelectorAll('.flower-svg .center').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.1)'; });
+          flowerWrap.style.opacity = '0'; flowerWrap.style.transform = 'none'; flowerWrap.style.filter = 'none';
+          flowerAura.style.opacity = '0'; flowerAura.style.transform = 'translate(-50%, -50%) scale(0.3)';
+
+          document.querySelectorAll('.flower-svg .stem').forEach(el => { el.style.strokeDashoffset = '400'; });
+          document.querySelectorAll('.flower-svg .leaf').forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'scale(0.2) rotate(-20deg)';
+          });
+          document.querySelectorAll('.flower-svg .bud').forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'scale(0.1)';
+          });
+          document.querySelectorAll('.flower-svg .petal').forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'scale(0.1) rotate(0deg)';
+          });
+          document.querySelectorAll('.flower-svg .flower-center').forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'scale(0.1)';
+          });
+          document.querySelectorAll('.flower-svg .pollen').forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'scale(0)';
+          });
+
           hbHappy.style.opacity = '0'; hbHappy.style.transform = 'translateY(20px)';
           hbBirthday.style.opacity = '0'; hbBirthday.style.transform = 'translateY(20px)';
           hbName.style.opacity = '0'; hbName.style.transform = 'translateY(15px)';
@@ -2254,7 +2367,7 @@
       // ============================================================
       function init() {
         initOceanScene();
-        console.log('September Birthday · Moonlit Garden (Pro Animation) ready.', deviceInfo);
+        console.log('September Birthday · Moonlit Garden (New Bloom) ready.', deviceInfo);
       }
 
       if (document.readyState === 'loading') {
