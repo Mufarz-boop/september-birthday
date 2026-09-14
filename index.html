@@ -356,22 +356,72 @@
                   inset 0 -3px 8px rgba(0,0,0,0.4), inset 0 3px 8px rgba(255,255,255,0.2);
     }
     .wax-seal:focus-visible { outline: 2px solid #b8c8d8; outline-offset: 6px; }
-    .seal-shard {
+
+    /* ============================================================
+       KELOPAK DARI SEAL — animasi baru
+       ============================================================ */
+    .seal-petal {
       position: absolute;
       top: 42%; left: 50%;
-      width: 14px; height: 14px;
-      border-radius: 50% 0 50% 50%;
-      background: radial-gradient(circle at 30% 30%, #a86a58, #6a2e22 70%, #4a1a12 100%);
+      width: 18px; height: 18px;
+      border-radius: 60% 40% 60% 40%;
+      background: radial-gradient(circle at 35% 30%, #c47a68, #8a3a28 55%, #5a1e14 100%);
       opacity: 0;
       pointer-events: none;
-      z-index: 11;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 8px rgba(180, 100, 60, 0.5);
+      z-index: 12;
+      transform: translate(-50%, -50%) rotate(0deg);
+      box-shadow:
+        0 0 10px rgba(200, 120, 90, 0.6),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 3px rgba(255, 255, 255, 0.2);
       will-change: transform, opacity;
+      border: 1px solid rgba(200, 150, 120, 0.3);
     }
-    .seal-shard.petal-shape {
-      border-radius: 60% 10% 60% 10%;
+    .seal-petal.rose-petal {
+      border-radius: 70% 30% 70% 30% / 50% 50% 50% 50%;
+      background: radial-gradient(circle at 40% 30%, #d08a78, #9a4a38 60%, #6a2a1e 100%);
     }
+    .seal-petal.soft-petal {
+      border-radius: 50% 50% 60% 40% / 60% 40% 60% 40%;
+      background: radial-gradient(circle at 35% 35%, #c88a78, #8a4a38 60%, #5a2a1e 100%);
+    }
+    /* Ring glow yang keluar dari seal */
+    .seal-glow-ring {
+      position: absolute;
+      top: 42%; left: 50%;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255, 220, 180, 0.9) 0%,
+        rgba(255, 180, 130, 0.6) 30%,
+        rgba(220, 120, 90, 0.3) 60%,
+        transparent 100%);
+      transform: translate(-50%, -50%) scale(0.3);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9;
+      will-change: transform, opacity;
+      filter: blur(4px);
+    }
+    /* Cahaya kilat saat seal terbuka */
+    .seal-flash {
+      position: absolute;
+      top: 42%; left: 50%;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255, 245, 230, 0.95) 0%,
+        rgba(255, 220, 180, 0.6) 25%,
+        rgba(255, 180, 130, 0.3) 50%,
+        transparent 80%);
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 8;
+      will-change: transform, opacity;
+      filter: blur(8px);
+    }
+
     .instruction {
       position: absolute;
       bottom: 18%; left: 0; right: 0; text-align: center;
@@ -633,9 +683,6 @@
       z-index: 25; pointer-events: none; padding: 2rem 1.5rem;
     }
 
-    /* ============================================================
-       BUNGA BARU — MEKAR DARI BIJI
-       ============================================================ */
     .flower-wrap {
       position: relative;
       width: clamp(180px, 38vw, 340px);
@@ -783,9 +830,6 @@
       z-index: 50; pointer-events: none; opacity: 0;
     }
 
-    /* ============================================================
-       TOUCH & REDUCED MOTION
-       ============================================================ */
     .touch-device .btn-primary, .touch-device .continue-btn,
     .touch-device .next-btn, .touch-device .replay-btn,
     .touch-device .wax-seal { min-height: 44px; min-width: 44px; touch-action: manipulation; }
@@ -819,9 +863,6 @@
       #scene-letter canvas.dust-canvas, #scene-ocean canvas.ocean-canvas { display: none; }
     }
 
-    /* ============================================================
-       RESPONSIVE
-       ============================================================ */
     @media (min-width: 1600px) {
       #scene-ocean .content { max-width: 900px; }
       #scene-letter .page { max-width: 1400px; margin: 0 auto; }
@@ -855,6 +896,7 @@
       .btn-primary { padding: 0.85rem 2.4rem; font-size: 0.78rem; letter-spacing: 0.4em; }
       .envelope-scene { width: 92vw; }
       .wax-seal { width: 52px; height: 52px; font-size: 1.15rem; }
+      .seal-petal { width: 14px; height: 14px; }
       .continue-btn { padding: 0.75rem 1.8rem; font-size: 0.68rem; letter-spacing: 0.28em; }
       #scene-letter .page { padding: 2.5rem 1rem 7rem; }
       .letter-card { padding: 1.75rem 1.15rem; border-radius: 4px; }
@@ -933,9 +975,6 @@
   </style>
 </head>
 <body>
-  <!-- ============================================================
-       TRANSISI BLOB ORGANIK
-       ============================================================ -->
   <div class="blob-transition" id="blobTransition">
     <div class="blob-layer blob-1"></div>
     <div class="blob-layer blob-2"></div>
@@ -986,6 +1025,9 @@
           </div>
           <div class="envelope-front" id="envelopeFront"></div>
           <div class="envelope-flap" id="envelopeFlap"></div>
+          <!-- Elemen baru untuk animasi seal -->
+          <div class="seal-flash" id="sealFlash"></div>
+          <div class="seal-glow-ring" id="sealGlowRing"></div>
           <div class="wax-seal" id="waxSeal" tabindex="0" role="button" aria-label="Buka surat dengan menekan segel lilin">S</div>
         </div>
       </div>
@@ -1125,9 +1167,6 @@
     (function() {
       'use strict';
 
-      // ============================================================
-      // KONFIGURASI
-      // ============================================================
       const CONFIG = {
         name: "Nama Dia",
         birthday: "14 September 2026",
@@ -1174,9 +1213,6 @@
         return Math.max(base, 6);
       }
 
-      // ============================================================
-      // TRANSISI BLOB ORGANIK
-      // ============================================================
       const blobTransition = document.getElementById('blobTransition');
       const blobVeil = document.getElementById('blobVeil');
       const blobLayers = blobTransition.querySelectorAll('.blob-layer');
@@ -1193,11 +1229,9 @@
           }, 900);
           return;
         }
-
         const tl = gsap.timeline({ onComplete: () => { if (onComplete) onComplete(); } });
         gsap.set(blobLayers, { scale: 0, opacity: 0 });
         gsap.set(blobVeil, { opacity: 0 });
-
         tl.to(blobLayers[0], { scale: 1, opacity: 1, duration: 1.4, ease: "power3.inOut" }, 0)
           .to(blobLayers[1], { scale: 1.05, opacity: 0.9, duration: 1.5, ease: "power3.inOut" }, 0.15)
           .to(blobLayers[2], { scale: 1.1, opacity: 0.8, duration: 1.6, ease: "power3.inOut" }, 0.3)
@@ -1207,9 +1241,6 @@
           .to(blobLayers, { scale: 0.3, opacity: 0, duration: 1.4, ease: "power3.inOut", stagger: 0.08 }, 1.4);
       }
 
-      // ============================================================
-      // MANAJER SCENE
-      // ============================================================
       const scenes = {
         ocean: document.getElementById('scene-ocean'),
         garden: document.getElementById('scene-garden'),
@@ -1238,7 +1269,6 @@
           toScene.classList.remove('prev');
           void toScene.offsetWidth;
           currentScene = sceneName;
-
           setTimeout(() => {
             if (sceneName === 'garden') initGardenScene();
             else if (sceneName === 'letter') {
@@ -1247,20 +1277,14 @@
             }
             else if (sceneName === 'finale') initFinaleScene();
           }, 200);
-
           setTimeout(() => {
             if (fromScene.classList.contains('prev')) fromScene.classList.remove('prev');
           }, 1800);
-
           setTimeout(() => { isTransitioning = false; }, 600);
         };
-
         playBlobTransition(doSwitch, null);
       }
 
-      // ============================================================
-      // LENIS SMOOTH SCROLL
-      // ============================================================
       let lenis = null;
       function initLenisForLetter() {
         if (!lenisAvailable || prefersReducedMotion) return;
@@ -1289,9 +1313,6 @@
         }
       }
 
-      // ============================================================
-      // SCENE 1 · LAUTAN CAHAYA BULAN
-      // ============================================================
       function initOceanScene() {
         const canvas = document.querySelector('#scene-ocean .ocean-canvas');
         const oceanContent = document.getElementById('oceanContent');
@@ -1371,9 +1392,7 @@
         oceanBtn.addEventListener('click', function(e) {
           e.preventDefault();
           oceanBtn.disabled = true;
-
           if (prefersReducedMotion) { transitionToScene('garden'); return; }
-
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => transitionToScene('garden') });
             tl.to(oceanBtn, { opacity: 0, scale: 0.9, duration: 0.7, ease: "expo.in" })
@@ -1389,7 +1408,7 @@
       }
 
       // ============================================================
-      // SCENE 2 · TAMAN CAHAYA BULAN TERSEMBUNYI
+      // SCENE 2 · TAMAN CAHAYA BULAN — ANIMASI SEAL BARU
       // ============================================================
       let gardenInitialized = false;
       function initGardenScene() {
@@ -1402,22 +1421,27 @@
         const letter = document.getElementById('envelopeLetter');
         const envelopeFlap = document.getElementById('envelopeFlap');
         const waxSeal = document.getElementById('waxSeal');
+        const sealFlash = document.getElementById('sealFlash');
+        const sealGlowRing = document.getElementById('sealGlowRing');
         const instruction = document.getElementById('envelopeInstruction');
         const continueBtn = document.getElementById('envelopeContinueBtn');
         const envelopeScene = document.getElementById('envelopeScene');
 
         let isOpening = false, isOpened = false;
         let particleAnimId = null;
-        const sealShards = [];
+        const sealPetals = [];
 
-        for (let i = 0; i < 14; i++) {
-          const shard = document.createElement('div');
-          shard.className = 'seal-shard';
-          if (i % 3 === 0) shard.classList.add('petal-shape');
-          envelope.appendChild(shard);
-          sealShards.push(shard);
+        // Buat 12 kelopak seal dengan variasi bentuk
+        for (let i = 0; i < 12; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'seal-petal';
+          if (i % 3 === 0) petal.classList.add('rose-petal');
+          else if (i % 3 === 1) petal.classList.add('soft-petal');
+          envelope.appendChild(petal);
+          sealPetals.push(petal);
         }
 
+        // Background particles
         if (canvas && !deviceInfo.prefersReducedData) {
           const ctx = canvas.getContext('2d');
           let w, h;
@@ -1465,6 +1489,7 @@
           animateParticles();
         }
 
+        // Entrance amplop
         if (prefersReducedMotion) {
           topLabel.style.opacity = '1'; instruction.style.opacity = '0.6'; waxSeal.style.opacity = '1';
           envelope.style.opacity = '1'; envelope.style.transform = 'none'; envelope.style.filter = 'none';
@@ -1518,6 +1543,9 @@
           }, 1400);
         }
 
+        // ============================================================
+        // FUNGSI OPEN ENVELOPE — ANIMASI BARU
+        // ============================================================
         function openEnvelope() {
           if (isOpening || isOpened) return;
           isOpening = true;
@@ -1539,67 +1567,139 @@
 
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => { isOpened = true; isOpening = false; } });
-            tl.to(waxSeal, { scale: 1.18, duration: 0.28, ease: "power2.out" })
-              .to(waxSeal, { scale: 0.92, duration: 0.22, ease: "power2.in" })
-              .to(waxSeal, { scale: 1.08, duration: 0.22, ease: "power2.out" });
 
+            // ============================================================
+            // FASE 1: Heartbeat seal (berdenyut 2 kali)
+            // ============================================================
+            tl.to(waxSeal, { scale: 1.2, duration: 0.22, ease: "power2.out" })
+              .to(waxSeal, { scale: 0.94, duration: 0.18, ease: "power2.in" })
+              .to(waxSeal, { scale: 1.15, duration: 0.20, ease: "power2.out" })
+              .to(waxSeal, { scale: 0.96, duration: 0.18, ease: "power2.in" })
+              .to(waxSeal, { scale: 1.1, duration: 0.25, ease: "power2.out" });
+
+            // ============================================================
+            // FASE 2: Glow ring muncul & melebar dari seal
+            // ============================================================
+            gsap.set(sealGlowRing, { scale: 0.3, opacity: 0 });
+            tl.to(sealGlowRing, {
+              scale: 1.6, opacity: 1, duration: 0.5, ease: "power2.out"
+            }, "-=0.4")
+            .to(sealGlowRing, {
+              scale: 3.5, opacity: 0, duration: 0.9, ease: "power2.out"
+            }, "-=0.1");
+
+            // ============================================================
+            // FASE 3: Flash putih kecil dari seal
+            // ============================================================
+            gsap.set(sealFlash, { scale: 0, opacity: 0 });
+            tl.to(sealFlash, {
+              scale: 1.2, opacity: 0.95, duration: 0.25, ease: "power2.out"
+            }, "-=0.9")
+            .to(sealFlash, {
+              scale: 2.5, opacity: 0, duration: 0.8, ease: "power2.out"
+            }, "-=0.05");
+
+            // ============================================================
+            // FASE 4: Kelopak-kelopak keluar dari seal (petal burst)
+            // ============================================================
             const sealRect = waxSeal.getBoundingClientRect();
             const envRect = envelope.getBoundingClientRect();
             const sealCX = sealRect.left + sealRect.width / 2 - envRect.left;
             const sealCY = sealRect.top + sealRect.height / 2 - envRect.top;
 
-            sealShards.forEach((shard, i) => {
-              const angle = (i / sealShards.length) * Math.PI * 2 + Math.random() * 0.6;
-              const distance = 50 + Math.random() * 80;
+            sealPetals.forEach((petal, i) => {
+              const baseAngle = (i / sealPetals.length) * Math.PI * 2;
+              const angle = baseAngle + (Math.random() - 0.5) * 0.4;
+              const distance = 70 + Math.random() * 100;
               const tx = Math.cos(angle) * distance;
-              const ty = Math.sin(angle) * distance - 30;
-              gsap.set(shard, {
-                left: sealCX + 'px', top: sealCY + 'px',
-                opacity: 0.95, scale: 1, x: 0, y: 0, rotation: 0
+              const ty = Math.sin(angle) * distance - 25;
+              const startRotation = (baseAngle * 180 / Math.PI) + Math.random() * 60 - 30;
+              const endRotation = startRotation + (Math.random() * 360 - 180);
+
+              gsap.set(petal, {
+                left: sealCX + 'px',
+                top: sealCY + 'px',
+                opacity: 0,
+                scale: 0.3,
+                x: 0, y: 0,
+                rotation: startRotation
               });
-              tl.to(shard, {
-                x: tx, y: ty,
-                rotation: Math.random() * 540 - 270,
-                scale: 0.2, opacity: 0,
-                duration: 1.6 + Math.random() * 0.8,
-                ease: "power3.out"
-              }, "-=0.9");
+
+              // Setiap kelopak muncul dengan delay kecil
+              tl.to(petal, {
+                opacity: 1,
+                scale: 1.1,
+                duration: 0.35,
+                ease: "back.out(1.8)"
+              }, "-=0.5")
+              // Lalu terbang keluar sambil berputar & memudar
+              .to(petal, {
+                x: tx,
+                y: ty,
+                rotation: endRotation,
+                scale: 0.7,
+                opacity: 0.9,
+                duration: 1.4 + Math.random() * 0.6,
+                ease: "power2.out"
+              }, "-=0.15")
+              .to(petal, {
+                y: ty + 40 + Math.random() * 30,
+                x: tx + (Math.random() - 0.5) * 40,
+                rotation: endRotation + 60,
+                scale: 0.3,
+                opacity: 0,
+                duration: 1.2 + Math.random() * 0.4,
+                ease: "power2.in"
+              }, "-=0.6");
             });
 
-            tl.to(waxSeal, { scale: 1.4, opacity: 0, duration: 0.7, ease: "power2.in" }, "-=1.1")
-              .to(envelopeFlap, { rotateX: -180, duration: 1.6, ease: "power3.inOut" }, "-=0.5")
-              .to(letter, {
-                opacity: 1, y: -60, rotate: -3,
-                duration: 2.2, ease: "expo.out"
-              }, "-=1.0")
-              .add(() => { letter.classList.add('revealed'); }, "-=1.4")
-              .add(() => {
-                gsap.to(letter, {
-                  y: -70, rotate: 1, duration: 3.4,
-                  ease: "sine.inOut", yoyo: true, repeat: -1
-                });
-                gsap.to(letter, {
-                  rotate: -3, duration: 4.2,
-                  ease: "sine.inOut", yoyo: true, repeat: -1
-                });
-              }, "-=0.6")
-              .to(continueBtn, {
-                opacity: 1, y: 0, duration: 1.4, ease: "expo.out",
-                onStart: () => { continueBtn.classList.add('visible'); }
-              }, "-=1.0");
+            // ============================================================
+            // FASE 5: Wax seal menghilang dengan glow
+            // ============================================================
+            tl.to(waxSeal, {
+              scale: 1.5, opacity: 0, rotate: 180,
+              duration: 0.9, ease: "power2.in"
+            }, "-=2.2");
+
+            // ============================================================
+            // FASE 6: Flap terbuka dengan overshoot organik
+            // ============================================================
+            tl.to(envelopeFlap, {
+              rotateX: -180,
+              duration: 1.5,
+              ease: "power3.inOut"
+            }, "-=1.5");
+
+            // ============================================================
+            // FASE 7: Letter muncul mengambang dari dalam
+            // ============================================================
+            tl.to(letter, {
+              opacity: 1,
+              y: -65,
+              rotate: -3,
+              duration: 2.0,
+              ease: "expo.out"
+            }, "-=1.0")
+            .add(() => { letter.classList.add('revealed'); }, "-=1.3")
+            .add(() => {
+              gsap.to(letter, {
+                y: -75, rotate: 1, duration: 3.4,
+                ease: "sine.inOut", yoyo: true, repeat: -1
+              });
+              gsap.to(letter, {
+                rotate: -3, duration: 4.2,
+                ease: "sine.inOut", yoyo: true, repeat: -1
+              });
+            }, "-=0.5")
+            .to(continueBtn, {
+              opacity: 1, y: 0, duration: 1.4, ease: "expo.out",
+              onStart: () => { continueBtn.classList.add('visible'); }
+            }, "-=1.0");
           } else {
+            // Fallback sederhana
             waxSeal.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             waxSeal.style.opacity = '0';
-            waxSeal.style.transform = 'translate(-50%, -50%) scale(1.4)';
-            sealShards.forEach((shard, i) => {
-              const angle = (i / sealShards.length) * Math.PI * 2;
-              shard.style.transition = 'all 1.4s ease-out';
-              shard.style.opacity = '0.9';
-              setTimeout(() => {
-                shard.style.transform = `translate(calc(-50% + ${Math.cos(angle) * 70}px), calc(-50% + ${Math.sin(angle) * 70}px)) rotate(${Math.random() * 360}deg) scale(0.3)`;
-                shard.style.opacity = '0';
-              }, 100);
-            });
+            waxSeal.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(180deg)';
             envelopeFlap.style.transition = 'transform 1.5s ease-in-out';
             envelopeFlap.style.transform = 'rotateX(-180deg)';
             setTimeout(() => {
@@ -1734,7 +1834,6 @@
         function revealLetterParagraphs() {
           const ps = letterBody.querySelectorAll('p');
           if (prefersReducedMotion) { ps.forEach(p => { p.classList.remove('reveal-init'); p.classList.add('reveal-in'); }); return; }
-
           if (gsapAvailable) {
             gsap.to(ps, {
               opacity: 1, y: 0, filter: 'blur(0px)',
@@ -1797,7 +1896,7 @@
       }
 
       // ============================================================
-      // SCENE 4 · TAMAN YANG MEKAR (FINALE)
+      // SCENE 4 · TAMAN YANG MEKAR
       // ============================================================
       let finaleInitialized = false;
       let finaleStarted = false;
@@ -2099,7 +2198,6 @@
 
             .add(() => { finaleContent.style.opacity = '1'; }, 19.9);
 
-          // Urutan mekarnya bunga baru
           tl.to(flowerWrap, { opacity: 1, duration: 1.0, ease: "power2.out" }, 20.3)
             .to('.flower-svg .stem', { strokeDashoffset: 0, duration: 2.4, ease: "power2.inOut" }, 20.5)
             .to('.flower-svg .leaf', {
@@ -2228,9 +2326,6 @@
         setTimeout(() => { runFinale(); }, 800);
       }
 
-      // ============================================================
-      // RESIZE & ORIENTASI
-      // ============================================================
       let resizeTimer;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
@@ -2250,9 +2345,6 @@
         lastTap = now;
       }, { passive: false });
 
-      // ============================================================
-      // INISIALISASI
-      // ============================================================
       function init() {
         initOceanScene();
         console.log('Ulang Tahun September · Taman Cahaya Bulan siap.', deviceInfo);
