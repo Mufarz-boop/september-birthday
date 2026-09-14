@@ -4,74 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>September Birthday · Moonlit Garden</title>
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
-  <!-- GSAP (only animation library needed) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <!-- Lenis for smooth letter scroll (optional, but kept) -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
   <style>
-    /* ============================================================
-       GLOBAL RESET & BASE — MOONLIT PALETTE
-       ============================================================ */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: 100%;
-      height: 100%;
-      background: #0a1118; /* deep ocean night */
-      color: #e8e0d4;
+      width: 100%; height: 100%;
+      background: #0a1118; color: #e8e0d4;
       font-family: 'Inter', sans-serif;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow: hidden;
-      overscroll-behavior: none;
+      overflow: hidden; overscroll-behavior: none;
     }
-    /* hide scrollbars */
     ::-webkit-scrollbar { width: 0; height: 0; background: transparent; }
-    ::-webkit-scrollbar-thumb { background: transparent; }
     * { scrollbar-width: none; -ms-overflow-style: none; }
 
     /* ============================================================
        SCENE CONTAINER
        ============================================================ */
     .scene-container {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: scale(1.02);
-      filter: blur(6px);
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      opacity: 0; visibility: hidden; pointer-events: none;
+      transform: scale(1.02); filter: blur(6px);
       transition: opacity 1.6s cubic-bezier(0.65, 0, 0.35, 1),
                   visibility 1.6s cubic-bezier(0.65, 0, 0.35, 1),
                   transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
                   filter 1.6s cubic-bezier(0.65, 0, 0.35, 1);
-      overflow: hidden;
-      z-index: 10;
-      will-change: opacity, transform, filter;
+      overflow: hidden; z-index: 10; will-change: opacity, transform, filter;
     }
     .scene-container.active {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: scale(1);
-      filter: blur(0px);
-      z-index: 20;
+      opacity: 1; visibility: visible; pointer-events: auto;
+      transform: scale(1); filter: blur(0px); z-index: 20;
     }
     .scene-container.prev {
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.98);
-      filter: blur(8px);
-      z-index: 5;
+      opacity: 0; visibility: hidden;
+      transform: scale(0.98); filter: blur(8px); z-index: 5;
+    }
+
+    /* ============================================================
+       MOONLIGHT VEIL TRANSITION OVERLAY (menggantikan flash putih)
+       ============================================================ */
+    .moonlight-veil {
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none; opacity: 0;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(220, 230, 245, 0.55) 0%, rgba(160, 190, 220, 0.35) 30%, rgba(80, 110, 140, 0.5) 60%, rgba(10, 17, 24, 0.95) 100%);
+      will-change: opacity, backdrop-filter;
+    }
+    .moonlight-veil::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 50%, transparent 20%, rgba(10, 17, 24, 0.7) 80%);
+      mix-blend-mode: multiply;
+    }
+    .moonlight-veil::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg,
+        rgba(200, 220, 240, 0.15) 0%,
+        rgba(160, 190, 220, 0.05) 40%,
+        rgba(80, 110, 140, 0.2) 70%,
+        rgba(10, 17, 24, 0.8) 100%);
+      opacity: 0.8;
+    }
+    .moonlight-veil .sweep-light {
+      position: absolute; top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at center,
+        rgba(220, 235, 255, 0.5) 0%,
+        rgba(180, 210, 240, 0.2) 25%,
+        transparent 55%);
+      transform: scale(0.5); opacity: 0;
+      will-change: transform, opacity;
     }
 
     /* ============================================================
@@ -80,27 +85,16 @@
     #scene-ocean {
       background: linear-gradient(180deg, #0a1118 0%, #0d1a24 30%, #12232e 60%, #0a1118 100%);
     }
-    #scene-ocean .ocean-bg {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      overflow: hidden;
-    }
-    /* Moon */
+    #scene-ocean .ocean-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
     #scene-ocean .moon {
-      position: absolute;
-      top: 12%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: clamp(100px, 18vw, 200px);
-      height: clamp(100px, 18vw, 200px);
+      position: absolute; top: 12%; left: 50%; transform: translateX(-50%);
+      width: clamp(100px, 18vw, 200px); height: clamp(100px, 18vw, 200px);
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #f5f0e0, #e8dfc8 40%, #c8bfa8 100%);
       box-shadow: 0 0 60px 20px rgba(200, 215, 230, 0.3),
                   0 0 120px 40px rgba(180, 200, 220, 0.15),
                   0 0 200px 80px rgba(160, 180, 210, 0.1);
-      z-index: 5;
-      filter: blur(0.5px);
+      z-index: 5; filter: blur(0.5px);
       animation: moonPulse 6s ease-in-out infinite alternate;
     }
     @keyframes moonPulse {
@@ -108,115 +102,65 @@
       100% { box-shadow: 0 0 70px 25px rgba(210, 225, 240, 0.4), 0 0 140px 50px rgba(190, 210, 230, 0.2); }
     }
     #scene-ocean .moon::after {
-      content: '';
-      position: absolute;
-      inset: 10%;
-      border-radius: 50%;
+      content: ''; position: absolute; inset: 10%; border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, transparent 40%, rgba(160, 150, 130, 0.15) 70%, rgba(120, 110, 90, 0.25) 100%);
       pointer-events: none;
     }
-    /* Ocean waves canvas */
     #scene-ocean canvas.ocean-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-      pointer-events: none;
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 3; pointer-events: none;
     }
-    /* Overlay content */
     #scene-ocean .overlay {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      height: 100svh;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 1.5rem;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
+      position: relative; z-index: 10; width: 100%; height: 100svh; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 1.5rem;
+      padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
       pointer-events: none;
     }
     #scene-ocean .content {
-      pointer-events: auto;
-      max-width: 800px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.8rem;
-      opacity: 0;
-      transform: translateY(20px);
+      pointer-events: auto; max-width: 800px; width: 100%;
+      display: flex; flex-direction: column; align-items: center; gap: 1.8rem;
+      opacity: 0; transform: translateY(20px);
     }
     #scene-ocean .date {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(0.9rem, 3vw, 1.2rem);
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: rgba(220, 230, 245, 0.75);
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: clamp(0.9rem, 3vw, 1.2rem); letter-spacing: 0.4em;
+      text-transform: uppercase; color: rgba(220, 230, 245, 0.75);
       text-shadow: 0 0 20px rgba(180, 200, 230, 0.3);
     }
     #scene-ocean .main-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(2.4rem, 9vw, 5rem);
-      line-height: 1.2;
-      color: #f0ece0;
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: clamp(2.4rem, 9vw, 5rem); line-height: 1.2; color: #f0ece0;
       text-shadow: 0 0 40px rgba(180, 200, 230, 0.3), 0 0 80px rgba(150, 180, 220, 0.15);
       letter-spacing: 0.02em;
     }
     #scene-ocean .main-text span {
-      display: block;
-      font-style: italic;
-      color: #d8d0b8;
-      font-size: 0.9em;
-      margin-top: 0.2rem;
+      display: block; font-style: italic; color: #d8d0b8;
+      font-size: 0.9em; margin-top: 0.2rem;
     }
     #scene-ocean .subtitle {
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      font-size: clamp(0.8rem, 2.5vw, 1rem);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: rgba(200, 215, 235, 0.55);
+      font-family: 'Inter', sans-serif; font-weight: 300;
+      font-size: clamp(0.8rem, 2.5vw, 1rem); letter-spacing: 0.25em;
+      text-transform: uppercase; color: rgba(200, 215, 235, 0.55);
       text-shadow: 0 0 30px rgba(150, 180, 220, 0.3);
     }
     .btn-primary {
-      pointer-events: auto;
-      margin-top: 1.5rem;
-      padding: 1rem 3.2rem;
-      background: transparent;
-      border: 1px solid rgba(200, 215, 235, 0.4);
-      border-radius: 60px;
-      color: #e8e0d0;
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      font-size: 0.9rem;
-      letter-spacing: 0.5em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      pointer-events: auto; margin-top: 1.5rem; padding: 1rem 3.2rem;
+      background: transparent; border: 1px solid rgba(200, 215, 235, 0.4);
+      border-radius: 60px; color: #e8e0d0;
+      font-family: 'Inter', sans-serif; font-weight: 400;
+      font-size: 0.9rem; letter-spacing: 0.5em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative; overflow: hidden;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
       box-shadow: 0 0 20px rgba(150, 180, 220, 0.1);
-      outline: none;
-      min-height: 44px;
-      touch-action: manipulation;
+      outline: none; min-height: 44px; touch-action: manipulation;
     }
     .btn-primary:focus-visible { outline: 2px solid #b8c8d8; outline-offset: 4px; }
     .btn-primary:hover {
       border-color: rgba(220, 235, 255, 0.8);
       box-shadow: 0 0 40px rgba(180, 210, 240, 0.25), 0 0 80px rgba(150, 180, 220, 0.15);
-      transform: scale(1.03);
-      letter-spacing: 0.6em;
-      color: #fff8ec;
+      transform: scale(1.03); letter-spacing: 0.6em; color: #fff8ec;
     }
     .btn-primary .sweep {
       position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
@@ -230,28 +174,19 @@
     }
 
     /* ============================================================
-       SCENE 2 — HIDDEN MOONLIT GARDEN (ENVELOPE)
+       SCENE 2 — HIDDEN MOONLIT GARDEN (ENVELOPE) — ANIMASI BARU
        ============================================================ */
     #scene-garden {
       background: radial-gradient(ellipse at 50% 30%, #12232e 0%, #0a1118 50%, #050a0e 100%);
     }
-    #scene-garden .garden-bg {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      overflow: hidden;
-    }
+    #scene-garden .garden-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
     #scene-garden .garden-bg .moon-small {
-      position: absolute;
-      top: 8%;
-      right: 12%;
-      width: clamp(60px, 10vw, 100px);
-      height: clamp(60px, 10vw, 100px);
+      position: absolute; top: 8%; right: 12%;
+      width: clamp(60px, 10vw, 100px); height: clamp(60px, 10vw, 100px);
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #f0ead8, #d8d0b8 60%, #b8b09a 100%);
       box-shadow: 0 0 40px 15px rgba(200, 215, 235, 0.25);
-      filter: blur(0.8px);
-      z-index: 2;
+      filter: blur(0.8px); z-index: 2;
       animation: moonSmallPulse 8s ease-in-out infinite alternate;
     }
     @keyframes moonSmallPulse {
@@ -259,53 +194,31 @@
       100% { box-shadow: 0 0 55px 22px rgba(210, 225, 245, 0.35); }
     }
     #scene-garden canvas.particle-canvas {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
-      pointer-events: none;
+      position: absolute; inset: 0; z-index: 3; pointer-events: none;
     }
     #scene-garden .scene {
-      position: relative;
-      z-index: 5;
-      width: 100%;
-      height: 100svh;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: relative; z-index: 5; width: 100%; height: 100svh; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 1.5rem;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      perspective: 1200px;
+      padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+      perspective: 1400px;
     }
     #scene-garden .top-label {
-      position: absolute;
-      top: 8%;
-      left: 0; right: 0;
-      text-align: center;
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      font-size: clamp(0.6rem, 2.2vw, 0.85rem);
-      letter-spacing: 0.6em;
-      text-transform: uppercase;
-      color: rgba(200, 215, 235, 0.6);
+      position: absolute; top: 8%; left: 0; right: 0; text-align: center;
+      font-family: 'Inter', sans-serif; font-weight: 300;
+      font-size: clamp(0.6rem, 2.2vw, 0.85rem); letter-spacing: 0.6em;
+      text-transform: uppercase; color: rgba(200, 215, 235, 0.6);
       text-shadow: 0 0 30px rgba(150, 180, 220, 0.3);
-      z-index: 20;
-      pointer-events: none;
+      z-index: 20; pointer-events: none;
     }
     .envelope-scene {
-      position: relative;
-      width: min(90vw, 520px);
-      aspect-ratio: 1.6 / 1;
+      position: relative; width: min(90vw, 520px); aspect-ratio: 1.6 / 1;
       margin-bottom: 2rem;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
     }
     .envelope {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      position: relative; width: 100%; height: 100%;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.8s ease, filter 0.8s ease;
       filter: drop-shadow(0 25px 40px rgba(0,0,0,0.6));
@@ -318,14 +231,16 @@
       position: absolute; inset: 0;
       background: linear-gradient(145deg, #f0e8d8 0%, #e0d4c0 40%, #d0c4b0 100%);
       border-radius: 4px;
-      box-shadow: inset 0 1px 3px rgba(255,255,255,0.6), inset 0 -2px 6px rgba(0,0,0,0.12), 0 20px 40px rgba(0,0,0,0.4);
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.6),
+                  inset 0 -2px 6px rgba(0,0,0,0.12),
+                  0 20px 40px rgba(0,0,0,0.4);
       overflow: hidden;
     }
     .envelope-back::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 2px, transparent 2px, transparent 4px),
-                        repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 2px, transparent 2px, transparent 4px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px);
       pointer-events: none;
     }
     .envelope-front {
@@ -333,10 +248,11 @@
       background: linear-gradient(160deg, #ede3d3 0%, #ddd0bc 50%, #d0c2a8 100%);
       border-radius: 4px;
       clip-path: polygon(0 38%, 50% 0%, 100% 38%, 100% 100%, 0 100%);
-      box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -4px 8px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.5),
+                  inset 0 -4px 8px rgba(0,0,0,0.08),
+                  0 4px 12px rgba(0,0,0,0.3);
       z-index: 3;
       backface-visibility: hidden;
-      transform-style: preserve-3d;
       transform-origin: top center;
       transition: transform 1.0s cubic-bezier(0.23, 1, 0.32, 1);
     }
@@ -348,8 +264,7 @@
       transform-origin: top center;
       z-index: 5;
       backface-visibility: hidden;
-      transform-style: preserve-3d;
-      transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 1.2s ease;
+      transition: transform 1.4s cubic-bezier(0.68, -0.35, 0.27, 1.35), box-shadow 1.2s ease;
       box-shadow: inset 0 -2px 6px rgba(0,0,0,0.1), 0 6px 16px rgba(0,0,0,0.35);
     }
     .letter {
@@ -362,35 +277,33 @@
       z-index: 2;
       transform: translateY(0) rotate(0deg);
       transform-origin: center center;
-      transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 1.2s ease, opacity 1.0s ease;
+      transition: transform 1.4s cubic-bezier(0.34, 1.2, 0.64, 1),
+                  box-shadow 1.2s ease, opacity 1.0s ease;
       opacity: 0;
       pointer-events: none;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      text-align: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem; text-align: center;
     }
     .letter.revealed {
-      box-shadow: 0 12px 40px rgba(200, 160, 100, 0.25), 0 0 80px rgba(220, 180, 120, 0.15), inset 0 0 60px rgba(200, 170, 130, 0.08);
+      box-shadow: 0 12px 40px rgba(200, 160, 100, 0.35),
+                  0 0 80px rgba(220, 180, 120, 0.2),
+                  inset 0 0 60px rgba(200, 170, 130, 0.1);
     }
     .letter-content {
-      opacity: 0;
-      transform: translateY(10px);
+      opacity: 0; transform: translateY(10px);
       transition: opacity 1.0s ease 0.4s, transform 1.0s ease 0.4s;
       max-width: 90%;
     }
     .letter.revealed .letter-content { opacity: 1; transform: translateY(0); }
     .letter-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(1.4rem, 5vw, 2.2rem);
-      line-height: 1.4;
-      color: #3d2e1f;
-      text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+      font-family: 'Cormorant Garamond', serif; font-weight: 300;
+      font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.4;
+      color: #3d2e1f; text-shadow: 0 1px 2px rgba(255,255,255,0.5);
     }
+
+    /* === WAX SEAL (versi baru: pecah jadi kelopak) === */
     .wax-seal {
       position: absolute;
       top: 42%; left: 50%;
@@ -399,15 +312,14 @@
       height: clamp(52px, 10vw, 72px);
       border-radius: 50%;
       background: radial-gradient(circle at 35% 35%, #9a5a4a, #6a2e22 60%, #4a1a12 100%);
-      z-index: 10;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 -3px 8px rgba(0,0,0,0.4), inset 0 3px 8px rgba(255,255,255,0.2);
-      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease, opacity 0.8s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
+      z-index: 10; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5),
+                  inset 0 -3px 8px rgba(0,0,0,0.4),
+                  inset 0 3px 8px rgba(255,255,255,0.2);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.6s ease, opacity 0.8s ease;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-weight: 400;
       font-size: clamp(1.2rem, 3.5vw, 1.8rem);
       color: #f0e0c8;
       text-shadow: 0 1px 2px rgba(0,0,0,0.5);
@@ -418,22 +330,36 @@
     }
     .wax-seal:hover {
       transform: translate(-50%, -50%) scale(1.06);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 40px rgba(180, 100, 60, 0.4), inset 0 -3px 8px rgba(0,0,0,0.4), inset 0 3px 8px rgba(255,255,255,0.2);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 40px rgba(180, 100, 60, 0.4),
+                  inset 0 -3px 8px rgba(0,0,0,0.4), inset 0 3px 8px rgba(255,255,255,0.2);
     }
     .wax-seal:focus-visible { outline: 2px solid #b8c8d8; outline-offset: 6px; }
+
+    /* === SEAL SHARDS (pecahan kelopak) === */
+    .seal-shard {
+      position: absolute;
+      top: 42%; left: 50%;
+      width: 14px; height: 14px;
+      border-radius: 50% 0 50% 50%;
+      background: radial-gradient(circle at 30% 30%, #a86a58, #6a2e22 70%, #4a1a12 100%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 11;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 8px rgba(180, 100, 60, 0.5);
+    }
+    .seal-shard.petal-shape {
+      border-radius: 60% 10% 60% 10%;
+    }
+
     .instruction {
       position: absolute;
-      bottom: 18%; left: 0; right: 0;
-      text-align: center;
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      font-size: clamp(0.6rem, 2vw, 0.75rem);
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: rgba(200, 215, 235, 0.45);
+      bottom: 18%; left: 0; right: 0; text-align: center;
+      font-family: 'Inter', sans-serif; font-weight: 300;
+      font-size: clamp(0.6rem, 2vw, 0.75rem); letter-spacing: 0.35em;
+      text-transform: uppercase; color: rgba(200, 215, 235, 0.45);
       text-shadow: 0 0 20px rgba(150, 180, 220, 0.3);
-      z-index: 15;
-      pointer-events: none;
+      z-index: 15; pointer-events: none;
       animation: instructionFade 3s ease-in-out infinite;
     }
     @keyframes instructionFade {
@@ -449,26 +375,18 @@
       border: 1px solid rgba(200, 215, 235, 0.5);
       border-radius: 50px;
       color: #e8e0d0;
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
+      font-family: 'Inter', sans-serif; font-weight: 300;
       font-size: clamp(0.7rem, 2vw, 0.85rem);
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      cursor: pointer;
-      z-index: 30;
-      opacity: 0;
-      pointer-events: none;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      cursor: pointer; z-index: 30;
+      opacity: 0; pointer-events: none;
       transition: opacity 1.0s ease, transform 0.6s ease, box-shadow 0.6s ease, background 0.6s ease;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      white-space: nowrap;
-      overflow: hidden;
-      min-height: 44px;
-      touch-action: manipulation;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      white-space: nowrap; overflow: hidden;
+      min-height: 44px; touch-action: manipulation;
     }
     .continue-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
+      opacity: 1; pointer-events: auto;
       transform: translateX(-50%) translateY(0);
     }
     .continue-btn:hover {
@@ -483,28 +401,24 @@
        SCENE 3 — LETTER IN THE GARDEN
        ============================================================ */
     #scene-letter {
-      background: radial-gradient(ellipse at 50% 20%, rgba(30, 45, 55, 0.6) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 80%, rgba(20, 35, 45, 0.4) 0%, transparent 50%),
-                  linear-gradient(180deg, #0a1118 0%, #0f1a22 50%, #0a1118 100%);
-      overflow-y: auto !important;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
-      position: fixed;
-      inset: 0;
-      overscroll-behavior: contain;
+      background:
+        radial-gradient(ellipse at 50% 20%, rgba(30, 45, 55, 0.6) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(20, 35, 45, 0.4) 0%, transparent 50%),
+        linear-gradient(180deg, #0a1118 0%, #0f1a22 50%, #0a1118 100%);
+      overflow-y: auto !important; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+      position: fixed; inset: 0; overscroll-behavior: contain;
     }
     #scene-letter::before {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       pointer-events: none; z-index: 1; opacity: 0.03;
-      background-image: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px),
-                        repeating-linear-gradient(90deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px);
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px);
       mix-blend-mode: overlay;
     }
     #scene-letter::after {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       pointer-events: none; z-index: 2;
       background: radial-gradient(circle at 50% 40%, transparent 30%, rgba(0,0,0,0.5) 100%);
     }
@@ -512,8 +426,7 @@
       position: fixed; inset: 0; z-index: 3; pointer-events: none;
     }
     #scene-letter .page {
-      position: relative; z-index: 10;
-      width: 100%; min-height: 100svh;
+      position: relative; z-index: 10; width: 100%; min-height: 100svh;
       display: flex; flex-direction: column; align-items: center;
       padding: 4rem 1.5rem 8rem;
       padding-top: max(4rem, env(safe-area-inset-top));
@@ -523,7 +436,9 @@
       width: 100%; max-width: 640px;
       background: linear-gradient(165deg, #f5ede0 0%, #f0e6d6 40%, #ebe0cf 100%);
       border-radius: 3px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.8);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5),
+                  0 4px 20px rgba(0,0,0,0.3),
+                  inset 0 1px 2px rgba(255,255,255,0.8);
       padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 3.5rem);
       position: relative;
       opacity: 0; transform: translateY(30px); filter: blur(6px);
@@ -531,14 +446,14 @@
     }
     .letter-card::before {
       content: ''; position: absolute; inset: 0; border-radius: 3px; pointer-events: none;
-      box-shadow: inset 0 0 60px rgba(180, 150, 110, 0.15), inset 0 0 0 1px rgba(180, 150, 110, 0.15);
+      box-shadow: inset 0 0 60px rgba(180, 150, 110, 0.15),
+                  inset 0 0 0 1px rgba(180, 150, 110, 0.15);
     }
     .letter-header { text-align: center; margin-bottom: 3rem; }
     .letter-date {
       font-family: 'Inter', sans-serif; font-weight: 300;
-      font-size: clamp(0.6rem, 1.8vw, 0.72rem);
-      letter-spacing: 0.5em; text-transform: uppercase;
-      color: rgba(120, 90, 60, 0.65); margin-bottom: 1.2rem;
+      font-size: clamp(0.6rem, 1.8vw, 0.72rem); letter-spacing: 0.5em;
+      text-transform: uppercase; color: rgba(120, 90, 60, 0.65); margin-bottom: 1.2rem;
     }
     .letter-title {
       font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic;
@@ -562,7 +477,9 @@
     .letter-body p.reveal-init { opacity: 0; transform: translateY(20px); filter: blur(4px); }
     .letter-body p.reveal-in {
       opacity: 1; transform: translateY(0); filter: blur(0);
-      transition: opacity 1.4s cubic-bezier(0.23, 1, 0.32, 1), transform 1.4s cubic-bezier(0.23, 1, 0.32, 1), filter 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: opacity 1.4s cubic-bezier(0.23, 1, 0.32, 1),
+                  transform 1.4s cubic-bezier(0.23, 1, 0.32, 1),
+                  filter 1.4s cubic-bezier(0.23, 1, 0.32, 1);
     }
     .letter-signature {
       margin-top: 3rem; text-align: right;
@@ -577,7 +494,8 @@
     .final-section {
       width: 100%; max-width: 640px; text-align: center; margin-top: 5rem;
       opacity: 0; transform: translateY(30px);
-      transition: opacity 1.8s cubic-bezier(0.23, 1, 0.32, 1), transform 1.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: opacity 1.8s cubic-bezier(0.23, 1, 0.32, 1),
+                  transform 1.8s cubic-bezier(0.23, 1, 0.32, 1);
     }
     .final-section.visible { opacity: 1; transform: translateY(0); }
     .final-greeting {
@@ -587,9 +505,8 @@
     }
     .final-date {
       font-family: 'Inter', sans-serif; font-weight: 300;
-      font-size: clamp(0.65rem, 2vw, 0.78rem);
-      letter-spacing: 0.5em; text-transform: uppercase;
-      color: rgba(180, 200, 230, 0.5); margin-bottom: 3rem;
+      font-size: clamp(0.65rem, 2vw, 0.78rem); letter-spacing: 0.5em;
+      text-transform: uppercase; color: rgba(180, 200, 230, 0.5); margin-bottom: 3rem;
     }
     .final-teaser {
       font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
@@ -598,13 +515,12 @@
     }
     .next-btn {
       display: inline-block; padding: 1rem 3rem;
-      background: transparent;
-      border: 1px solid rgba(200, 215, 235, 0.45);
+      background: transparent; border: 1px solid rgba(200, 215, 235, 0.45);
       border-radius: 50px; color: #e8e0d0;
       font-family: 'Inter', sans-serif; font-weight: 300;
-      font-size: clamp(0.68rem, 2vw, 0.8rem);
-      letter-spacing: 0.4em; text-transform: uppercase;
-      cursor: pointer; position: relative; overflow: hidden;
+      font-size: clamp(0.68rem, 2vw, 0.8rem); letter-spacing: 0.4em;
+      text-transform: uppercase; cursor: pointer;
+      position: relative; overflow: hidden;
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
       transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
       outline: none; min-height: 44px; touch-action: manipulation;
@@ -649,17 +565,16 @@
     #scene-finale::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
       opacity: 0.025;
-      background-image: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px),
-                        repeating-linear-gradient(90deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px);
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 2px, #fff 2px, #fff 3px);
       mix-blend-mode: overlay;
     }
     #scene-finale::after {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
       background: radial-gradient(circle at 50% 45%, transparent 25%, rgba(0,0,0,0.7) 100%);
     }
-    #scene-finale canvas {
-      position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
-    }
+    #scene-finale canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     #scene-finale #starfield-canvas { z-index: 3; }
     #scene-finale #petals-canvas { z-index: 4; }
     #scene-finale #fireworks-canvas { z-index: 5; }
@@ -688,7 +603,8 @@
     .countdown-text {
       font-family: 'Cormorant Garamond', serif; font-weight: 300;
       font-size: clamp(6rem, 30vw, 18rem); line-height: 1;
-      color: #f0ece0; text-shadow: 0 0 60px rgba(180, 210, 240, 0.4), 0 0 120px rgba(140, 170, 210, 0.25);
+      color: #f0ece0;
+      text-shadow: 0 0 60px rgba(180, 210, 240, 0.4), 0 0 120px rgba(140, 170, 210, 0.25);
       will-change: transform, opacity, filter;
     }
     .finale-content {
@@ -704,7 +620,8 @@
     }
     .flower-svg {
       width: 100%; height: 100%; overflow: visible;
-      filter: drop-shadow(0 0 30px rgba(200, 220, 240, 0.3)) drop-shadow(0 0 60px rgba(180, 160, 200, 0.2));
+      filter: drop-shadow(0 0 30px rgba(200, 220, 240, 0.3))
+              drop-shadow(0 0 60px rgba(180, 160, 200, 0.2));
     }
     .flower-svg .stem { stroke-dasharray: 300; stroke-dashoffset: 300; }
     .flower-svg .petal, .flower-svg .leaf, .flower-svg .center {
@@ -771,16 +688,23 @@
     .replay-btn:focus-visible { outline: 2px solid #b8c8d8; outline-offset: 4px; }
     .flash-overlay {
       position: absolute; inset: 0;
-      background: radial-gradient(circle at center, #f8f0e0 0%, rgba(220, 230, 245, 0.8) 30%, rgba(180, 200, 230, 0.4) 60%, transparent 100%);
+      background: radial-gradient(circle at center,
+        #f8f0e0 0%,
+        rgba(220, 230, 245, 0.8) 30%,
+        rgba(180, 200, 230, 0.4) 60%,
+        transparent 100%);
       z-index: 50; pointer-events: none; opacity: 0;
     }
 
     /* ============================================================
-       GLOBAL TRANSITION OVERLAY
+       GLOBAL TRANSITION OVERLAY (Moonlight Veil)
        ============================================================ */
     .global-transition {
       position: fixed; inset: 0;
-      background: radial-gradient(circle at center, #f0ead8 0%, #d8d0b8 40%, #1a2a30 100%);
+      background: radial-gradient(circle at center,
+        rgba(200, 220, 240, 0.15) 0%,
+        rgba(120, 150, 190, 0.35) 40%,
+        rgba(10, 17, 24, 0.9) 100%);
       z-index: 9999; pointer-events: none; opacity: 0;
       will-change: opacity;
     }
@@ -794,7 +718,9 @@
     .touch-device .btn-primary:hover, .touch-device .continue-btn:hover,
     .touch-device .next-btn:hover, .touch-device .replay-btn:hover { transform: none; }
     .touch-device .btn-primary:active, .touch-device .continue-btn:active,
-    .touch-device .next-btn:active, .touch-device .replay-btn:active { transform: scale(0.96); transition: transform 0.1s ease; }
+    .touch-device .next-btn:active, .touch-device .replay-btn:active {
+      transform: scale(0.96); transition: transform 0.1s ease;
+    }
     .touch-device .envelope-scene:hover .envelope { transform: none; filter: drop-shadow(0 25px 40px rgba(0,0,0,0.6)); }
     .touch-device .wax-seal:hover { transform: translate(-50%, -50%) scale(1); }
 
@@ -928,6 +854,13 @@
   </style>
 </head>
 <body>
+  <!-- ============================================================
+       MOONLIGHT VEIL TRANSITION (pengganti flash putih)
+       ============================================================ -->
+  <div class="moonlight-veil" id="moonlightVeil">
+    <div class="sweep-light" id="sweepLight"></div>
+  </div>
+
   <!-- ============================================================
        SCENE 1 · MOONLIT OCEAN
        ============================================================ -->
@@ -1069,7 +1002,7 @@
     <button class="replay-btn" id="replayBtn" aria-label="Replay the finale animation">Replay</button>
   </div>
 
-  <!-- Global transition overlay -->
+  <!-- Global transition overlay (fallback) -->
   <div class="global-transition" id="globalTransition"></div>
 
   <script>
@@ -1087,7 +1020,6 @@
         audio: { enabled: false, src: null, volume: 0.35 }
       };
 
-      // Device detection
       const deviceInfo = {
         isMobile: window.innerWidth < 768,
         isTablet: window.innerWidth >= 768 && window.innerWidth < 1024,
@@ -1117,6 +1049,43 @@
       }
 
       // ============================================================
+      // MOONLIGHT VEIL TRANSITION (pengganti flash)
+      // ============================================================
+      const moonlightVeil = document.getElementById('moonlightVeil');
+      const sweepLight = document.getElementById('sweepLight');
+
+      function playMoonlightVeil(onComplete) {
+        // Animasi: cahaya bulan menyapu lembut dari kiri ke kanan,
+        // veil muncul perlahan, lalu hilang.
+        if (prefersReducedMotion || !gsapAvailable) {
+          if (moonlightVeil) {
+            moonlightVeil.style.transition = 'opacity 0.9s ease';
+            moonlightVeil.style.opacity = '0.95';
+            setTimeout(() => {
+              if (onComplete) onComplete();
+              moonlightVeil.style.transition = 'opacity 1.3s ease';
+              moonlightVeil.style.opacity = '0';
+            }, 900);
+          } else {
+            if (onComplete) onComplete();
+          }
+          return;
+        }
+
+        const tl = gsap.timeline();
+        // Sweep light: cahaya bulan melintas
+        gsap.set(sweepLight, { x: '-60%', y: '-10%', scale: 0.6, opacity: 0 });
+        tl.to(sweepLight, { opacity: 1, duration: 0.5, ease: 'power2.out' })
+          .to(sweepLight, { x: '60%', scale: 1.4, duration: 1.6, ease: 'power1.inOut' }, '-=0.3')
+          .to(sweepLight, { opacity: 0, duration: 0.8, ease: 'power2.in' }, '-=0.6')
+          .to(moonlightVeil, {
+            opacity: 0.95, duration: 1.0, ease: 'power2.in',
+            onComplete: () => { if (onComplete) onComplete(); }
+          }, '-=1.0')
+          .to(moonlightVeil, { opacity: 0, duration: 1.4, ease: 'power2.out' }, '+=0.3');
+      }
+
+      // ============================================================
       // SCENE MANAGER
       // ============================================================
       const scenes = {
@@ -1129,7 +1098,7 @@
       let isTransitioning = false;
       const globalTransition = document.getElementById('globalTransition');
 
-      function transitionToScene(sceneName, transitionStyle) {
+      function transitionToScene(sceneName) {
         if (isTransitioning || sceneName === currentScene) return;
         isTransitioning = true;
         const fromScene = scenes[currentScene];
@@ -1149,27 +1118,24 @@
           void toScene.offsetWidth;
           setTimeout(() => {
             if (sceneName === 'garden') initGardenScene();
-            else if (sceneName === 'letter') { initLetterScene(); if (lenisAvailable && !prefersReducedMotion) initLenisForLetter(); }
+            else if (sceneName === 'letter') {
+              initLetterScene();
+              if (lenisAvailable && !prefersReducedMotion) initLenisForLetter();
+            }
             else if (sceneName === 'finale') initFinaleScene();
             setTimeout(() => { isTransitioning = false; }, 400);
           }, 400);
-          setTimeout(() => { if (fromScene.classList.contains('prev')) fromScene.classList.remove('prev'); }, 1800);
+          setTimeout(() => {
+            if (fromScene.classList.contains('prev')) fromScene.classList.remove('prev');
+          }, 1800);
           currentScene = sceneName;
         }
 
-        if (prefersReducedMotion || transitionStyle === 'fade') { doSwitch(); return; }
-        if (gsapAvailable) {
-          gsap.timeline()
-            .to(globalTransition, { opacity: 0.95, duration: 1.0, ease: 'power2.in', onComplete: doSwitch })
-            .to(globalTransition, { opacity: 0, duration: 1.4, ease: 'power2.out' }, '+=0.5');
+        // Gunakan Moonlight Veil (bukan flash)
+        if (prefersReducedMotion || !gsapAvailable) {
+          playMoonlightVeil(doSwitch);
         } else {
-          globalTransition.style.transition = 'opacity 1.0s ease';
-          globalTransition.style.opacity = '0.95';
-          setTimeout(() => {
-            doSwitch();
-            globalTransition.style.transition = 'opacity 1.4s ease';
-            globalTransition.style.opacity = '0';
-          }, 1000);
+          playMoonlightVeil(doSwitch);
         }
       }
 
@@ -1202,7 +1168,6 @@
           requestAnimationFrame(raf);
         }
       }
-      function destroyLenis() { if (lenis) { try { lenis.destroy(); } catch(e) {} lenis = null; } }
 
       // ============================================================
       // SCENE 1 · MOONLIT OCEAN
@@ -1215,7 +1180,6 @@
         const oceanSubtitle = document.getElementById('oceanSubtitle');
         const oceanBtn = document.getElementById('oceanBtn');
 
-        // --- Ocean waves canvas ---
         if (canvas && !deviceInfo.prefersReducedData) {
           const ctx = canvas.getContext('2d');
           let w, h;
@@ -1223,7 +1187,6 @@
           resize();
           window.addEventListener('resize', resize);
 
-          // Simple layered sine waves
           let time = 0;
           const waveLayers = [
             { amplitude: 6, speed: 0.005, offset: 0.5, color: 'rgba(180, 210, 240, 0.08)', yBase: 0.78 },
@@ -1237,7 +1200,7 @@
             if (!ctx) return;
             ctx.clearRect(0, 0, w, h);
             time += 0.016;
-            waveLayers.forEach((layer, i) => {
+            waveLayers.forEach((layer) => {
               ctx.beginPath();
               const baseY = h * layer.yBase;
               ctx.moveTo(0, h);
@@ -1257,7 +1220,6 @@
           window.addEventListener('beforeunload', () => cancelAnimationFrame(animId));
         }
 
-        // --- Entrance animation ---
         if (prefersReducedMotion) {
           oceanContent.style.opacity = '1'; oceanContent.style.transform = 'none';
           oceanDate.style.opacity = '1'; oceanMainText.style.opacity = '1';
@@ -1285,35 +1247,28 @@
           }, 1500);
         }
 
-        // --- Button: cinematic ocean → garden transition ---
         oceanBtn.addEventListener('click', function(e) {
           e.preventDefault();
           oceanBtn.disabled = true;
 
-          if (prefersReducedMotion) { transitionToScene('garden', 'fade'); return; }
+          if (prefersReducedMotion) { transitionToScene('garden'); return; }
 
           if (gsapAvailable) {
-            const tl = gsap.timeline({
-              onComplete: () => transitionToScene('garden', 'fade')
-            });
-            // Fade out content, blur the ocean, simulate moving inland
+            const tl = gsap.timeline({ onComplete: () => transitionToScene('garden') });
             tl.to(oceanBtn, { opacity: 0, scale: 0.9, duration: 0.6, ease: 'power2.in' })
               .to(oceanContent, { opacity: 0, duration: 0.8 }, '-=0.3')
-              .to(canvas, { opacity: 0, filter: 'blur(8px)', duration: 1.6, ease: 'power2.inOut' }, '-=0.2')
-              .to(globalTransition, { opacity: 0.95, duration: 1.2, ease: 'power2.in' }, '-=0.8');
+              .to(canvas, { opacity: 0, filter: 'blur(8px)', duration: 1.6, ease: 'power2.inOut' }, '-=0.2');
           } else {
             oceanContent.style.transition = 'opacity 0.8s ease';
             oceanContent.style.opacity = '0';
             if (canvas) { canvas.style.transition = 'opacity 1.2s ease, filter 1.2s ease'; canvas.style.opacity = '0'; canvas.style.filter = 'blur(6px)'; }
-            globalTransition.style.transition = 'opacity 1.2s ease';
-            globalTransition.style.opacity = '0.8';
-            setTimeout(() => transitionToScene('garden', 'fade'), 1200);
+            setTimeout(() => transitionToScene('garden'), 1200);
           }
         });
       }
 
       // ============================================================
-      // SCENE 2 · HIDDEN MOONLIT GARDEN (ENVELOPE)
+      // SCENE 2 · HIDDEN MOONLIT GARDEN (ENVELOPE) — ANIMASI BARU
       // ============================================================
       let gardenInitialized = false;
       function initGardenScene() {
@@ -1328,11 +1283,22 @@
         const waxSeal = document.getElementById('waxSeal');
         const instruction = document.getElementById('envelopeInstruction');
         const continueBtn = document.getElementById('envelopeContinueBtn');
+        const envelopeScene = document.getElementById('envelopeScene');
 
         let isOpening = false, isOpened = false;
         let particleAnimId = null;
+        const sealShards = [];
 
-        // Fireflies / particles (garden atmosphere)
+        // Buat elemen shard (kelopak pecahan) di dalam envelope
+        for (let i = 0; i < 12; i++) {
+          const shard = document.createElement('div');
+          shard.className = 'seal-shard';
+          if (i % 3 === 0) shard.classList.add('petal-shape');
+          envelope.appendChild(shard);
+          sealShards.push(shard);
+        }
+
+        // Fireflies / particles
         if (canvas && !deviceInfo.prefersReducedData) {
           const ctx = canvas.getContext('2d');
           let w, h;
@@ -1381,31 +1347,66 @@
           animateParticles();
         }
 
-        // Entrance animation
+        // ============================================================
+        // ENTRANCE ANIMASI BARU:
+        // Amplop muncul dari kabut, terangkat dari rumput,
+        // lalu sedikit goyang seperti diletakkan.
+        // ============================================================
         if (prefersReducedMotion) {
           topLabel.style.opacity = '1'; instruction.style.opacity = '0.6'; waxSeal.style.opacity = '1';
+          envelope.style.opacity = '1'; envelope.style.transform = 'none'; envelope.style.filter = 'none';
         } else if (gsapAvailable) {
-          const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
           gsap.set(topLabel, { opacity: 0, y: -10 });
-          gsap.set(waxSeal, { opacity: 0, scale: 0.8 });
-          gsap.set(envelope, { opacity: 0, scale: 0.92, y: 30, filter: 'blur(15px)' });
+          gsap.set(waxSeal, { opacity: 0, scale: 0.7, rotate: -15 });
+          gsap.set(envelope, {
+            opacity: 0, scale: 0.85, y: 80,
+            rotateX: 25, filter: 'blur(20px)'
+          });
           gsap.set(instruction, { opacity: 0 });
-          tl.to(envelope, { opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', duration: 2.4, ease: 'power3.out', delay: 0.6 })
-            .to(waxSeal, { opacity: 1, scale: 1, duration: 1.2, ease: 'back.out(1.4)' }, '-=1.0')
-            .to(topLabel, { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' }, '-=0.8')
-            .to(instruction, { opacity: 0.6, duration: 1.8 }, '-=0.6');
+
+          const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+          // Amplop terangkat dari bawah + kabur
+          tl.to(envelope, {
+            opacity: 1, scale: 1, y: 0,
+            rotateX: 0, filter: 'blur(0px)',
+            duration: 2.6, ease: 'power3.out', delay: 0.4
+          })
+          // Wax seal muncul dengan sedikit rotasi
+          .to(waxSeal, {
+            opacity: 1, scale: 1, rotate: 0,
+            duration: 1.4, ease: 'back.out(1.6)'
+          }, '-=1.4')
+          // Label atas muncul
+          .to(topLabel, { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' }, '-=1.0')
+          // Instruksi muncul
+          .to(instruction, { opacity: 0.6, duration: 1.8 }, '-=0.8')
+          // Sedikit "settle" bounce
+          .to(envelope, { y: -6, duration: 0.6, ease: 'power2.out' }, '-=1.6')
+          .to(envelope, { y: 0, duration: 0.7, ease: 'power2.inOut' });
         } else {
           envelope.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
-          envelope.style.opacity = '1'; envelope.style.transform = 'scale(1) translateY(0)'; envelope.style.filter = 'blur(0px)';
+          envelope.style.opacity = '1'; envelope.style.transform = 'scale(1) translateY(0)';
+          envelope.style.filter = 'blur(0px)';
           setTimeout(() => {
             waxSeal.style.transition = 'opacity 1s ease, transform 1s ease';
-            waxSeal.style.opacity = '1'; topLabel.style.opacity = '1'; instruction.style.opacity = '0.6';
+            waxSeal.style.opacity = '1';
+            topLabel.style.opacity = '1';
+            instruction.style.opacity = '0.6';
           }, 1400);
         }
 
+        // ============================================================
+        // OPEN ENVELOPE — ANIMASI BARU:
+        // 1. Wax seal berdenyut + pecah menjadi kelopak (shards)
+        // 2. Flap terbuka perlahan
+        // 3. Letter muncul mengambang dengan rotasi lembut
+        // ============================================================
         function openEnvelope() {
           if (isOpening || isOpened) return;
           isOpening = true;
+
+          // Sembunyikan instruksi
+          if (gsapAvailable) gsap.to(instruction, { opacity: 0, duration: 0.5 });
 
           if (prefersReducedMotion) {
             waxSeal.style.opacity = '0';
@@ -1413,30 +1414,102 @@
             letter.style.opacity = '1';
             letter.style.transform = 'translateY(-40%) rotate(-2deg)';
             letter.classList.add('revealed');
-            setTimeout(() => { continueBtn.classList.add('visible'); instruction.style.opacity = '0'; isOpened = true; }, 800);
+            setTimeout(() => {
+              continueBtn.classList.add('visible');
+              instruction.style.opacity = '0';
+              isOpened = true;
+            }, 800);
             return;
           }
 
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => { isOpened = true; isOpening = false; } });
-            tl.to(waxSeal, { scale: 1.1, duration: 0.2, ease: 'power2.out' })
-              .to(waxSeal, { scale: 0.94, duration: 0.2, ease: 'power2.in' })
-              .to(waxSeal, { scale: 1, duration: 0.25, ease: 'power2.out' })
-              .to(waxSeal, { opacity: 0, y: -30, scale: 0.8, duration: 1.0, ease: 'power2.in' }, '+=0.15')
-              .to(envelopeFlap, { rotateX: -180, duration: 1.6, ease: 'power3.inOut' }, '-=0.7')
-              .to(letter, { opacity: 1, y: -35, rotate: -2, duration: 1.8, ease: 'power3.out' }, '-=1.1')
-              .add(() => { letter.classList.add('revealed'); }, '-=0.9')
-              .to(continueBtn, { opacity: 1, y: 0, duration: 1.3, ease: 'power2.out', onStart: () => { continueBtn.classList.add('visible'); } }, '-=0.4')
-              .to(instruction, { opacity: 0, duration: 0.8 }, '-=1.3');
+
+            // 1. Wax seal berdenyut
+            tl.to(waxSeal, { scale: 1.15, duration: 0.25, ease: 'power2.out' })
+              .to(waxSeal, { scale: 0.9, duration: 0.2, ease: 'power2.in' })
+              .to(waxSeal, { scale: 1.05, duration: 0.2, ease: 'power2.out' });
+
+            // 2. Wax seal pecah jadi kelopak — shards tersebar
+            const sealRect = waxSeal.getBoundingClientRect();
+            const envelopeRect = envelope.getBoundingClientRect();
+            const sealCenterX = sealRect.left + sealRect.width / 2 - envelopeRect.left;
+            const sealCenterY = sealRect.top + sealRect.height / 2 - envelopeRect.top;
+
+            sealShards.forEach((shard, i) => {
+              const angle = (i / sealShards.length) * Math.PI * 2 + Math.random() * 0.5;
+              const distance = 40 + Math.random() * 60;
+              const tx = Math.cos(angle) * distance;
+              const ty = Math.sin(angle) * distance - 20;
+              gsap.set(shard, {
+                left: sealCenterX + 'px',
+                top: sealCenterY + 'px',
+                opacity: 0.9,
+                scale: 1
+              });
+              tl.to(shard, {
+                x: tx, y: ty,
+                rotation: Math.random() * 360 - 180,
+                scale: 0.3,
+                opacity: 0,
+                duration: 1.4 + Math.random() * 0.6,
+                ease: 'power2.out'
+              }, '-=0.9');
+            });
+
+            // 3. Wax seal menghilang sambil membesar sedikit
+            tl.to(waxSeal, {
+              scale: 1.3, opacity: 0, duration: 0.6, ease: 'power2.in'
+            }, '-=1.0');
+
+            // 4. Flap terbuka perlahan
+            tl.to(envelopeFlap, {
+              rotateX: -180,
+              duration: 1.6,
+              ease: 'power3.inOut'
+            }, '-=0.6');
+
+            // 5. Letter muncul mengambang — naik dengan rotasi lembut
+            tl.to(letter, {
+              opacity: 1,
+              y: -55,
+              rotate: -3,
+              duration: 2.0,
+              ease: 'power3.out'
+            }, '-=1.0')
+            .add(() => { letter.classList.add('revealed'); }, '-=1.2')
+            // 6. Letter sedikit bergoyang seperti tertiup angin
+            .to(letter, { y: -60, rotate: 1, duration: 1.2, ease: 'sine.inOut' }, '-=0.6')
+            .to(letter, { y: -55, rotate: -2, duration: 1.0, ease: 'sine.inOut' })
+            // 7. Tombol lanjut muncul
+            .to(continueBtn, {
+              opacity: 1, y: 0, duration: 1.3, ease: 'power2.out',
+              onStart: () => { continueBtn.classList.add('visible'); }
+            }, '-=0.8')
+            .to(instruction, { opacity: 0, duration: 0.6 }, '-=1.0');
           } else {
-            waxSeal.style.transition = 'opacity 1.0s ease, transform 1.0s ease';
+            // Fallback non-GSAP
+            waxSeal.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             waxSeal.style.opacity = '0';
+            waxSeal.style.transform = 'translate(-50%, -50%) scale(1.4)';
+
+            // Shards
+            sealShards.forEach((shard, i) => {
+              const angle = (i / sealShards.length) * Math.PI * 2;
+              shard.style.transition = 'all 1.4s ease-out';
+              shard.style.opacity = '0.9';
+              setTimeout(() => {
+                shard.style.transform = `translate(calc(-50% + ${Math.cos(angle) * 60}px), calc(-50% + ${Math.sin(angle) * 60}px)) rotate(${Math.random() * 360}deg) scale(0.3)`;
+                shard.style.opacity = '0';
+              }, 100);
+            });
+
             envelopeFlap.style.transition = 'transform 1.5s ease-in-out';
             envelopeFlap.style.transform = 'rotateX(-180deg)';
             setTimeout(() => {
               letter.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
               letter.style.opacity = '1';
-              letter.style.transform = 'translateY(-35%) rotate(-2deg)';
+              letter.style.transform = 'translateY(-50%) rotate(-2deg)';
               letter.classList.add('revealed');
               setTimeout(() => {
                 continueBtn.classList.add('visible');
@@ -1448,24 +1521,32 @@
         }
 
         waxSeal.addEventListener('click', openEnvelope);
-        waxSeal.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEnvelope(); } });
+        waxSeal.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openEnvelope(); }
+        });
 
         continueBtn.addEventListener('click', () => {
-          if (prefersReducedMotion) { transitionToScene('letter', 'fade'); return; }
+          if (prefersReducedMotion) { transitionToScene('letter'); return; }
           if (gsapAvailable) {
-            const tl = gsap.timeline({ onComplete: () => transitionToScene('letter', 'fade') });
+            const tl = gsap.timeline({ onComplete: () => transitionToScene('letter') });
             tl.to(continueBtn, { opacity: 0, y: -10, duration: 0.8, ease: 'power2.in' })
-              .to(letter, { boxShadow: '0 20px 80px rgba(220, 180, 120, 0.5), 0 0 120px rgba(220, 180, 120, 0.3)', duration: 1.4, ease: 'power2.in' }, '-=0.5')
+              .to(letter, {
+                boxShadow: '0 20px 80px rgba(220, 180, 120, 0.5), 0 0 120px rgba(220, 180, 120, 0.3)',
+                duration: 1.4, ease: 'power2.in'
+              }, '-=0.5')
               .to(letter, { scale: 1.4, y: -20, duration: 2.0, ease: 'power2.in' }, '-=1.2')
-              .to(globalTransition, { opacity: 0.95, duration: 1.2, ease: 'power2.in' }, '-=1.0');
+              .to(envelopeScene, { opacity: 0, filter: 'blur(10px)', duration: 1.0 }, '-=1.0');
           } else {
             continueBtn.style.transition = 'opacity 0.6s ease'; continueBtn.style.opacity = '0';
-            letter.style.transition = 'transform 1.2s ease'; letter.style.transform = 'scale(1.3) translateY(-10%)';
-            globalTransition.style.transition = 'opacity 1.2s ease'; globalTransition.style.opacity = '0.9';
-            setTimeout(() => transitionToScene('letter', 'fade'), 1400);
+            letter.style.transition = 'transform 1.2s ease';
+            letter.style.transform = 'scale(1.3) translateY(-10%)';
+            setTimeout(() => transitionToScene('letter'), 1400);
           }
         });
-        continueBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); continueBtn.click(); } });
+        continueBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); continueBtn.click(); }
+        });
+
         window.addEventListener('beforeunload', () => { if (particleAnimId) cancelAnimationFrame(particleAnimId); });
       }
 
@@ -1486,7 +1567,6 @@
 
         let dustAnimId = null;
 
-        // Dust particles (soft atmosphere)
         if (dustCanvas && !deviceInfo.prefersReducedData) {
           const ctx = dustCanvas.getContext('2d');
           let w, h;
@@ -1515,8 +1595,15 @@
               if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
               const opacity = p.opacity * (0.5 + 0.5 * Math.sin(p.pulse));
               ctx.beginPath();
-              if (p.gold) { ctx.fillStyle = `rgba(220, 210, 170, ${opacity})`; ctx.shadowColor = `rgba(220, 200, 140, ${opacity * 0.5})`; ctx.shadowBlur = 6; }
-              else { ctx.fillStyle = `rgba(200, 215, 235, ${opacity * 0.6})`; ctx.shadowColor = `rgba(180, 200, 230, ${opacity * 0.3})`; ctx.shadowBlur = 3; }
+              if (p.gold) {
+                ctx.fillStyle = `rgba(220, 210, 170, ${opacity})`;
+                ctx.shadowColor = `rgba(220, 200, 140, ${opacity * 0.5})`;
+                ctx.shadowBlur = 6;
+              } else {
+                ctx.fillStyle = `rgba(200, 215, 235, ${opacity * 0.6})`;
+                ctx.shadowColor = `rgba(180, 200, 230, ${opacity * 0.3})`;
+                ctx.shadowBlur = 3;
+              }
               ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
             });
             ctx.shadowBlur = 0;
@@ -1525,11 +1612,9 @@
           animateDust();
         }
 
-        // Prepare paragraphs for reveal
         const paragraphs = letterBody.querySelectorAll('p');
         paragraphs.forEach(p => p.classList.add('reveal-init'));
 
-        // Entrance
         if (prefersReducedMotion) {
           letterCard.style.opacity = '1'; letterCard.style.transform = 'none'; letterCard.style.filter = 'none';
           paragraphs.forEach(p => { p.classList.remove('reveal-init'); p.classList.add('reveal-in'); });
@@ -1581,22 +1666,22 @@
         sceneLetter.addEventListener('scroll', checkScroll, { passive: true });
 
         letterNextBtn.addEventListener('click', () => {
-          if (prefersReducedMotion) { transitionToScene('finale', 'fade'); return; }
+          if (prefersReducedMotion) { transitionToScene('finale'); return; }
           if (gsapAvailable) {
-            const tl = gsap.timeline({ onComplete: () => transitionToScene('finale', 'fade') });
+            const tl = gsap.timeline({ onComplete: () => transitionToScene('finale') });
             tl.to(letterNextBtn, { opacity: 0, y: -10, duration: 0.8, ease: 'power2.in' })
               .to(letterCard, { boxShadow: '0 30px 120px rgba(220, 180, 120, 0.5)', duration: 1.6, ease: 'power2.in' }, '-=0.4')
-              .to([letterCard, letterFinalSection], { opacity: 0.3, duration: 1.4, ease: 'power2.in' }, '-=1.4')
-              .to(globalTransition, { opacity: 0.95, duration: 1.2, ease: 'power2.in' }, '-=1.2');
+              .to([letterCard, letterFinalSection], { opacity: 0.3, duration: 1.4, ease: 'power2.in' }, '-=1.4');
           } else {
             letterNextBtn.style.transition = 'opacity 0.6s ease'; letterNextBtn.style.opacity = '0';
             letterCard.style.transition = 'opacity 1.2s ease'; letterCard.style.opacity = '0.3';
             letterFinalSection.style.opacity = '0.3';
-            globalTransition.style.transition = 'opacity 1.5s ease'; globalTransition.style.opacity = '0.95';
-            setTimeout(() => transitionToScene('finale', 'fade'), 1600);
+            setTimeout(() => transitionToScene('finale'), 1600);
           }
         });
-        letterNextBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); letterNextBtn.click(); } });
+        letterNextBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); letterNextBtn.click(); }
+        });
         window.addEventListener('beforeunload', () => { if (dustAnimId) cancelAnimationFrame(dustAnimId); });
       }
 
@@ -1631,13 +1716,12 @@
         hbDate.textContent = CONFIG.birthday;
         hbMessage.textContent = CONFIG.finalMessage;
 
-        // Canvas setup (fireflies, petals, fireworks)
         const starfieldCanvas = document.getElementById('starfield-canvas');
         const petalsCanvas = document.getElementById('petals-canvas');
         const fireworksCanvas = document.getElementById('fireworks-canvas');
 
-        // Simple starfield (soft night sky)
-        let starfieldAnim = null;
+        // Starfield
+        let starfieldAnim = null, starfield = null;
         if (starfieldCanvas && !deviceInfo.prefersReducedData) {
           const ctx = starfieldCanvas.getContext('2d');
           let w, h;
@@ -1646,7 +1730,13 @@
           const count = getOptimalCount(200, 500);
           const stars = [];
           for (let i = 0; i < count; i++) {
-            stars.push({ x: Math.random() * w, y: Math.random() * h, size: Math.random() * 1.4 + 0.3, opacity: Math.random() * 0.5 + 0.1, pulse: Math.random() * Math.PI * 2, pulseSpeed: 0.005 + Math.random() * 0.015 });
+            stars.push({
+              x: Math.random() * w, y: Math.random() * h,
+              size: Math.random() * 1.4 + 0.3,
+              opacity: Math.random() * 0.5 + 0.1,
+              pulse: Math.random() * Math.PI * 2,
+              pulseSpeed: 0.005 + Math.random() * 0.015
+            });
           }
           let burstMode = false, burstProgress = 0;
           function animateStars() {
@@ -1691,8 +1781,8 @@
           };
         }
 
-        // Petals (gentle falling)
-        let petalsAnim = null, petalsActive = false;
+        // Petals
+        let petalsAnim = null, petalsActive = false, petals = null;
         if (petalsCanvas && !deviceInfo.prefersReducedData) {
           const ctx = petalsCanvas.getContext('2d');
           let w, h;
@@ -1721,9 +1811,12 @@
               if (petalArr.length < 25 && Math.random() < 0.02) spawnPetal();
               for (let i = petalArr.length - 1; i >= 0; i--) {
                 const p = petalArr[i];
-                p.sway += p.swaySpeed; p.y += p.speedY; p.x += p.speedX + Math.sin(p.sway) * 0.3; p.rotation += p.rotationSpeed;
+                p.sway += p.swaySpeed; p.y += p.speedY;
+                p.x += p.speedX + Math.sin(p.sway) * 0.3;
+                p.rotation += p.rotationSpeed;
                 if (p.y > h + 30) { petalArr.splice(i, 1); continue; }
-                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation); ctx.globalAlpha = p.opacity;
+                ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation);
+                ctx.globalAlpha = p.opacity;
                 ctx.fillStyle = p.color;
                 ctx.beginPath(); ctx.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2); ctx.fill();
                 ctx.restore();
@@ -1732,11 +1825,17 @@
             petalsAnim = requestAnimationFrame(animatePetals);
           }
           animatePetals();
-          petals = { start: () => { petalsActive = true; for (let i = 0; i < 15; i++) { spawnPetal(); petalArr[i].y = Math.random() * h; } }, clear: () => { petalArr.length = 0; } };
+          petals = {
+            start: () => {
+              petalsActive = true;
+              for (let i = 0; i < 15; i++) { spawnPetal(); petalArr[i].y = Math.random() * h; }
+            },
+            clear: () => { petalArr.length = 0; }
+          };
         }
 
-        // Fireworks (soft bursts)
-        let fireworksAnim = null, fwActive = false;
+        // Fireworks
+        let fireworksAnim = null, fwActive = false, fireworks = null;
         if (fireworksCanvas && !deviceInfo.prefersReducedData) {
           const ctx = fireworksCanvas.getContext('2d');
           let w, h;
@@ -1748,7 +1847,13 @@
             const col = fwColors[Math.floor(Math.random() * fwColors.length)];
             for (let i = 0; i < count; i++) {
               const angle = Math.random() * Math.PI * 2, speed = 0.8 + Math.random() * 3;
-              fwParticles.push({ x: cx, y: cy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1, decay: 0.006 + Math.random() * 0.01, size: 0.8 + Math.random() * 1.5, color: col, gravity: 0.02 });
+              fwParticles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+                life: 1, decay: 0.006 + Math.random() * 0.01,
+                size: 0.8 + Math.random() * 1.5,
+                color: col, gravity: 0.02
+              });
             }
           }
           function animateFireworks() {
@@ -1757,7 +1862,8 @@
             if (fwActive) {
               for (let i = fwParticles.length - 1; i >= 0; i--) {
                 const p = fwParticles[i];
-                p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.vx *= 0.99; p.vy *= 0.99; p.life -= p.decay;
+                p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+                p.vx *= 0.99; p.vy *= 0.99; p.life -= p.decay;
                 if (p.life <= 0) { fwParticles.splice(i, 1); continue; }
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(${p.color.r},${p.color.g},${p.color.b},${p.life * 0.8})`;
@@ -1773,11 +1879,12 @@
           fireworks = {
             start: () => { fwActive = true; },
             clear: () => { fwParticles.length = 0; },
-            launch: () => { createBurst(w * (0.2 + Math.random() * 0.6), h * (0.15 + Math.random() * 0.35), deviceInfo.isMobile ? 20 : 40); }
+            launch: () => {
+              createBurst(w * (0.2 + Math.random() * 0.6), h * (0.15 + Math.random() * 0.35), deviceInfo.isMobile ? 20 : 40);
+            }
           };
         }
 
-        // --- Finale animation sequence ---
         function runFinale() {
           if (finaleStarted) return;
           finaleStarted = true;
@@ -1797,7 +1904,7 @@
           }
 
           if (!gsapAvailable) {
-            // Fallback (non-GSAP)
+            // Fallback sederhana
             centralLight.style.transition = 'opacity 2s ease'; centralLight.style.opacity = '1';
             if (starfield) starfield.burst(2500);
             setTimeout(() => { whisperWait.style.opacity = '1'; }, 3000);
@@ -1833,7 +1940,6 @@
             return;
           }
 
-          // Main GSAP timeline
           const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
           tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.4 }, 0)
             .add(() => { if (starfield) starfield.burst(2800); }, 0.6)
@@ -1842,11 +1948,20 @@
             .to(whisperMore, { opacity: 1, duration: 1.8 }, 7.2)
             .to(whisperMore, { opacity: 0, duration: 1.4 }, 10.4)
             .to(countdownScene, { opacity: 1, duration: 0.8 }, 11.8)
-            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)' }, { scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out' }, 11.8)
-            .to(countdownText, { scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in', onStart: () => { countdownText.textContent = '2'; } }, 13.2)
-            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 }, { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 14.1)
-            .to(countdownText, { scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in', onStart: () => { countdownText.textContent = '1'; } }, 15.5)
-            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 }, { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 16.4)
+            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)' },
+                    { scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out' }, 11.8)
+            .to(countdownText, {
+              scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in',
+              onStart: () => { countdownText.textContent = '2'; }
+            }, 13.2)
+            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 },
+                    { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 14.1)
+            .to(countdownText, {
+              scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in',
+              onStart: () => { countdownText.textContent = '1'; }
+            }, 15.5)
+            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 },
+                    { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 16.4)
             .to(countdownText, { scale: 1.6, filter: 'blur(20px)', opacity: 0, duration: 1.0, ease: 'power2.in' }, 17.8)
             .to(countdownScene, { opacity: 0, duration: 0.6 }, 18.4)
             .to(centralLight, { scale: 80, opacity: 1, duration: 1.4, ease: 'power3.in' }, 18.4)
@@ -1866,22 +1981,27 @@
             .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 31.8)
             .add(() => { if (fireworks) fireworks.launch(); }, 33.2)
             .add(() => { if (fireworks) fireworks.launch(); }, 34.5)
-            .to(flowerWrap, { filter: 'drop-shadow(0 0 60px rgba(200, 220, 240, 0.5)) drop-shadow(0 0 120px rgba(180, 200, 230, 0.3))', duration: 2.4, ease: 'power2.inOut' }, 35.5)
+            .to(flowerWrap, {
+              filter: 'drop-shadow(0 0 60px rgba(200, 220, 240, 0.5)) drop-shadow(0 0 120px rgba(180, 200, 230, 0.3))',
+              duration: 2.4, ease: 'power2.inOut'
+            }, 35.5)
             .to(hbFooter, { opacity: 1, duration: 2.2, ease: 'power2.out' }, 36.5)
             .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3500); }, 38.5);
           masterTimeline = tl;
         }
 
-        // Replay
         function handleReplay() {
           finaleStarted = false;
           if (masterTimeline) { masterTimeline.kill(); masterTimeline = null; }
           if (petals) petals.clear();
           if (fireworks) fireworks.clear();
-          centralLight.style.opacity = '0'; centralLight.style.transform = 'translate(-50%, -50%) scale(1)'; centralLight.style.transition = 'none';
+          centralLight.style.opacity = '0';
+          centralLight.style.transform = 'translate(-50%, -50%) scale(1)';
+          centralLight.style.transition = 'none';
           whisperWait.style.opacity = '0'; whisperMore.style.opacity = '0';
           countdownScene.style.opacity = '0'; countdownText.textContent = '3';
-          finaleContent.style.opacity = '0'; flowerWrap.style.opacity = '0'; flowerWrap.style.transform = 'scale(0.6)'; flowerWrap.style.filter = 'none';
+          finaleContent.style.opacity = '0';
+          flowerWrap.style.opacity = '0'; flowerWrap.style.transform = 'scale(0.6)'; flowerWrap.style.filter = 'none';
           document.querySelectorAll('.flower-svg .stem').forEach(el => { el.style.strokeDashoffset = '300'; });
           document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.3)'; });
           document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.2)'; });
@@ -1896,7 +2016,9 @@
         }
 
         replayBtn.addEventListener('click', handleReplay);
-        replayBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleReplay(); } });
+        replayBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleReplay(); }
+        });
 
         window.addEventListener('beforeunload', () => {
           if (starfieldAnim) cancelAnimationFrame(starfieldAnim);
@@ -1904,12 +2026,11 @@
           if (fireworksAnim) cancelAnimationFrame(fireworksAnim);
         });
 
-        // Start finale after a short delay
         setTimeout(() => { runFinale(); }, 800);
       }
 
       // ============================================================
-      // GLOBAL RESIZE & ORIENTATION
+      // RESIZE & ORIENTATION
       // ============================================================
       let resizeTimer;
       window.addEventListener('resize', () => {
@@ -1924,7 +2045,11 @@
 
       document.addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
       let lastTap = 0;
-      document.addEventListener('touchend', (e) => { const now = Date.now(); if (now - lastTap < 300) e.preventDefault(); lastTap = now; }, { passive: false });
+      document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTap < 300) e.preventDefault();
+        lastTap = now;
+      }, { passive: false });
 
       // ============================================================
       // INIT
