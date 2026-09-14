@@ -357,9 +357,6 @@
     }
     .wax-seal:focus-visible { outline: 2px solid #b8c8d8; outline-offset: 6px; }
 
-    /* ============================================================
-       KELOPAK DARI SEAL
-       ============================================================ */
     .seal-petal {
       position: absolute;
       top: 42%; left: 50%;
@@ -595,10 +592,10 @@
     }
 
     /* ============================================================
-       SCENE 4 — TAMAN YANG MEKAR (FINALE)
+       SCENE 4 — BLACK HOLE (FINALE)
        ============================================================ */
     #scene-finale {
-      background: radial-gradient(ellipse at 50% 50%, #0d1a22 0%, #050a0e 70%, #020408 100%);
+      background: radial-gradient(ellipse at 50% 50%, #0a0a14 0%, #02020a 70%, #000000 100%);
     }
     #scene-finale::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
@@ -610,12 +607,14 @@
     }
     #scene-finale::after {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
-      background: radial-gradient(circle at 50% 45%, transparent 25%, rgba(0,0,0,0.7) 100%);
+      background: radial-gradient(circle at 50% 45%, transparent 25%, rgba(0,0,0,0.8) 100%);
     }
     #scene-finale canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     #scene-finale #starfield-canvas { z-index: 3; }
-    #scene-finale #petals-canvas { z-index: 4; }
-    #scene-finale #fireworks-canvas { z-index: 5; }
+    #scene-finale #blackhole-canvas { z-index: 4; }
+    #scene-finale #petals-canvas { z-index: 5; }
+    #scene-finale #fireworks-canvas { z-index: 6; }
+
     .central-light {
       position: absolute; top: 50%; left: 50%;
       width: 4px; height: 4px; border-radius: 50%;
@@ -649,84 +648,6 @@
       position: absolute; inset: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       z-index: 25; pointer-events: none; padding: 2rem 1.5rem;
-    }
-
-    .flower-wrap {
-      position: relative;
-      width: clamp(180px, 38vw, 340px);
-      height: clamp(180px, 38vw, 340px);
-      margin-bottom: 2rem;
-      opacity: 0;
-      will-change: transform, opacity;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .flower-svg {
-      width: 100%; height: 100%;
-      overflow: visible;
-      filter: drop-shadow(0 0 20px rgba(200, 220, 240, 0.35))
-              drop-shadow(0 0 50px rgba(180, 160, 210, 0.25));
-    }
-    .flower-svg .stem {
-      stroke-dasharray: 400;
-      stroke-dashoffset: 400;
-      stroke-linecap: round;
-    }
-    .flower-svg .leaf {
-      transform-origin: center;
-      opacity: 0;
-      transform: scale(0.2) rotate(-20deg);
-    }
-    .flower-svg .bud {
-      transform-origin: 100px 100px;
-      opacity: 0;
-      transform: scale(0.1);
-    }
-    .flower-svg .petal {
-      transform-origin: 100px 100px;
-      opacity: 0;
-      transform: scale(0.1) rotate(0deg);
-    }
-    .flower-svg .flower-center {
-      transform-origin: 100px 100px;
-      opacity: 0;
-      transform: scale(0.1);
-    }
-    .flower-svg .pollen {
-      transform-origin: center;
-      opacity: 0;
-      transform: scale(0);
-    }
-    .flower-aura {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 120%; height: 120%;
-      transform: translate(-50%, -50%) scale(0.3);
-      border-radius: 50%;
-      background: radial-gradient(circle,
-        rgba(200, 220, 250, 0.15) 0%,
-        rgba(180, 200, 240, 0.08) 40%,
-        transparent 70%);
-      opacity: 0;
-      pointer-events: none;
-      will-change: transform, opacity;
-    }
-    .flower-aura::before {
-      content: '';
-      position: absolute;
-      inset: 15%;
-      border-radius: 50%;
-      border: 1px solid rgba(200, 220, 250, 0.3);
-      box-shadow: 0 0 20px rgba(180, 200, 240, 0.4);
-    }
-    .flower-aura::after {
-      content: '';
-      position: absolute;
-      inset: 30%;
-      border-radius: 50%;
-      border: 1px dashed rgba(220, 230, 255, 0.25);
     }
 
     .hb-line {
@@ -798,12 +719,12 @@
       z-index: 50; pointer-events: none; opacity: 0;
     }
 
-    .touch-device .btn-primary, .touch-device .continue-btn,
+    .touch-device .btn-primary,
     .touch-device .next-btn, .touch-device .replay-btn,
     .touch-device .wax-seal { min-height: 44px; min-width: 44px; touch-action: manipulation; }
-    .touch-device .btn-primary:hover, .touch-device .continue-btn:hover,
+    .touch-device .btn-primary:hover,
     .touch-device .next-btn:hover, .touch-device .replay-btn:hover { transform: none; }
-    .touch-device .btn-primary:active, .touch-device .continue-btn:active,
+    .touch-device .btn-primary:active,
     .touch-device .next-btn:active, .touch-device .replay-btn:active {
       transform: scale(0.96); transition: transform 0.1s ease;
     }
@@ -818,10 +739,6 @@
       .letter-card, .letter-body p, .final-section { opacity: 1 !important; transform: none !important; filter: none !important; }
       .central-light { opacity: 1 !important; }
       .finale-content { opacity: 1 !important; }
-      .flower-wrap { opacity: 1 !important; transform: none !important; }
-      .flower-svg .stem { stroke-dashoffset: 0 !important; }
-      .flower-svg .leaf, .flower-svg .petal, .flower-svg .bud,
-      .flower-svg .flower-center, .flower-svg .pollen { opacity: 1 !important; transform: none !important; }
       .hb-line, .hb-name, .hb-message { opacity: 1 !important; transform: none !important; }
       .hb-footer { opacity: 1 !important; }
       .blob-transition .blob-layer { animation: none !important; }
@@ -843,7 +760,6 @@
       .envelope-scene { width: min(80vw, 460px); }
       #scene-garden .top-label { top: 6%; }
       .letter-card { max-width: 600px; }
-      .flower-wrap { width: clamp(160px, 30vw, 280px); height: clamp(160px, 30vw, 280px); }
       .hb-line { font-size: clamp(2.5rem, 9vw, 5rem); }
     }
     @media (max-width: 768px) {
@@ -871,7 +787,6 @@
       .letter-signature { font-size: 0.95rem; }
       .signature-name { font-size: 1.6rem; }
       .next-btn { padding: 0.8rem 1.8rem; font-size: 0.62rem; letter-spacing: 0.3em; }
-      .flower-wrap { width: 160px; height: 160px; margin-bottom: 1rem; }
       .hb-line { font-size: clamp(1.8rem, 12vw, 3rem); letter-spacing: 0.04em; }
       .hb-name { font-size: clamp(1.3rem, 7vw, 2rem); margin-top: 0.5rem; }
       .hb-message { font-size: 0.88rem; margin-top: 1rem; line-height: 1.55; }
@@ -893,7 +808,6 @@
       .hb-name { font-size: 1.2rem; }
       .hb-message { font-size: 0.82rem; }
       .replay-btn { padding: 0.6rem 1.4rem; font-size: 0.55rem; }
-      .flower-wrap { width: 140px; height: 140px; }
     }
     @media (max-width: 320px) {
       #scene-ocean .main-text { font-size: 1.35rem; }
@@ -901,7 +815,6 @@
       .envelope-scene { width: 96vw; }
       .letter-card { padding: 1.5rem 1rem; }
       .letter-body { font-size: 0.92rem; }
-      .flower-wrap { width: 120px; height: 120px; }
       .hb-line { font-size: 1.4rem; }
       .hb-message { font-size: 0.78rem; }
     }
@@ -919,7 +832,6 @@
       .letter-card { padding: 1.5rem 1.25rem; }
       .letter-header { margin-bottom: 1.5rem; }
       .letter-divider { margin-top: 1rem; }
-      .flower-wrap { width: 130px; height: 130px; margin-bottom: 0.6rem; }
       .hb-line { font-size: clamp(1.6rem, 8vw, 2.6rem); }
       .hb-name { font-size: clamp(1.1rem, 5vw, 1.8rem); margin-top: 0.4rem; }
       .hb-message { font-size: 0.85rem; margin-top: 0.8rem; }
@@ -946,9 +858,7 @@
     <div class="veil-overlay" id="blobVeil"></div>
   </div>
 
-  <!-- ============================================================
-       SCENE 1 · LAUTAN CAHAYA BULAN
-       ============================================================ -->
+  <!-- SCENE 1 -->
   <div class="scene-container active" id="scene-ocean">
     <div class="ocean-bg">
       <div class="moon"></div>
@@ -969,9 +879,7 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       SCENE 2 · TAMAN CAHAYA BULAN TERSEMBUNYI
-       ============================================================ -->
+  <!-- SCENE 2 -->
   <div class="scene-container" id="scene-garden">
     <div class="garden-bg">
       <div class="moon-small"></div>
@@ -998,9 +906,7 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       SCENE 3 · SURAT DI TENGAH TAMAN
-       ============================================================ -->
+  <!-- SCENE 3 -->
   <div class="scene-container" id="scene-letter">
     <canvas class="dust-canvas" id="dustCanvas"></canvas>
     <main class="page">
@@ -1039,11 +945,10 @@
     </div>
   </div>
 
-  <!-- ============================================================
-       SCENE 4 · TAMAN YANG MEKAR (FINALE)
-       ============================================================ -->
+  <!-- SCENE 4 · BLACK HOLE FINALE -->
   <div class="scene-container" id="scene-finale">
     <canvas id="starfield-canvas"></canvas>
+    <canvas id="blackhole-canvas"></canvas>
     <canvas id="petals-canvas"></canvas>
     <canvas id="fireworks-canvas"></canvas>
     <div class="central-light" id="centralLight"></div>
@@ -1051,62 +956,6 @@
     <div class="text-scene" id="whisperMore"><div class="whisper-text">Ada <em>satu hal lagi</em> untukmu.</div></div>
     <div class="text-scene" id="countdownScene"><div class="countdown-text" id="countdownText">3</div></div>
     <div class="finale-content" id="finaleContent">
-      <div class="flower-wrap" id="flowerWrap">
-        <div class="flower-aura" id="flowerAura"></div>
-        <svg class="flower-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path class="stem"
-                d="M 100 200 Q 98 175 100 150 Q 102 125 100 100"
-                stroke="#7a9a6a" stroke-width="2.8" fill="none"/>
-          <g class="leaf-group">
-            <ellipse class="leaf" cx="82" cy="165" rx="14" ry="7" fill="#8aaa78" transform="rotate(-35 82 165)"/>
-            <ellipse class="leaf" cx="118" cy="150" rx="13" ry="6.5" fill="#8aaa78" transform="rotate(30 118 150)"/>
-            <ellipse class="leaf" cx="85" cy="130" rx="11" ry="5.5" fill="#8aaa78" transform="rotate(-45 85 130)"/>
-          </g>
-          <g class="bud">
-            <ellipse cx="100" cy="100" rx="14" ry="18" fill="#d8c8b0"/>
-            <ellipse cx="100" cy="100" rx="10" ry="13" fill="#e8d8c0"/>
-          </g>
-          <g class="petal-group outer">
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(45 100 100)"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95" transform="rotate(90 100 100)"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(135 100 100)"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95" transform="rotate(180 100 100)"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(225 100 100)"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f5e6ec" opacity="0.95" transform="rotate(270 100 100)"/>
-            <ellipse class="petal outer" cx="100" cy="60" rx="16" ry="26" fill="#f0dce0" opacity="0.95" transform="rotate(315 100 100)"/>
-          </g>
-          <g class="petal-group middle">
-            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#f0d0d8" opacity="0.95"/>
-            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#ecc8d0" opacity="0.95" transform="rotate(60 100 100)"/>
-            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#f0d0d8" opacity="0.95" transform="rotate(120 100 100)"/>
-            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#ecc8d0" opacity="0.95" transform="rotate(180 100 100)"/>
-            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#f0d0d8" opacity="0.95" transform="rotate(240 100 100)"/>
-            <ellipse class="petal middle" cx="100" cy="68" rx="13" ry="20" fill="#ecc8d0" opacity="0.95" transform="rotate(300 100 100)"/>
-          </g>
-          <g class="petal-group inner">
-            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f8e8e0" opacity="0.95"/>
-            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f4dcd8" opacity="0.95" transform="rotate(90 100 100)"/>
-            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f8e8e0" opacity="0.95" transform="rotate(180 100 100)"/>
-            <ellipse class="petal inner" cx="100" cy="76" rx="10" ry="16" fill="#f4dcd8" opacity="0.95" transform="rotate(270 100 100)"/>
-          </g>
-          <g class="flower-center">
-            <circle cx="100" cy="100" r="12" fill="#f0c98a"/>
-            <circle cx="100" cy="100" r="8" fill="#e8b070" opacity="0.85"/>
-            <circle cx="100" cy="100" r="4" fill="#d89858" opacity="0.9"/>
-          </g>
-          <g class="pollen-group">
-            <circle class="pollen" cx="60" cy="70" r="1.8" fill="#fff8e0"/>
-            <circle class="pollen" cx="140" cy="65" r="1.5" fill="#f8e8d0"/>
-            <circle class="pollen" cx="55" cy="110" r="1.3" fill="#fff5e0"/>
-            <circle class="pollen" cx="145" cy="120" r="1.6" fill="#f8e8d0"/>
-            <circle class="pollen" cx="70" cy="145" r="1.4" fill="#fff8e0"/>
-            <circle class="pollen" cx="130" cy="150" r="1.5" fill="#fff0d8"/>
-            <circle class="pollen" cx="45" cy="90" r="1.2" fill="#f8e8d0"/>
-            <circle class="pollen" cx="155" cy="95" r="1.3" fill="#fff8e0"/>
-          </g>
-        </svg>
-      </div>
       <div class="hb-line" id="hbHappy">SELAMAT</div>
       <div class="hb-line" id="hbBirthday">ULANG TAHUN</div>
       <div class="hb-name" id="hbName">Nama Dia</div>
@@ -1130,9 +979,7 @@
       const CONFIG = {
         name: "Nama Dia",
         birthday: "14 September 2026",
-        finalMessage: "Semoga babak baru ini membawa hari-hari yang indah, kebahagiaan yang tak terduga, dan alasan tak terhitung untuk tersenyum.",
-        photos: [],
-        audio: { enabled: false, src: null, volume: 0.35 }
+        finalMessage: "Semoga babak baru ini membawa hari-hari yang indah, kebahagiaan yang tak terduga, dan alasan tak terhitung untuk tersenyum."
       };
 
       const deviceInfo = {
@@ -1273,6 +1120,9 @@
         }
       }
 
+      // ============================================================
+      // SCENE 1
+      // ============================================================
       function initOceanScene() {
         const canvas = document.querySelector('#scene-ocean .ocean-canvas');
         const oceanContent = document.getElementById('oceanContent');
@@ -1368,7 +1218,7 @@
       }
 
       // ============================================================
-      // SCENE 2 · TAMAN CAHAYA BULAN — SEAL LANGSUNG TRANSISI
+      // SCENE 2
       // ============================================================
       let gardenInitialized = false;
       function initGardenScene() {
@@ -1497,9 +1347,6 @@
           }, 1400);
         }
 
-        // ============================================================
-        // FUNGSI OPEN ENVELOPE — 2 DETIK LALU LANGSUNG KE SURAT
-        // ============================================================
         function openEnvelope() {
           if (isOpening || isOpened) return;
           isOpening = true;
@@ -1522,7 +1369,6 @@
               }
             });
 
-            // FASE 1: Seal berdenyut + glow ring (0 - 0.7s)
             gsap.set(sealGlowRing, { scale: 0.3, opacity: 0 });
             gsap.set(sealFlash, { scale: 0, opacity: 0 });
 
@@ -1535,16 +1381,12 @@
               .to(sealGlowRing, {
                 scale: 4, opacity: 0, duration: 0.7, ease: "power2.out"
               }, "-=0.1")
-
-              // FASE 2: Flash cahaya (0.5 - 1.1s)
               .to(sealFlash, {
                 scale: 1.5, opacity: 1, duration: 0.3, ease: "power2.out"
               }, "-=0.9")
               .to(sealFlash, {
                 scale: 3, opacity: 0, duration: 0.6, ease: "power2.out"
               }, "-=0.1")
-
-              // FASE 3: Kelopak keluar dari seal (0.7 - 1.9s)
               .add(() => {
                 const sealRect = waxSeal.getBoundingClientRect();
                 const envRect = envelope.getBoundingClientRect();
@@ -1596,25 +1438,18 @@
                     }, "-=0.6");
                 });
               }, "-=1.0")
-
-              // FASE 4: Seal menghilang (1.2 - 2.0s)
               .to(waxSeal, {
                 scale: 1.8, opacity: 0, rotate: 200,
                 duration: 0.8, ease: "power2.in"
               }, "-=1.6")
-
-              // FASE 5: Amplop ikut memudar (1.5 - 2.0s)
               .to(envelopeScene, {
                 opacity: 0, scale: 1.15, filter: 'blur(12px)',
                 duration: 0.9, ease: "power2.in"
               }, "-=0.8")
-
-              // Setelah ~2 detik, langsung transisi ke scene letter
               .add(() => {
                 transitionToScene('letter');
               }, "+=0.05");
           } else {
-            // Fallback
             waxSeal.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             waxSeal.style.opacity = '0';
             waxSeal.style.transform = 'translate(-50%, -50%) scale(1.4) rotate(180deg)';
@@ -1640,7 +1475,7 @@
       }
 
       // ============================================================
-      // SCENE 3 · SURAT DI TENGAH TAMAN
+      // SCENE 3
       // ============================================================
       let letterInitialized = false;
       function initLetterScene() {
@@ -1789,11 +1624,19 @@
       }
 
       // ============================================================
-      // SCENE 4 · TAMAN YANG MEKAR
+      // SCENE 4 · BLACK HOLE FINALE
       // ============================================================
       let finaleInitialized = false;
       let finaleStarted = false;
       let masterTimeline = null;
+      let blackHoleState = {
+        active: false,
+        phase: 'idle', // idle | forming | growing | collapse | explode | dispersed
+        scale: 0,
+        rotation: 0,
+        collapseProgress: 0,
+        explosionProgress: 0
+      };
 
       function initFinaleScene() {
         if (finaleInitialized) return;
@@ -1805,8 +1648,6 @@
         const countdownScene = document.getElementById('countdownScene');
         const countdownText = document.getElementById('countdownText');
         const finaleContent = document.getElementById('finaleContent');
-        const flowerWrap = document.getElementById('flowerWrap');
-        const flowerAura = document.getElementById('flowerAura');
         const hbHappy = document.getElementById('hbHappy');
         const hbBirthday = document.getElementById('hbBirthday');
         const hbName = document.getElementById('hbName');
@@ -1821,16 +1662,20 @@
         hbMessage.textContent = CONFIG.finalMessage;
 
         const starfieldCanvas = document.getElementById('starfield-canvas');
+        const blackholeCanvas = document.getElementById('blackhole-canvas');
         const petalsCanvas = document.getElementById('petals-canvas');
         const fireworksCanvas = document.getElementById('fireworks-canvas');
 
+        // ============================================================
+        // STARFIELD
+        // ============================================================
         let starfieldAnim = null, starfield = null;
         if (starfieldCanvas && !deviceInfo.prefersReducedData) {
           const ctx = starfieldCanvas.getContext('2d');
           let w, h;
           function resize() { w = starfieldCanvas.width = window.innerWidth; h = starfieldCanvas.height = window.innerHeight; }
           resize(); window.addEventListener('resize', resize);
-          const count = getOptimalCount(200, 500);
+          const count = getOptimalCount(180, 450);
           const stars = [];
           for (let i = 0; i < count; i++) {
             stars.push({
@@ -1884,6 +1729,253 @@
           };
         }
 
+        // ============================================================
+        // BLACK HOLE CANVAS
+        // ============================================================
+        let bhAnim = null;
+        if (blackholeCanvas && !deviceInfo.prefersReducedData) {
+          const ctx = blackholeCanvas.getContext('2d');
+          let w, h, cx, cy;
+          function resize() {
+            w = blackholeCanvas.width = window.innerWidth;
+            h = blackholeCanvas.height = window.innerHeight;
+            cx = w / 2;
+            cy = h / 2;
+          }
+          resize(); window.addEventListener('resize', resize);
+
+          // Partikel yang ditarik black hole
+          const particleCount = getOptimalCount(180, 400);
+          const bhParticles = [];
+          for (let i = 0; i < particleCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 200 + Math.random() * Math.max(w, h) * 0.7;
+            bhParticles.push({
+              angle: angle,
+              radius: radius,
+              baseRadius: radius,
+              speed: (0.002 + Math.random() * 0.008) * (Math.random() < 0.5 ? 1 : -1),
+              size: 0.4 + Math.random() * 1.8,
+              hue: Math.random() < 0.4 ? 45 : (Math.random() < 0.5 ? 200 : 280),
+              saturation: 60 + Math.random() * 40,
+              lightness: 60 + Math.random() * 30,
+              opacity: 0.3 + Math.random() * 0.6,
+              trail: []
+            });
+          }
+
+          // Debu accretion disk
+          const diskParticleCount = getOptimalCount(150, 350);
+          const diskParticles = [];
+          for (let i = 0; i < diskParticleCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 30 + Math.random() * 80;
+            diskParticles.push({
+              angle: angle,
+              radius: radius,
+              baseRadius: radius,
+              speed: 0.01 + Math.random() * 0.03,
+              size: 0.5 + Math.random() * 1.5,
+              opacity: 0.4 + Math.random() * 0.5,
+              hue: 30 + Math.random() * 30
+            });
+          }
+
+          let time = 0;
+
+          function drawBlackHole() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, w, h);
+            time += 0.016;
+
+            const state = blackHoleState;
+
+            // Hitung skala black hole berdasarkan state
+            let bhRadius = 0;
+            if (state.active) {
+              if (state.phase === 'forming') {
+                bhRadius = state.scale * 8;
+              } else if (state.phase === 'growing') {
+                bhRadius = 8 + state.scale * 55;
+              } else if (state.phase === 'collapse') {
+                bhRadius = 63 + state.collapseProgress * 60;
+              } else if (state.phase === 'explode') {
+                bhRadius = 123 * (1 - state.explosionProgress * 0.3);
+              } else if (state.phase === 'dispersed') {
+                bhRadius = 0;
+              }
+            }
+
+            const bhOpacity = state.phase === 'dispersed' ? 0 : 1;
+
+            if (bhRadius > 0 && bhOpacity > 0) {
+              // ============================================================
+              // 1. ACCRETION DISK - lingkaran cahaya berputar di sekitar BH
+              // ============================================================
+              const diskRadius = bhRadius * 2.2;
+              const diskGradient = ctx.createRadialGradient(cx, cy, bhRadius * 1.05, cx, cy, diskRadius);
+              diskGradient.addColorStop(0, `rgba(255, 180, 80, ${0.6 * bhOpacity})`);
+              diskGradient.addColorStop(0.3, `rgba(255, 140, 60, ${0.4 * bhOpacity})`);
+              diskGradient.addColorStop(0.6, `rgba(200, 100, 200, ${0.2 * bhOpacity})`);
+              diskGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+              ctx.beginPath();
+              ctx.arc(cx, cy, diskRadius, 0, Math.PI * 2);
+              ctx.fillStyle = diskGradient;
+              ctx.fill();
+
+              // Partikel accretion disk berputar
+              diskParticles.forEach(p => {
+                p.angle += p.speed * (1 + bhRadius * 0.02);
+                // Radius mengecil saat collapse (tertarik masuk)
+                if (state.phase === 'collapse') {
+                  p.radius = p.baseRadius * (1 - state.collapseProgress * 0.85) + bhRadius * 0.5;
+                } else if (state.phase === 'growing') {
+                  p.radius = p.baseRadius * (1 + state.scale * 0.5);
+                } else {
+                  p.radius = p.baseRadius;
+                }
+                const px = cx + Math.cos(p.angle) * p.radius;
+                const py = cy + Math.sin(p.angle) * p.radius * 0.4; // ellips
+                const glowSize = p.size * (1 + bhRadius * 0.015);
+                ctx.beginPath();
+                ctx.fillStyle = `hsla(${p.hue}, 100%, 65%, ${p.opacity * bhOpacity})`;
+                ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, ${p.opacity * bhOpacity})`;
+                ctx.shadowBlur = 12;
+                ctx.arc(px, py, glowSize, 0, Math.PI * 2);
+                ctx.fill();
+              });
+              ctx.shadowBlur = 0;
+
+              // ============================================================
+              // 2. EVENT HORIZON - lingkaran hitam pekat di tengah
+              // ============================================================
+              const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, bhRadius);
+              coreGradient.addColorStop(0, `rgba(0, 0, 0, ${bhOpacity})`);
+              coreGradient.addColorStop(0.7, `rgba(0, 0, 0, ${bhOpacity})`);
+              coreGradient.addColorStop(0.95, `rgba(20, 5, 30, ${0.9 * bhOpacity})`);
+              coreGradient.addColorStop(1, `rgba(60, 20, 80, ${0.5 * bhOpacity})`);
+              ctx.beginPath();
+              ctx.arc(cx, cy, bhRadius, 0, Math.PI * 2);
+              ctx.fillStyle = coreGradient;
+              ctx.fill();
+
+              // ============================================================
+              // 3. PHOTON RING - cincin cahaya tipis di tepi event horizon
+              // ============================================================
+              ctx.beginPath();
+              ctx.arc(cx, cy, bhRadius * 1.08, 0, Math.PI * 2);
+              ctx.strokeStyle = `rgba(255, 200, 120, ${0.8 * bhOpacity})`;
+              ctx.lineWidth = 1.5 + bhRadius * 0.03;
+              ctx.shadowColor = `rgba(255, 180, 100, ${0.9 * bhOpacity})`;
+              ctx.shadowBlur = 20 + bhRadius * 0.5;
+              ctx.stroke();
+              ctx.shadowBlur = 0;
+
+              // Cincin kedua (lebih redup)
+              ctx.beginPath();
+              ctx.arc(cx, cy, bhRadius * 1.25, 0, Math.PI * 2);
+              ctx.strokeStyle = `rgba(180, 140, 255, ${0.4 * bhOpacity})`;
+              ctx.lineWidth = 1 + bhRadius * 0.02;
+              ctx.shadowColor = `rgba(180, 140, 255, ${0.6 * bhOpacity})`;
+              ctx.shadowBlur = 15;
+              ctx.stroke();
+              ctx.shadowBlur = 0;
+
+              // ============================================================
+              // 4. GRAVITATIONAL LENSING - distorsi cahaya di sekitar BH
+              // ============================================================
+              ctx.save();
+              ctx.globalCompositeOperation = 'lighter';
+              for (let i = 0; i < 6; i++) {
+                const ringAngle = (i / 6) * Math.PI * 2 + time * 0.5;
+                const ringR = bhRadius * (1.5 + i * 0.15);
+                ctx.beginPath();
+                ctx.arc(cx, cy, ringR, ringAngle, ringAngle + Math.PI * 0.8);
+                ctx.strokeStyle = `hsla(${30 + i * 20}, 100%, 65%, ${0.15 * bhOpacity})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+              }
+              ctx.restore();
+            }
+
+            // ============================================================
+            // 5. PARTIKEL YANG DITARIK BLACK HOLE
+            // ============================================================
+            if (state.active) {
+              bhParticles.forEach(p => {
+                // Saat black hole aktif, partikel ditarik ke pusat
+                let pullStrength = 0;
+                if (state.phase === 'forming' || state.phase === 'growing') {
+                  pullStrength = state.scale * 0.5;
+                } else if (state.phase === 'collapse') {
+                  pullStrength = 0.5 + state.collapseProgress * 1.5;
+                } else if (state.phase === 'explode') {
+                  // Partikel terdorong keluar saat ledakan
+                  pullStrength = -2 * (1 - state.explosionProgress);
+                } else if (state.phase === 'dispersed') {
+                  pullStrength = -0.5;
+                }
+
+                p.angle += p.speed * (1 + pullStrength * 3);
+                if (pullStrength > 0) {
+                  p.radius = Math.max(bhRadius * 0.9, p.radius - pullStrength * 4);
+                } else if (pullStrength < 0) {
+                  p.radius = p.radius + Math.abs(pullStrength) * 3;
+                }
+
+                const px = cx + Math.cos(p.angle) * p.radius;
+                const py = cy + Math.sin(p.angle) * p.radius;
+
+                // Trail effect
+                p.trail.push({ x: px, y: py });
+                if (p.trail.length > 6) p.trail.shift();
+
+                if (p.trail.length > 1) {
+                  ctx.beginPath();
+                  ctx.moveTo(p.trail[0].x, p.trail[0].y);
+                  for (let i = 1; i < p.trail.length; i++) {
+                    ctx.lineTo(p.trail[i].x, p.trail[i].y);
+                  }
+                  ctx.strokeStyle = `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.opacity * 0.5})`;
+                  ctx.lineWidth = p.size * 0.6;
+                  ctx.stroke();
+                }
+
+                ctx.beginPath();
+                ctx.fillStyle = `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.opacity})`;
+                ctx.shadowColor = `hsla(${p.hue}, ${p.saturation}%, ${p.lightness}%, ${p.opacity})`;
+                ctx.shadowBlur = 8;
+                ctx.arc(px, py, p.size, 0, Math.PI * 2);
+                ctx.fill();
+              });
+              ctx.shadowBlur = 0;
+            }
+
+            // ============================================================
+            // 6. SINGULARITY FLASH (saat ledakan)
+            // ============================================================
+            if (state.phase === 'explode') {
+              const explodeR = 100 + state.explosionProgress * Math.max(w, h) * 0.8;
+              const explodeOpacity = (1 - state.explosionProgress) * 0.9;
+              const expGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, explodeR);
+              expGradient.addColorStop(0, `rgba(255, 255, 255, ${explodeOpacity})`);
+              expGradient.addColorStop(0.2, `rgba(255, 240, 200, ${explodeOpacity * 0.8})`);
+              expGradient.addColorStop(0.5, `rgba(255, 180, 100, ${explodeOpacity * 0.5})`);
+              expGradient.addColorStop(1, 'rgba(255, 100, 50, 0)');
+              ctx.beginPath();
+              ctx.arc(cx, cy, explodeR, 0, Math.PI * 2);
+              ctx.fillStyle = expGradient;
+              ctx.fill();
+            }
+
+            bhAnim = requestAnimationFrame(drawBlackHole);
+          }
+          drawBlackHole();
+        }
+
+        // ============================================================
+        // PETALS CANVAS
+        // ============================================================
         let petalsAnim = null, petalsActive = false, petals = null;
         if (petalsCanvas && !deviceInfo.prefersReducedData) {
           const ctx = petalsCanvas.getContext('2d');
@@ -1936,6 +2028,9 @@
           };
         }
 
+        // ============================================================
+        // FIREWORKS CANVAS
+        // ============================================================
         let fireworksAnim = null, fwActive = false, fireworks = null;
         if (fireworksCanvas && !deviceInfo.prefersReducedData) {
           const ctx = fireworksCanvas.getContext('2d');
@@ -1986,6 +2081,9 @@
           };
         }
 
+        // ============================================================
+        // RUN FINALE
+        // ============================================================
         function runFinale() {
           if (finaleStarted) return;
           finaleStarted = true;
@@ -1993,14 +2091,7 @@
           if (prefersReducedMotion) {
             centralLight.style.opacity = '1';
             finaleContent.style.opacity = '1';
-            flowerWrap.style.opacity = '1';
-            flowerAura.style.opacity = '1'; flowerAura.style.transform = 'translate(-50%, -50%) scale(1)';
-            document.querySelectorAll('.flower-svg .stem').forEach(el => el.style.strokeDashoffset = '0');
-            document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
-            document.querySelectorAll('.flower-svg .bud').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
-            document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0.95'; el.style.transform = 'none'; });
-            document.querySelectorAll('.flower-svg .flower-center').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
-            document.querySelectorAll('.flower-svg .pollen').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+            blackHoleState.active = false;
             hbHappy.style.opacity = '1'; hbBirthday.style.opacity = '1';
             hbName.style.opacity = '1'; hbMessage.style.opacity = '1'; hbFooter.style.opacity = '1';
             replayBtn.classList.add('visible');
@@ -2014,24 +2105,23 @@
             setTimeout(() => { whisperWait.style.opacity = '0'; }, 5400);
             setTimeout(() => { whisperMore.style.opacity = '1'; }, 7200);
             setTimeout(() => { whisperMore.style.opacity = '0'; }, 10400);
-            setTimeout(() => { countdownScene.style.opacity = '1'; countdownText.textContent = '3'; }, 11800);
+            setTimeout(() => { countdownScene.style.opacity = '1'; countdownText.textContent = '3'; blackHoleState.active = true; blackHoleState.phase = 'forming'; blackHoleState.scale = 0; }, 11800);
+            setTimeout(() => { blackHoleState.phase = 'growing'; blackHoleState.scale = 0; }, 12500);
             setTimeout(() => { countdownText.textContent = '2'; }, 14100);
             setTimeout(() => { countdownText.textContent = '1'; }, 16400);
             setTimeout(() => {
               countdownScene.style.opacity = '0';
               flashOverlay.style.opacity = '0.9';
-              setTimeout(() => { flashOverlay.style.opacity = '0'; }, 800);
+              blackHoleState.phase = 'collapse'; blackHoleState.collapseProgress = 0;
+              setTimeout(() => {
+                blackHoleState.phase = 'explode'; blackHoleState.explosionProgress = 0;
+                if (starfield) starfield.burst(1500);
+                flashOverlay.style.opacity = '0';
+              }, 900);
             }, 18400);
             setTimeout(() => {
+              blackHoleState.phase = 'dispersed';
               finaleContent.style.opacity = '1';
-              flowerWrap.style.opacity = '1';
-              flowerAura.style.opacity = '1'; flowerAura.style.transform = 'translate(-50%, -50%) scale(1)';
-              document.querySelectorAll('.flower-svg .stem').forEach(el => el.style.strokeDashoffset = '0');
-              document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
-              document.querySelectorAll('.flower-svg .bud').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
-              document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0.95'; el.style.transform = 'none'; });
-              document.querySelectorAll('.flower-svg .flower-center').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
-              document.querySelectorAll('.flower-svg .pollen').forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
               if (petals) petals.start();
             }, 20200);
             setTimeout(() => { hbHappy.style.opacity = '1'; }, 25500);
@@ -2046,16 +2136,33 @@
             return;
           }
 
+          // ============================================================
+          // GSAP TIMELINE - BLACK HOLE FINALE
+          // ============================================================
           const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-          tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.4 }, 0)
-            .add(() => { if (starfield) starfield.burst(2800); }, 0.6)
+          // FASE 1: Central light muncul
+          tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.0 }, 0)
+            .add(() => { if (starfield) starfield.burst(2200); }, 0.5)
 
+            // FASE 2: Whisper texts
             .to(whisperWait, { opacity: 1, duration: 1.6, ease: "expo.out" }, 3.0)
             .to(whisperWait, { opacity: 0, y: -20, duration: 1.4, ease: "expo.in" }, 5.4)
 
             .to(whisperMore, { opacity: 1, y: 0, duration: 1.8, ease: "expo.out" }, 7.2)
             .to(whisperMore, { opacity: 0, y: -20, duration: 1.4, ease: "expo.in" }, 10.4)
+
+            // FASE 3: Countdown 3-2-1, bersamaan dengan black hole forming
+            .add(() => {
+              blackHoleState.active = true;
+              blackHoleState.phase = 'forming';
+            }, 11.0)
+            .to({}, {
+              duration: 1.5,
+              onUpdate: function() {
+                blackHoleState.scale = this.progress();
+              }
+            }, 11.0)
 
             .to(countdownScene, { opacity: 1, duration: 0.8, ease: "power2.out" }, 11.8)
             .fromTo(countdownText,
@@ -2066,6 +2173,17 @@
               duration: 1.0, ease: "power2.in",
               onStart: () => { countdownText.textContent = '2'; }
             }, 13.2)
+
+            // FASE 4: Black hole growing
+            .add(() => {
+              blackHoleState.phase = 'growing';
+            }, 13.5)
+            .to({}, {
+              duration: 3.0,
+              onUpdate: function() {
+                blackHoleState.scale = this.progress();
+              }
+            }, 13.5)
 
             .fromTo(countdownText,
               { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
@@ -2084,82 +2202,52 @@
               duration: 1.1, ease: "power2.in"
             }, 18.0)
 
+            // FASE 5: COLLAPSE - black hole menyusut & menarik semua
             .to(countdownScene, { opacity: 0, duration: 0.5, ease: "power2.in" }, 18.5)
-            .to(centralLight, { scale: 90, opacity: 1, duration: 1.5, ease: "power3.in" }, 18.5)
-            .to(flashOverlay, { opacity: 0.95, duration: 0.7, ease: "power2.in" }, 19.0)
+            .add(() => {
+              blackHoleState.phase = 'collapse';
+            }, 18.5)
+            .to({}, {
+              duration: 1.0,
+              onUpdate: function() {
+                blackHoleState.collapseProgress = this.progress();
+              }
+            }, 18.5)
+
+            // FASE 6: Central light meledak & flash
+            .to(centralLight, { scale: 90, opacity: 1, duration: 1.2, ease: "power3.in" }, 19.0)
+            .to(flashOverlay, { opacity: 0.95, duration: 0.6, ease: "power2.in" }, 19.2)
+
+            // FASE 7: EXPLODE - black hole meledak
+            .add(() => {
+              blackHoleState.phase = 'explode';
+              blackHoleState.explosionProgress = 0;
+              if (starfield) starfield.burst(1600);
+            }, 19.5)
+            .to({}, {
+              duration: 2.0,
+              onUpdate: function() {
+                blackHoleState.explosionProgress = this.progress();
+              }
+            }, 19.5)
             .to(flashOverlay, { opacity: 0, duration: 1.6, ease: "expo.out" }, 19.8)
 
-            .add(() => { finaleContent.style.opacity = '1'; }, 19.9);
-
-          tl.to(flowerWrap, { opacity: 1, duration: 1.0, ease: "power2.out" }, 20.3)
-            .to('.flower-svg .stem', { strokeDashoffset: 0, duration: 2.4, ease: "power2.inOut" }, 20.5)
-            .to('.flower-svg .leaf', {
-              opacity: 1, scale: 1, rotation: 0,
-              duration: 1.2,
-              stagger: { each: 0.4, from: "start", ease: "power2.inOut" },
-              ease: "back.out(1.8)"
-            }, 21.8)
-            .to('.flower-svg .bud', {
-              opacity: 1, scale: 1, duration: 1.4, ease: "back.out(1.6)"
-            }, 23.2)
-            .to('.flower-svg .bud', {
-              opacity: 0, scale: 0.7, duration: 1.2, ease: "power2.in"
-            }, 24.2)
-            .to('.flower-svg .petal.outer', {
-              opacity: 0.95, scale: 1, rotation: 0,
-              duration: 2.0,
-              stagger: { each: 0.14, from: "center", ease: "power2.inOut" },
-              ease: "back.out(1.6)"
-            }, 24.4)
-            .to('.flower-svg .petal.middle', {
-              opacity: 0.95, scale: 1, rotation: 0,
-              duration: 1.8,
-              stagger: { each: 0.16, from: "center", ease: "power2.inOut" },
-              ease: "back.out(1.6)"
-            }, 25.8)
-            .to('.flower-svg .petal.inner', {
-              opacity: 0.95, scale: 1, rotation: 0,
-              duration: 1.6,
-              stagger: { each: 0.18, from: "center", ease: "power2.inOut" },
-              ease: "back.out(1.6)"
-            }, 27.2)
-            .to('.flower-svg .flower-center', {
-              opacity: 1, scale: 1, duration: 1.2, ease: "back.out(2.2)"
-            }, 28.4)
-            .to(flowerAura, {
-              opacity: 1, scale: 1, duration: 2.0, ease: "expo.out"
-            }, 28.6)
-            .to('.flower-svg .pollen', {
-              opacity: 1, scale: 1,
-              duration: 1.4,
-              stagger: { each: 0.08, from: "random", ease: "power2.out" },
-              ease: "back.out(2.0)"
-            }, 29.2)
+            // FASE 8: Dispersed - black hole hilang, pesan muncul
             .add(() => {
-              gsap.to(flowerWrap, {
-                y: -10, rotation: 1, duration: 4.0,
-                ease: "sine.inOut", yoyo: true, repeat: -1
-              });
-              gsap.to(flowerAura, {
-                rotation: 360, duration: 28,
-                ease: "none", repeat: -1
-              });
-              gsap.to('.flower-svg .pollen', {
-                rotation: -360, duration: 35,
-                ease: "none", repeat: -1,
-                transformOrigin: "100px 100px"
-              });
-            }, 29.8)
-            .add(() => { if (petals) petals.start(); }, 30.2)
-            .to(hbHappy, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 30.6)
-            .to(hbBirthday, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 32.2)
-            .to(hbName, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 33.8)
-            .to(hbMessage, { opacity: 1, y: 0, duration: 2.2, ease: "expo.out" }, 35.4)
-            .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 37.0)
-            .add(() => { if (fireworks) fireworks.launch(); }, 38.4)
-            .add(() => { if (fireworks) fireworks.launch(); }, 39.8)
-            .to(hbFooter, { opacity: 1, duration: 2.4, ease: "expo.out" }, 41.0)
-            .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3200); }, 42.5);
+              blackHoleState.phase = 'dispersed';
+              finaleContent.style.opacity = '1';
+              if (petals) petals.start();
+            }, 21.0)
+
+            .to(hbHappy, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 21.5)
+            .to(hbBirthday, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 23.1)
+            .to(hbName, { opacity: 1, y: 0, duration: 2.0, ease: "expo.out" }, 24.7)
+            .to(hbMessage, { opacity: 1, y: 0, duration: 2.2, ease: "expo.out" }, 26.3)
+            .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 28.0)
+            .add(() => { if (fireworks) fireworks.launch(); }, 29.4)
+            .add(() => { if (fireworks) fireworks.launch(); }, 30.8)
+            .to(hbFooter, { opacity: 1, duration: 2.4, ease: "expo.out" }, 32.0)
+            .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3200); }, 33.5);
 
           masterTimeline = tl;
         }
@@ -2169,6 +2257,11 @@
           if (masterTimeline) { masterTimeline.kill(); masterTimeline = null; }
           if (petals) petals.clear();
           if (fireworks) fireworks.clear();
+          blackHoleState.active = false;
+          blackHoleState.phase = 'idle';
+          blackHoleState.scale = 0;
+          blackHoleState.collapseProgress = 0;
+          blackHoleState.explosionProgress = 0;
           centralLight.style.opacity = '0';
           centralLight.style.transform = 'translate(-50%, -50%) scale(1)';
           centralLight.style.transition = 'none';
@@ -2176,26 +2269,6 @@
           whisperMore.style.opacity = '0'; whisperMore.style.transform = '';
           countdownScene.style.opacity = '0'; countdownText.textContent = '3';
           finaleContent.style.opacity = '0';
-          flowerWrap.style.opacity = '0'; flowerWrap.style.transform = 'none'; flowerWrap.style.filter = 'none';
-          flowerAura.style.opacity = '0'; flowerAura.style.transform = 'translate(-50%, -50%) scale(0.3)';
-
-          document.querySelectorAll('.flower-svg .stem').forEach(el => { el.style.strokeDashoffset = '400'; });
-          document.querySelectorAll('.flower-svg .leaf').forEach(el => {
-            el.style.opacity = '0'; el.style.transform = 'scale(0.2) rotate(-20deg)';
-          });
-          document.querySelectorAll('.flower-svg .bud').forEach(el => {
-            el.style.opacity = '0'; el.style.transform = 'scale(0.1)';
-          });
-          document.querySelectorAll('.flower-svg .petal').forEach(el => {
-            el.style.opacity = '0'; el.style.transform = 'scale(0.1) rotate(0deg)';
-          });
-          document.querySelectorAll('.flower-svg .flower-center').forEach(el => {
-            el.style.opacity = '0'; el.style.transform = 'scale(0.1)';
-          });
-          document.querySelectorAll('.flower-svg .pollen').forEach(el => {
-            el.style.opacity = '0'; el.style.transform = 'scale(0)';
-          });
-
           hbHappy.style.opacity = '0'; hbHappy.style.transform = 'translateY(20px)';
           hbBirthday.style.opacity = '0'; hbBirthday.style.transform = 'translateY(20px)';
           hbName.style.opacity = '0'; hbName.style.transform = 'translateY(15px)';
@@ -2212,6 +2285,7 @@
 
         window.addEventListener('beforeunload', () => {
           if (starfieldAnim) cancelAnimationFrame(starfieldAnim);
+          if (bhAnim) cancelAnimationFrame(bhAnim);
           if (petalsAnim) cancelAnimationFrame(petalsAnim);
           if (fireworksAnim) cancelAnimationFrame(fireworksAnim);
         });
@@ -2240,7 +2314,7 @@
 
       function init() {
         initOceanScene();
-        console.log('Ulang Tahun September · Taman Cahaya Bulan siap.', deviceInfo);
+        console.log('Ulang Tahun September · Black Hole Finale siap.', deviceInfo);
       }
 
       if (document.readyState === 'loading') {
