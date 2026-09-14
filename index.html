@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
+  <!-- GSAP + plugins -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+  <!-- Lenis smooth scroll -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,56 +31,77 @@
     .scene-container {
       position: fixed; inset: 0; width: 100%; height: 100%;
       opacity: 0; visibility: hidden; pointer-events: none;
-      transform: scale(1.02); filter: blur(6px);
-      transition: opacity 1.6s cubic-bezier(0.65, 0, 0.35, 1),
-                  visibility 1.6s cubic-bezier(0.65, 0, 0.35, 1),
-                  transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
-                  filter 1.6s cubic-bezier(0.65, 0, 0.35, 1);
-      overflow: hidden; z-index: 10; will-change: opacity, transform, filter;
+      transform: scale(1.04) translateZ(0);
+      filter: blur(8px);
+      transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden; z-index: 10;
+      will-change: opacity, transform, filter;
     }
     .scene-container.active {
       opacity: 1; visibility: visible; pointer-events: auto;
-      transform: scale(1); filter: blur(0px); z-index: 20;
+      transform: scale(1) translateZ(0); filter: blur(0px); z-index: 20;
     }
     .scene-container.prev {
       opacity: 0; visibility: hidden;
-      transform: scale(0.98); filter: blur(8px); z-index: 5;
+      transform: scale(0.97) translateZ(0); filter: blur(10px); z-index: 5;
     }
 
     /* ============================================================
-       MOONLIGHT VEIL TRANSITION OVERLAY (menggantikan flash putih)
+       ORGANIC MORPHING BLOB TRANSITION
        ============================================================ */
-    .moonlight-veil {
+    .blob-transition {
       position: fixed; inset: 0; z-index: 9999;
       pointer-events: none; opacity: 0;
-      background:
-        radial-gradient(circle at 50% 30%, rgba(220, 230, 245, 0.55) 0%, rgba(160, 190, 220, 0.35) 30%, rgba(80, 110, 140, 0.5) 60%, rgba(10, 17, 24, 0.95) 100%);
-      will-change: opacity, backdrop-filter;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
     }
-    .moonlight-veil::before {
-      content: ''; position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 50%, transparent 20%, rgba(10, 17, 24, 0.7) 80%);
-      mix-blend-mode: multiply;
+    .blob-transition .blob-layer {
+      position: absolute;
+      width: 150vmax; height: 150vmax;
+      border-radius: 50%;
+      transform: scale(0);
+      will-change: transform, border-radius, opacity;
+      filter: blur(40px);
     }
-    .moonlight-veil::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(180deg,
+    .blob-transition .blob-1 {
+      background: radial-gradient(circle at 40% 40%,
+        rgba(220, 235, 255, 0.9) 0%,
+        rgba(160, 190, 220, 0.7) 40%,
+        rgba(80, 110, 140, 0.5) 70%,
+        transparent 100%);
+      animation: morphBlob 8s ease-in-out infinite;
+    }
+    .blob-transition .blob-2 {
+      background: radial-gradient(circle at 60% 60%,
+        rgba(200, 220, 245, 0.85) 0%,
+        rgba(140, 170, 210, 0.6) 50%,
+        transparent 100%);
+      animation: morphBlob 10s ease-in-out infinite reverse;
+    }
+    .blob-transition .blob-3 {
+      background: radial-gradient(circle at 50% 50%,
+        rgba(240, 245, 255, 0.7) 0%,
+        rgba(180, 200, 230, 0.4) 60%,
+        transparent 100%);
+      animation: morphBlob 12s ease-in-out infinite;
+    }
+    @keyframes morphBlob {
+      0%   { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      25%  { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      50%  { border-radius: 50% 50% 40% 60% / 40% 50% 60% 50%; }
+      75%  { border-radius: 40% 60% 50% 50% / 60% 40% 50% 60%; }
+      100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+    }
+    .blob-transition .veil-overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at center,
         rgba(200, 220, 240, 0.15) 0%,
-        rgba(160, 190, 220, 0.05) 40%,
-        rgba(80, 110, 140, 0.2) 70%,
-        rgba(10, 17, 24, 0.8) 100%);
-      opacity: 0.8;
-    }
-    .moonlight-veil .sweep-light {
-      position: absolute; top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: radial-gradient(ellipse at center,
-        rgba(220, 235, 255, 0.5) 0%,
-        rgba(180, 210, 240, 0.2) 25%,
-        transparent 55%);
-      transform: scale(0.5); opacity: 0;
-      will-change: transform, opacity;
+        rgba(120, 150, 190, 0.35) 40%,
+        rgba(10, 17, 24, 0.95) 100%);
+      opacity: 0;
     }
 
     /* ============================================================
@@ -150,7 +175,7 @@
       border-radius: 60px; color: #e8e0d0;
       font-family: 'Inter', sans-serif; font-weight: 400;
       font-size: 0.9rem; letter-spacing: 0.5em; text-transform: uppercase;
-      cursor: pointer; transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative; overflow: hidden;
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
       box-shadow: 0 0 20px rgba(150, 180, 220, 0.1);
@@ -174,7 +199,7 @@
     }
 
     /* ============================================================
-       SCENE 2 — HIDDEN MOONLIT GARDEN (ENVELOPE) — ANIMASI BARU
+       SCENE 2 — HIDDEN MOONLIT GARDEN
        ============================================================ */
     #scene-garden {
       background: radial-gradient(ellipse at 50% 30%, #12232e 0%, #0a1118 50%, #050a0e 100%);
@@ -201,7 +226,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 1.5rem;
       padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
-      perspective: 1400px;
+      perspective: 1600px;
     }
     #scene-garden .top-label {
       position: absolute; top: 8%; left: 0; right: 0; text-align: center;
@@ -215,12 +240,13 @@
       position: relative; width: min(90vw, 520px); aspect-ratio: 1.6 / 1;
       margin-bottom: 2rem;
       transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .envelope {
       position: relative; width: 100%; height: 100%;
       transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.8s ease, filter 0.8s ease;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.8s ease, filter 0.8s ease;
       filter: drop-shadow(0 25px 40px rgba(0,0,0,0.6));
     }
     .envelope-scene:hover .envelope {
@@ -254,7 +280,7 @@
       z-index: 3;
       backface-visibility: hidden;
       transform-origin: top center;
-      transition: transform 1.0s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: transform 1.0s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .envelope-flap {
       position: absolute; inset: 0;
@@ -264,7 +290,7 @@
       transform-origin: top center;
       z-index: 5;
       backface-visibility: hidden;
-      transition: transform 1.4s cubic-bezier(0.68, -0.35, 0.27, 1.35), box-shadow 1.2s ease;
+      transition: transform 1.4s cubic-bezier(0.34, 1.3, 0.64, 1), box-shadow 1.2s ease;
       box-shadow: inset 0 -2px 6px rgba(0,0,0,0.1), 0 6px 16px rgba(0,0,0,0.35);
     }
     .letter {
@@ -277,7 +303,7 @@
       z-index: 2;
       transform: translateY(0) rotate(0deg);
       transform-origin: center center;
-      transition: transform 1.4s cubic-bezier(0.34, 1.2, 0.64, 1),
+      transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
                   box-shadow 1.2s ease, opacity 1.0s ease;
       opacity: 0;
       pointer-events: none;
@@ -302,8 +328,6 @@
       font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.4;
       color: #3d2e1f; text-shadow: 0 1px 2px rgba(255,255,255,0.5);
     }
-
-    /* === WAX SEAL (versi baru: pecah jadi kelopak) === */
     .wax-seal {
       position: absolute;
       top: 42%; left: 50%;
@@ -334,8 +358,6 @@
                   inset 0 -3px 8px rgba(0,0,0,0.4), inset 0 3px 8px rgba(255,255,255,0.2);
     }
     .wax-seal:focus-visible { outline: 2px solid #b8c8d8; outline-offset: 6px; }
-
-    /* === SEAL SHARDS (pecahan kelopak) === */
     .seal-shard {
       position: absolute;
       top: 42%; left: 50%;
@@ -347,11 +369,11 @@
       z-index: 11;
       transform: translate(-50%, -50%);
       box-shadow: 0 0 8px rgba(180, 100, 60, 0.5);
+      will-change: transform, opacity;
     }
     .seal-shard.petal-shape {
       border-radius: 60% 10% 60% 10%;
     }
-
     .instruction {
       position: absolute;
       bottom: 18%; left: 0; right: 0; text-align: center;
@@ -474,12 +496,12 @@
       font-size: 3.2em; float: left; line-height: 0.85;
       padding: 0.1em 0.12em 0 0; color: #8a6a3a;
     }
-    .letter-body p.reveal-init { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+    .letter-body p.reveal-init { opacity: 0; transform: translateY(24px); filter: blur(6px); }
     .letter-body p.reveal-in {
       opacity: 1; transform: translateY(0); filter: blur(0);
-      transition: opacity 1.4s cubic-bezier(0.23, 1, 0.32, 1),
-                  transform 1.4s cubic-bezier(0.23, 1, 0.32, 1),
-                  filter 1.4s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: opacity 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 1.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .letter-signature {
       margin-top: 3rem; text-align: right;
@@ -494,8 +516,8 @@
     .final-section {
       width: 100%; max-width: 640px; text-align: center; margin-top: 5rem;
       opacity: 0; transform: translateY(30px);
-      transition: opacity 1.8s cubic-bezier(0.23, 1, 0.32, 1),
-                  transform 1.8s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 1.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .final-section.visible { opacity: 1; transform: translateY(0); }
     .final-greeting {
@@ -522,7 +544,7 @@
       text-transform: uppercase; cursor: pointer;
       position: relative; overflow: hidden;
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-      transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
       outline: none; min-height: 44px; touch-action: manipulation;
     }
     .next-btn:hover {
@@ -697,19 +719,6 @@
     }
 
     /* ============================================================
-       GLOBAL TRANSITION OVERLAY (Moonlight Veil)
-       ============================================================ */
-    .global-transition {
-      position: fixed; inset: 0;
-      background: radial-gradient(circle at center,
-        rgba(200, 220, 240, 0.15) 0%,
-        rgba(120, 150, 190, 0.35) 40%,
-        rgba(10, 17, 24, 0.9) 100%);
-      z-index: 9999; pointer-events: none; opacity: 0;
-      will-change: opacity;
-    }
-
-    /* ============================================================
        TOUCH & REDUCED MOTION
        ============================================================ */
     .touch-device .btn-primary, .touch-device .continue-btn,
@@ -735,6 +744,7 @@
       .flower-wrap { opacity: 1 !important; transform: none !important; }
       .hb-line, .hb-name, .hb-message { opacity: 1 !important; transform: none !important; }
       .hb-footer { opacity: 1 !important; }
+      .blob-transition .blob-layer { animation: none !important; }
     }
     @media (prefers-reduced-data: reduce) {
       #scene-finale canvas, #scene-garden canvas.particle-canvas,
@@ -855,10 +865,13 @@
 </head>
 <body>
   <!-- ============================================================
-       MOONLIGHT VEIL TRANSITION (pengganti flash putih)
+       ORGANIC BLOB TRANSITION
        ============================================================ -->
-  <div class="moonlight-veil" id="moonlightVeil">
-    <div class="sweep-light" id="sweepLight"></div>
+  <div class="blob-transition" id="blobTransition">
+    <div class="blob-layer blob-1"></div>
+    <div class="blob-layer blob-2"></div>
+    <div class="blob-layer blob-3"></div>
+    <div class="veil-overlay" id="blobVeil"></div>
   </div>
 
   <!-- ============================================================
@@ -1002,9 +1015,6 @@
     <button class="replay-btn" id="replayBtn" aria-label="Replay the finale animation">Replay</button>
   </div>
 
-  <!-- Global transition overlay (fallback) -->
-  <div class="global-transition" id="globalTransition"></div>
-
   <script>
     (function() {
       'use strict';
@@ -1040,6 +1050,18 @@
       const gsapAvailable = typeof gsap !== 'undefined';
       const lenisAvailable = typeof Lenis !== 'undefined';
 
+      // Register GSAP plugins
+      if (gsapAvailable) {
+        if (typeof MotionPathPlugin !== 'undefined') gsap.registerPlugin(MotionPathPlugin);
+        if (typeof CustomEase !== 'undefined') {
+          gsap.registerPlugin(CustomEase);
+          // Custom "silky" ease — lebih halus dari power4.out
+          CustomEase.create("silky", "M0,0 C0.16,1 0.3,1 1,1");
+          CustomEase.create("organic", "M0,0 C0.25,0.1 0.25,1 1,1");
+          CustomEase.create("bloomEase", "M0,0 C0.34,1.56 0.64,1 1,1");
+        }
+      }
+
       function getOptimalCount(baseMobile, baseDesktop) {
         let base = deviceInfo.isMobile ? baseMobile : baseDesktop;
         if (deviceInfo.cores <= 2) base = Math.floor(base * 0.5);
@@ -1049,40 +1071,64 @@
       }
 
       // ============================================================
-      // MOONLIGHT VEIL TRANSITION (pengganti flash)
+      // ORGANIC BLOB TRANSITION
       // ============================================================
-      const moonlightVeil = document.getElementById('moonlightVeil');
-      const sweepLight = document.getElementById('sweepLight');
+      const blobTransition = document.getElementById('blobTransition');
+      const blobVeil = document.getElementById('blobVeil');
+      const blobLayers = blobTransition.querySelectorAll('.blob-layer');
 
-      function playMoonlightVeil(onComplete) {
-        // Animasi: cahaya bulan menyapu lembut dari kiri ke kanan,
-        // veil muncul perlahan, lalu hilang.
+      function playBlobTransition(onSwitch, onComplete) {
         if (prefersReducedMotion || !gsapAvailable) {
-          if (moonlightVeil) {
-            moonlightVeil.style.transition = 'opacity 0.9s ease';
-            moonlightVeil.style.opacity = '0.95';
-            setTimeout(() => {
-              if (onComplete) onComplete();
-              moonlightVeil.style.transition = 'opacity 1.3s ease';
-              moonlightVeil.style.opacity = '0';
-            }, 900);
-          } else {
+          // Simple fade fallback
+          blobVeil.style.transition = 'opacity 0.9s ease';
+          blobVeil.style.opacity = '0.95';
+          setTimeout(() => {
+            if (onSwitch) onSwitch();
             if (onComplete) onComplete();
-          }
+            blobVeil.style.transition = 'opacity 1.3s ease';
+            blobVeil.style.opacity = '0';
+          }, 900);
           return;
         }
 
-        const tl = gsap.timeline();
-        // Sweep light: cahaya bulan melintas
-        gsap.set(sweepLight, { x: '-60%', y: '-10%', scale: 0.6, opacity: 0 });
-        tl.to(sweepLight, { opacity: 1, duration: 0.5, ease: 'power2.out' })
-          .to(sweepLight, { x: '60%', scale: 1.4, duration: 1.6, ease: 'power1.inOut' }, '-=0.3')
-          .to(sweepLight, { opacity: 0, duration: 0.8, ease: 'power2.in' }, '-=0.6')
-          .to(moonlightVeil, {
-            opacity: 0.95, duration: 1.0, ease: 'power2.in',
-            onComplete: () => { if (onComplete) onComplete(); }
-          }, '-=1.0')
-          .to(moonlightVeil, { opacity: 0, duration: 1.4, ease: 'power2.out' }, '+=0.3');
+        const tl = gsap.timeline({
+          onComplete: () => {
+            if (onComplete) onComplete();
+          }
+        });
+
+        // Reset layers
+        gsap.set(blobLayers, { scale: 0, opacity: 0 });
+        gsap.set(blobVeil, { opacity: 0 });
+
+        // Blob layers scale up organically
+        tl.to(blobLayers[0], {
+          scale: 1, opacity: 1, duration: 1.4,
+          ease: "power3.inOut"
+        }, 0)
+        .to(blobLayers[1], {
+          scale: 1.05, opacity: 0.9, duration: 1.5,
+          ease: "power3.inOut"
+        }, 0.15)
+        .to(blobLayers[2], {
+          scale: 1.1, opacity: 0.8, duration: 1.6,
+          ease: "power3.inOut"
+        }, 0.3)
+        .to(blobVeil, {
+          opacity: 1, duration: 0.6, ease: "power2.in"
+        }, 0.4)
+        // Di titik ini, scene switching dilakukan
+        .add(() => {
+          if (onSwitch) onSwitch();
+        }, 0.7)
+        // Blob keluar — fade + scale sedikit turun
+        .to(blobVeil, {
+          opacity: 0, duration: 1.2, ease: "power2.out"
+        }, 1.4)
+        .to(blobLayers, {
+          scale: 0.3, opacity: 0, duration: 1.4,
+          ease: "power3.inOut", stagger: 0.08
+        }, 1.4);
       }
 
       // ============================================================
@@ -1096,7 +1142,6 @@
       };
       let currentScene = 'ocean';
       let isTransitioning = false;
-      const globalTransition = document.getElementById('globalTransition');
 
       function transitionToScene(sceneName) {
         if (isTransitioning || sceneName === currentScene) return;
@@ -1110,12 +1155,15 @@
           if (sl) sl.scrollTop = 0;
         }
 
-        function doSwitch() {
+        const doSwitch = () => {
           fromScene.classList.remove('active');
           fromScene.classList.add('prev');
           toScene.classList.add('active');
           toScene.classList.remove('prev');
           void toScene.offsetWidth;
+          currentScene = sceneName;
+
+          // Init scene setelah switch
           setTimeout(() => {
             if (sceneName === 'garden') initGardenScene();
             else if (sceneName === 'letter') {
@@ -1123,24 +1171,20 @@
               if (lenisAvailable && !prefersReducedMotion) initLenisForLetter();
             }
             else if (sceneName === 'finale') initFinaleScene();
-            setTimeout(() => { isTransitioning = false; }, 400);
-          }, 400);
+          }, 200);
+
           setTimeout(() => {
             if (fromScene.classList.contains('prev')) fromScene.classList.remove('prev');
           }, 1800);
-          currentScene = sceneName;
-        }
 
-        // Gunakan Moonlight Veil (bukan flash)
-        if (prefersReducedMotion || !gsapAvailable) {
-          playMoonlightVeil(doSwitch);
-        } else {
-          playMoonlightVeil(doSwitch);
-        }
+          setTimeout(() => { isTransitioning = false; }, 600);
+        };
+
+        playBlobTransition(doSwitch, null);
       }
 
       // ============================================================
-      // LENIS (letter scroll only)
+      // LENIS SMOOTH SCROLL (letter only)
       // ============================================================
       let lenis = null;
       function initLenisForLetter() {
@@ -1151,13 +1195,14 @@
         lenis = new Lenis({
           wrapper: letterScene,
           content: letterScene.querySelector('.page') || letterScene,
-          duration: 1.4,
+          duration: 1.6,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           smoothWheel: true,
           smoothTouch: false,
-          touchMultiplier: 1.5,
-          wheelMultiplier: 1.1,
-          autoResize: true
+          touchMultiplier: 1.6,
+          wheelMultiplier: 1.0,
+          autoResize: true,
+          lerp: 0.08
         });
         if (gsapAvailable) {
           lenis.on('scroll', () => {});
@@ -1225,17 +1270,22 @@
           oceanDate.style.opacity = '1'; oceanMainText.style.opacity = '1';
           oceanSubtitle.style.opacity = '1'; oceanBtn.style.opacity = '1'; oceanBtn.style.transform = 'scale(1)';
         } else if (gsapAvailable) {
-          const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+          const easeOut = "expo.out";
+          const tl = gsap.timeline({ defaults: { ease: easeOut } });
           gsap.set(oceanContent, { opacity: 0, y: 30 });
-          gsap.set(oceanDate, { opacity: 0, y: 10 });
-          gsap.set(oceanMainText, { opacity: 0, y: 20 });
-          gsap.set(oceanSubtitle, { opacity: 0, y: 10 });
+          gsap.set(oceanDate, { opacity: 0, y: 12 });
+          gsap.set(oceanMainText, { opacity: 0, y: 24 });
+          gsap.set(oceanSubtitle, { opacity: 0, y: 12 });
           gsap.set(oceanBtn, { opacity: 0, scale: 0.9 });
-          tl.to(oceanDate, { opacity: 1, y: 0, duration: 1.4, delay: 1.5 })
-            .to(oceanMainText, { opacity: 1, y: 0, duration: 1.8 }, '-=0.8')
-            .to(oceanSubtitle, { opacity: 1, y: 0, duration: 1.4 }, '-=1.0')
-            .to(oceanBtn, { opacity: 1, scale: 1, duration: 1.4, ease: 'back.out(1.2)' }, '-=0.8')
-            .to(oceanContent, { opacity: 1, y: 0, duration: 1.2 }, '-=1.2');
+
+          tl.to(oceanDate, { opacity: 1, y: 0, duration: 1.6, delay: 1.2 })
+            .to(oceanMainText, { opacity: 1, y: 0, duration: 2.0 }, "-=0.9")
+            .to(oceanSubtitle, { opacity: 1, y: 0, duration: 1.6 }, "-=1.1")
+            .to(oceanBtn, {
+              opacity: 1, scale: 1, duration: 1.6,
+              ease: "back.out(1.4)"
+            }, "-=0.9")
+            .to(oceanContent, { opacity: 1, y: 0, duration: 1.4 }, "-=1.4");
         } else {
           setTimeout(() => {
             oceanContent.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
@@ -1244,7 +1294,7 @@
             oceanSubtitle.style.opacity = '1';
             oceanBtn.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
             oceanBtn.style.opacity = '1'; oceanBtn.style.transform = 'scale(1)';
-          }, 1500);
+          }, 1200);
         }
 
         oceanBtn.addEventListener('click', function(e) {
@@ -1255,9 +1305,9 @@
 
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => transitionToScene('garden') });
-            tl.to(oceanBtn, { opacity: 0, scale: 0.9, duration: 0.6, ease: 'power2.in' })
-              .to(oceanContent, { opacity: 0, duration: 0.8 }, '-=0.3')
-              .to(canvas, { opacity: 0, filter: 'blur(8px)', duration: 1.6, ease: 'power2.inOut' }, '-=0.2');
+            tl.to(oceanBtn, { opacity: 0, scale: 0.9, duration: 0.7, ease: "expo.in" })
+              .to(oceanContent, { opacity: 0, y: -20, duration: 0.9, ease: "expo.in" }, "-=0.4")
+              .to(canvas, { opacity: 0, filter: 'blur(10px)', duration: 1.2, ease: "power2.inOut" }, "-=0.6");
           } else {
             oceanContent.style.transition = 'opacity 0.8s ease';
             oceanContent.style.opacity = '0';
@@ -1268,7 +1318,7 @@
       }
 
       // ============================================================
-      // SCENE 2 · HIDDEN MOONLIT GARDEN (ENVELOPE) — ANIMASI BARU
+      // SCENE 2 · HIDDEN MOONLIT GARDEN
       // ============================================================
       let gardenInitialized = false;
       function initGardenScene() {
@@ -1289,8 +1339,8 @@
         let particleAnimId = null;
         const sealShards = [];
 
-        // Buat elemen shard (kelopak pecahan) di dalam envelope
-        for (let i = 0; i < 12; i++) {
+        // Buat shard elemen
+        for (let i = 0; i < 14; i++) {
           const shard = document.createElement('div');
           shard.className = 'seal-shard';
           if (i % 3 === 0) shard.classList.add('petal-shape');
@@ -1298,7 +1348,7 @@
           sealShards.push(shard);
         }
 
-        // Fireflies / particles
+        // Fireflies particles
         if (canvas && !deviceInfo.prefersReducedData) {
           const ctx = canvas.getContext('2d');
           let w, h;
@@ -1320,7 +1370,6 @@
               gold: Math.random() < 0.35
             });
           }
-
           function animateParticles() {
             if (!ctx) return;
             ctx.clearRect(0, 0, w, h);
@@ -1348,41 +1397,66 @@
         }
 
         // ============================================================
-        // ENTRANCE ANIMASI BARU:
-        // Amplop muncul dari kabut, terangkat dari rumput,
-        // lalu sedikit goyang seperti diletakkan.
+        // ENTRANCE: amplop muncul dengan MotionPath (jalur melengkung)
         // ============================================================
         if (prefersReducedMotion) {
           topLabel.style.opacity = '1'; instruction.style.opacity = '0.6'; waxSeal.style.opacity = '1';
           envelope.style.opacity = '1'; envelope.style.transform = 'none'; envelope.style.filter = 'none';
         } else if (gsapAvailable) {
-          gsap.set(topLabel, { opacity: 0, y: -10 });
-          gsap.set(waxSeal, { opacity: 0, scale: 0.7, rotate: -15 });
-          gsap.set(envelope, {
-            opacity: 0, scale: 0.85, y: 80,
-            rotateX: 25, filter: 'blur(20px)'
-          });
+          gsap.set(topLabel, { opacity: 0, y: -12 });
+          gsap.set(waxSeal, { opacity: 0, scale: 0.6, rotate: -20 });
           gsap.set(instruction, { opacity: 0 });
+          gsap.set(envelope, {
+            opacity: 0,
+            scale: 0.7,
+            rotateX: 30,
+            filter: 'blur(24px)',
+            transformPerspective: 1200
+          });
 
-          const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-          // Amplop terangkat dari bawah + kabur
-          tl.to(envelope, {
-            opacity: 1, scale: 1, y: 0,
-            rotateX: 0, filter: 'blur(0px)',
-            duration: 2.6, ease: 'power3.out', delay: 0.4
-          })
-          // Wax seal muncul dengan sedikit rotasi
-          .to(waxSeal, {
+          const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+
+          // Amplop muncul dengan MotionPath (jalur melengkung dari bawah)
+          if (typeof MotionPathPlugin !== 'undefined') {
+            tl.to(envelope, {
+              opacity: 1,
+              scale: 1,
+              rotateX: 0,
+              filter: 'blur(0px)',
+              duration: 2.4,
+              motionPath: {
+                path: [
+                  { x: -60, y: 140 },
+                  { x: 20, y: 60 },
+                  { x: -10, y: 20 },
+                  { x: 0, y: 0 }
+                ],
+                curviness: 1.6,
+                autoRotate: false
+              },
+              ease: "power3.out"
+            }, 0.3);
+          } else {
+            // Fallback jika MotionPathPlugin gagal load
+            gsap.set(envelope, { x: -40, y: 120 });
+            tl.to(envelope, {
+              opacity: 1, scale: 1, rotateX: 0, filter: 'blur(0px)',
+              x: 0, y: 0, duration: 2.4, ease: "power3.out"
+            }, 0.3);
+          }
+
+          // Wax seal muncul dengan rotasi
+          tl.to(waxSeal, {
             opacity: 1, scale: 1, rotate: 0,
-            duration: 1.4, ease: 'back.out(1.6)'
-          }, '-=1.4')
-          // Label atas muncul
-          .to(topLabel, { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' }, '-=1.0')
-          // Instruksi muncul
-          .to(instruction, { opacity: 0.6, duration: 1.8 }, '-=0.8')
-          // Sedikit "settle" bounce
-          .to(envelope, { y: -6, duration: 0.6, ease: 'power2.out' }, '-=1.6')
-          .to(envelope, { y: 0, duration: 0.7, ease: 'power2.inOut' });
+            duration: 1.4, ease: "back.out(1.7)"
+          }, "-=1.3")
+          // Label atas
+          .to(topLabel, { opacity: 1, y: 0, duration: 1.4 }, "-=1.0")
+          // Instruksi
+          .to(instruction, { opacity: 0.6, duration: 1.8 }, "-=0.8")
+          // Settle bounce organic
+          .to(envelope, { y: -8, duration: 0.7, ease: "sine.inOut" }, "-=1.6")
+          .to(envelope, { y: 0, duration: 0.9, ease: "sine.inOut" });
         } else {
           envelope.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
           envelope.style.opacity = '1'; envelope.style.transform = 'scale(1) translateY(0)';
@@ -1396,17 +1470,13 @@
         }
 
         // ============================================================
-        // OPEN ENVELOPE — ANIMASI BARU:
-        // 1. Wax seal berdenyut + pecah menjadi kelopak (shards)
-        // 2. Flap terbuka perlahan
-        // 3. Letter muncul mengambang dengan rotasi lembut
+        // OPEN: wax seal pecah + flap terbuka + letter floating
         // ============================================================
         function openEnvelope() {
           if (isOpening || isOpened) return;
           isOpening = true;
 
-          // Sembunyikan instruksi
-          if (gsapAvailable) gsap.to(instruction, { opacity: 0, duration: 0.5 });
+          if (gsapAvailable) gsap.to(instruction, { opacity: 0, duration: 0.6, ease: "power2.in" });
 
           if (prefersReducedMotion) {
             waxSeal.style.opacity = '0';
@@ -1425,85 +1495,98 @@
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => { isOpened = true; isOpening = false; } });
 
-            // 1. Wax seal berdenyut
-            tl.to(waxSeal, { scale: 1.15, duration: 0.25, ease: 'power2.out' })
-              .to(waxSeal, { scale: 0.9, duration: 0.2, ease: 'power2.in' })
-              .to(waxSeal, { scale: 1.05, duration: 0.2, ease: 'power2.out' });
+            // 1. Wax seal berdenyut (heartbeat)
+            tl.to(waxSeal, { scale: 1.18, duration: 0.28, ease: "power2.out" })
+              .to(waxSeal, { scale: 0.92, duration: 0.22, ease: "power2.in" })
+              .to(waxSeal, { scale: 1.08, duration: 0.22, ease: "power2.out" });
 
-            // 2. Wax seal pecah jadi kelopak — shards tersebar
+            // 2. Shards pecah — hitung posisi seal relatif ke envelope
             const sealRect = waxSeal.getBoundingClientRect();
-            const envelopeRect = envelope.getBoundingClientRect();
-            const sealCenterX = sealRect.left + sealRect.width / 2 - envelopeRect.left;
-            const sealCenterY = sealRect.top + sealRect.height / 2 - envelopeRect.top;
+            const envRect = envelope.getBoundingClientRect();
+            const sealCX = sealRect.left + sealRect.width / 2 - envRect.left;
+            const sealCY = sealRect.top + sealRect.height / 2 - envRect.top;
 
             sealShards.forEach((shard, i) => {
-              const angle = (i / sealShards.length) * Math.PI * 2 + Math.random() * 0.5;
-              const distance = 40 + Math.random() * 60;
+              const angle = (i / sealShards.length) * Math.PI * 2 + Math.random() * 0.6;
+              const distance = 50 + Math.random() * 80;
               const tx = Math.cos(angle) * distance;
-              const ty = Math.sin(angle) * distance - 20;
+              const ty = Math.sin(angle) * distance - 30;
               gsap.set(shard, {
-                left: sealCenterX + 'px',
-                top: sealCenterY + 'px',
-                opacity: 0.9,
-                scale: 1
+                left: sealCX + 'px',
+                top: sealCY + 'px',
+                opacity: 0.95,
+                scale: 1,
+                x: 0, y: 0, rotation: 0
               });
               tl.to(shard, {
-                x: tx, y: ty,
-                rotation: Math.random() * 360 - 180,
-                scale: 0.3,
+                x: tx,
+                y: ty,
+                rotation: Math.random() * 540 - 270,
+                scale: 0.2,
                 opacity: 0,
-                duration: 1.4 + Math.random() * 0.6,
-                ease: 'power2.out'
-              }, '-=0.9');
+                duration: 1.6 + Math.random() * 0.8,
+                ease: "power3.out"
+              }, "-=0.9");
             });
 
-            // 3. Wax seal menghilang sambil membesar sedikit
+            // 3. Wax seal menghilang
             tl.to(waxSeal, {
-              scale: 1.3, opacity: 0, duration: 0.6, ease: 'power2.in'
-            }, '-=1.0');
+              scale: 1.4, opacity: 0, duration: 0.7, ease: "power2.in"
+            }, "-=1.1");
 
-            // 4. Flap terbuka perlahan
+            // 4. Flap terbuka dengan overshoot organik
             tl.to(envelopeFlap, {
               rotateX: -180,
               duration: 1.6,
-              ease: 'power3.inOut'
-            }, '-=0.6');
+              ease: "power3.inOut"
+            }, "-=0.5");
 
-            // 5. Letter muncul mengambang — naik dengan rotasi lembut
+            // 5. Letter mengambang naik
             tl.to(letter, {
               opacity: 1,
-              y: -55,
+              y: -60,
               rotate: -3,
-              duration: 2.0,
-              ease: 'power3.out'
-            }, '-=1.0')
-            .add(() => { letter.classList.add('revealed'); }, '-=1.2')
-            // 6. Letter sedikit bergoyang seperti tertiup angin
-            .to(letter, { y: -60, rotate: 1, duration: 1.2, ease: 'sine.inOut' }, '-=0.6')
-            .to(letter, { y: -55, rotate: -2, duration: 1.0, ease: 'sine.inOut' })
-            // 7. Tombol lanjut muncul
+              duration: 2.2,
+              ease: "expo.out"
+            }, "-=1.0")
+            .add(() => { letter.classList.add('revealed'); }, "-=1.4")
+            // 6. Continuous floating — hidup terus-menerus
+            .add(() => {
+              gsap.to(letter, {
+                y: -70,
+                rotate: 1,
+                duration: 3.4,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1
+              });
+              gsap.to(letter, {
+                rotate: -3,
+                duration: 4.2,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1
+              });
+            }, "-=0.6")
+            // 7. Continue button
             .to(continueBtn, {
-              opacity: 1, y: 0, duration: 1.3, ease: 'power2.out',
+              opacity: 1, y: 0, duration: 1.4, ease: "expo.out",
               onStart: () => { continueBtn.classList.add('visible'); }
-            }, '-=0.8')
-            .to(instruction, { opacity: 0, duration: 0.6 }, '-=1.0');
+            }, "-=1.0");
           } else {
-            // Fallback non-GSAP
+            // Fallback
             waxSeal.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             waxSeal.style.opacity = '0';
             waxSeal.style.transform = 'translate(-50%, -50%) scale(1.4)';
-
-            // Shards
             sealShards.forEach((shard, i) => {
               const angle = (i / sealShards.length) * Math.PI * 2;
               shard.style.transition = 'all 1.4s ease-out';
               shard.style.opacity = '0.9';
               setTimeout(() => {
-                shard.style.transform = `translate(calc(-50% + ${Math.cos(angle) * 60}px), calc(-50% + ${Math.sin(angle) * 60}px)) rotate(${Math.random() * 360}deg) scale(0.3)`;
+                shard.style.transform = `translate(calc(-50% + ${Math.cos(angle) * 70}px), calc(-50% + ${Math.sin(angle) * 70}px)) rotate(${Math.random() * 360}deg) scale(0.3)`;
                 shard.style.opacity = '0';
               }, 100);
             });
-
             envelopeFlap.style.transition = 'transform 1.5s ease-in-out';
             envelopeFlap.style.transform = 'rotateX(-180deg)';
             setTimeout(() => {
@@ -1529,13 +1612,16 @@
           if (prefersReducedMotion) { transitionToScene('letter'); return; }
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => transitionToScene('letter') });
-            tl.to(continueBtn, { opacity: 0, y: -10, duration: 0.8, ease: 'power2.in' })
+            tl.to(continueBtn, { opacity: 0, y: -10, duration: 0.7, ease: "expo.in" })
               .to(letter, {
-                boxShadow: '0 20px 80px rgba(220, 180, 120, 0.5), 0 0 120px rgba(220, 180, 120, 0.3)',
-                duration: 1.4, ease: 'power2.in'
-              }, '-=0.5')
-              .to(letter, { scale: 1.4, y: -20, duration: 2.0, ease: 'power2.in' }, '-=1.2')
-              .to(envelopeScene, { opacity: 0, filter: 'blur(10px)', duration: 1.0 }, '-=1.0');
+                boxShadow: '0 20px 80px rgba(220, 180, 120, 0.6), 0 0 120px rgba(220, 180, 120, 0.4)',
+                duration: 1.4, ease: "power2.in"
+              }, "-=0.4")
+              .to(letter, { scale: 1.5, y: -30, duration: 1.8, ease: "power3.in" }, "-=1.2")
+              .to(envelopeScene, {
+                opacity: 0, filter: 'blur(12px)',
+                duration: 1.0, ease: "power2.in"
+              }, "-=1.0");
           } else {
             continueBtn.style.transition = 'opacity 0.6s ease'; continueBtn.style.opacity = '0';
             letter.style.transition = 'transform 1.2s ease';
@@ -1621,11 +1707,14 @@
           letterFinalSection.classList.add('visible');
           scrollHint.classList.add('visible');
         } else if (gsapAvailable) {
-          const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-          tl.to(letterCard, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 2.4, ease: 'power3.out', delay: 0.5 });
-          tl.add(() => { revealLetterParagraphs(); }, '-=1.0');
-          tl.add(() => { scrollHint.classList.add('visible'); }, '-=0.6');
-          tl.add(() => { letterFinalSection.classList.add('visible'); }, '+=3.0');
+          const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+          tl.to(letterCard, {
+            opacity: 1, y: 0, filter: 'blur(0px)',
+            duration: 2.4, delay: 0.4
+          })
+          .add(() => { revealLetterParagraphs(); }, "-=1.0")
+          .add(() => { scrollHint.classList.add('visible'); }, "-=0.6")
+          .add(() => { letterFinalSection.classList.add('visible'); }, "+=2.8");
         } else {
           setTimeout(() => {
             letterCard.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
@@ -1638,7 +1727,25 @@
         function revealLetterParagraphs() {
           const ps = letterBody.querySelectorAll('p');
           if (prefersReducedMotion) { ps.forEach(p => { p.classList.remove('reveal-init'); p.classList.add('reveal-in'); }); return; }
-          if ('IntersectionObserver' in window) {
+
+          if (gsapAvailable) {
+            // Stagger reveal per paragraph dengan delay
+            gsap.to(ps, {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              duration: 1.8,
+              stagger: {
+                each: 0.18,
+                from: "start",
+                ease: "power2.inOut"
+              },
+              ease: "expo.out",
+              onStart: () => {
+                ps.forEach(p => p.classList.remove('reveal-init'));
+              }
+            });
+          } else if ('IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries) => {
               entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1669,9 +1776,15 @@
           if (prefersReducedMotion) { transitionToScene('finale'); return; }
           if (gsapAvailable) {
             const tl = gsap.timeline({ onComplete: () => transitionToScene('finale') });
-            tl.to(letterNextBtn, { opacity: 0, y: -10, duration: 0.8, ease: 'power2.in' })
-              .to(letterCard, { boxShadow: '0 30px 120px rgba(220, 180, 120, 0.5)', duration: 1.6, ease: 'power2.in' }, '-=0.4')
-              .to([letterCard, letterFinalSection], { opacity: 0.3, duration: 1.4, ease: 'power2.in' }, '-=1.4');
+            tl.to(letterNextBtn, { opacity: 0, y: -10, duration: 0.7, ease: "expo.in" })
+              .to(letterCard, {
+                boxShadow: '0 30px 120px rgba(220, 180, 120, 0.6)',
+                duration: 1.6, ease: "power2.in"
+              }, "-=0.4")
+              .to([letterCard, letterFinalSection], {
+                opacity: 0.2, filter: 'blur(4px)',
+                duration: 1.4, ease: "power2.in"
+              }, "-=1.4");
           } else {
             letterNextBtn.style.transition = 'opacity 0.6s ease'; letterNextBtn.style.opacity = '0';
             letterCard.style.transition = 'opacity 1.2s ease'; letterCard.style.opacity = '0.3';
@@ -1748,7 +1861,7 @@
               let drawX = s.x, drawY = s.y, drawSize = s.size, drawOpacity = s.opacity;
               if (burstMode) {
                 const dx = s.x - cx, dy = s.y - cy, dist = Math.sqrt(dx*dx + dy*dy) || 1;
-                const push = burstProgress * 300;
+                const push = burstProgress * 350;
                 drawX = cx + (dx / dist) * (dist + push);
                 drawY = cy + (dy / dist) * (dist + push);
                 drawOpacity = s.opacity * (0.3 + 0.7 * Math.sin(s.pulse));
@@ -1808,7 +1921,7 @@
             if (!ctx) return;
             ctx.clearRect(0, 0, w, h);
             if (petalsActive) {
-              if (petalArr.length < 25 && Math.random() < 0.02) spawnPetal();
+              if (petalArr.length < 28 && Math.random() < 0.025) spawnPetal();
               for (let i = petalArr.length - 1; i >= 0; i--) {
                 const p = petalArr[i];
                 p.sway += p.swaySpeed; p.y += p.speedY;
@@ -1828,7 +1941,7 @@
           petals = {
             start: () => {
               petalsActive = true;
-              for (let i = 0; i < 15; i++) { spawnPetal(); petalArr[i].y = Math.random() * h; }
+              for (let i = 0; i < 18; i++) { spawnPetal(); petalArr[i].y = Math.random() * h; }
             },
             clear: () => { petalArr.length = 0; }
           };
@@ -1880,7 +1993,7 @@
             start: () => { fwActive = true; },
             clear: () => { fwParticles.length = 0; },
             launch: () => {
-              createBurst(w * (0.2 + Math.random() * 0.6), h * (0.15 + Math.random() * 0.35), deviceInfo.isMobile ? 20 : 40);
+              createBurst(w * (0.2 + Math.random() * 0.6), h * (0.15 + Math.random() * 0.35), deviceInfo.isMobile ? 22 : 45);
             }
           };
         }
@@ -1940,53 +2053,137 @@
             return;
           }
 
-          const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+          // ============================================================
+          // MAIN GSAP TIMELINE — dengan position parameter yang presisi
+          // ============================================================
+          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
           tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.4 }, 0)
             .add(() => { if (starfield) starfield.burst(2800); }, 0.6)
-            .to(whisperWait, { opacity: 1, duration: 1.6 }, 3.0)
-            .to(whisperWait, { opacity: 0, duration: 1.4 }, 5.4)
-            .to(whisperMore, { opacity: 1, duration: 1.8 }, 7.2)
-            .to(whisperMore, { opacity: 0, duration: 1.4 }, 10.4)
-            .to(countdownScene, { opacity: 1, duration: 0.8 }, 11.8)
-            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)' },
-                    { scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out' }, 11.8)
+
+            // Whisper 1
+            .to(whisperWait, { opacity: 1, duration: 1.6, ease: "expo.out" }, 3.0)
+            .to(whisperWait, { opacity: 0, y: -20, duration: 1.4, ease: "expo.in" }, 5.4)
+
+            // Whisper 2
+            .to(whisperMore, { opacity: 1, y: 0, duration: 1.8, ease: "expo.out" }, 7.2)
+            .to(whisperMore, { opacity: 0, y: -20, duration: 1.4, ease: "expo.in" }, 10.4)
+
+            // Countdown 3
+            .to(countdownScene, { opacity: 1, duration: 0.8, ease: "power2.out" }, 11.8)
+            .fromTo(countdownText,
+              { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
+              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.2, ease: "expo.out" }, 11.8)
             .to(countdownText, {
-              scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in',
+              scale: 1.5, filter: 'blur(20px)', opacity: 0,
+              duration: 1.0, ease: "power2.in",
               onStart: () => { countdownText.textContent = '2'; }
             }, 13.2)
-            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 },
-                    { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 14.1)
+
+            // Countdown 2
+            .fromTo(countdownText,
+              { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
+              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.2, ease: "expo.out" }, 14.2)
             .to(countdownText, {
-              scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in',
+              scale: 1.5, filter: 'blur(20px)', opacity: 0,
+              duration: 1.0, ease: "power2.in",
               onStart: () => { countdownText.textContent = '1'; }
-            }, 15.5)
-            .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 },
-                    { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 16.4)
-            .to(countdownText, { scale: 1.6, filter: 'blur(20px)', opacity: 0, duration: 1.0, ease: 'power2.in' }, 17.8)
-            .to(countdownScene, { opacity: 0, duration: 0.6 }, 18.4)
-            .to(centralLight, { scale: 80, opacity: 1, duration: 1.4, ease: 'power3.in' }, 18.4)
-            .to(flashOverlay, { opacity: 0.9, duration: 0.8 }, 18.9)
-            .to(flashOverlay, { opacity: 0, duration: 1.4, ease: 'power2.out' }, 19.7)
-            .add(() => { finaleContent.style.opacity = '1'; }, 19.8)
-            .to(flowerWrap, { opacity: 1, scale: 1, duration: 2.4, ease: 'power3.out' }, 20.2)
-            .to('.flower-svg .stem', { strokeDashoffset: 0, duration: 2.2, ease: 'power2.out' }, 20.2)
-            .to('.flower-svg .leaf', { opacity: 1, scale: 1, duration: 1.4, stagger: 0.4, ease: 'back.out(1.4)' }, 21.0)
-            .to('.flower-svg .petal', { opacity: 0.95, scale: 1, duration: 1.6, stagger: 0.1, ease: 'back.out(1.2)' }, 21.8)
-            .to('.flower-svg .center', { opacity: 1, scale: 1, duration: 1.2, ease: 'back.out(1.8)' }, 23.0)
-            .add(() => { if (petals) petals.start(); }, 23.4)
-            .to(hbHappy, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, 25.5)
-            .to(hbBirthday, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, 27.0)
-            .to(hbName, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, 28.6)
-            .to(hbMessage, { opacity: 1, y: 0, duration: 2.0, ease: 'power2.out' }, 30.2)
-            .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 31.8)
-            .add(() => { if (fireworks) fireworks.launch(); }, 33.2)
-            .add(() => { if (fireworks) fireworks.launch(); }, 34.5)
+            }, 15.6)
+
+            // Countdown 1
+            .fromTo(countdownText,
+              { scale: 0.5, filter: 'blur(16px)', opacity: 0 },
+              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.2, ease: "expo.out" }, 16.6)
+            .to(countdownText, {
+              scale: 1.7, filter: 'blur(24px)', opacity: 0,
+              duration: 1.1, ease: "power2.in"
+            }, 18.0)
+
+            // Flash + light burst
+            .to(countdownScene, { opacity: 0, duration: 0.5, ease: "power2.in" }, 18.5)
+            .to(centralLight, { scale: 90, opacity: 1, duration: 1.5, ease: "power3.in" }, 18.5)
+            .to(flashOverlay, { opacity: 0.95, duration: 0.7, ease: "power2.in" }, 19.0)
+            .to(flashOverlay, { opacity: 0, duration: 1.6, ease: "expo.out" }, 19.8)
+
+            // Finale content appear
+            .add(() => { finaleContent.style.opacity = '1'; }, 19.9)
+
+            // Flower bloom — STAGGER RADIAL dari center
             .to(flowerWrap, {
-              filter: 'drop-shadow(0 0 60px rgba(200, 220, 240, 0.5)) drop-shadow(0 0 120px rgba(180, 200, 230, 0.3))',
-              duration: 2.4, ease: 'power2.inOut'
-            }, 35.5)
-            .to(hbFooter, { opacity: 1, duration: 2.2, ease: 'power2.out' }, 36.5)
-            .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3500); }, 38.5);
+              opacity: 1, scale: 1,
+              duration: 2.4, ease: "expo.out"
+            }, 20.3)
+            .to('.flower-svg .stem', {
+              strokeDashoffset: 0,
+              duration: 2.4,
+              ease: "power3.inOut"
+            }, 20.3)
+            .to('.flower-svg .leaf', {
+              opacity: 1, scale: 1,
+              duration: 1.6,
+              stagger: {
+                each: 0.5,
+                from: "start",
+                ease: "power2.inOut"
+              },
+              ease: "back.out(1.6)"
+            }, 21.2)
+            .to('.flower-svg .petal', {
+              opacity: 0.95, scale: 1,
+              duration: 1.8,
+              stagger: {
+                each: 0.14,
+                from: "center",
+                ease: "power2.inOut"
+              },
+              ease: "back.out(1.5)"
+            }, 22.0)
+            .to('.flower-svg .center', {
+              opacity: 1, scale: 1,
+              duration: 1.4,
+              ease: "back.out(2.0)"
+            }, 23.4)
+
+            // Petals start
+            .add(() => { if (petals) petals.start(); }, 23.8)
+
+            // Text reveals — sequential
+            .to(hbHappy, {
+              opacity: 1, y: 0,
+              duration: 2.0, ease: "expo.out"
+            }, 25.8)
+            .to(hbBirthday, {
+              opacity: 1, y: 0,
+              duration: 2.0, ease: "expo.out"
+            }, 27.4)
+            .to(hbName, {
+              opacity: 1, y: 0,
+              duration: 2.0, ease: "expo.out"
+            }, 29.0)
+            .to(hbMessage, {
+              opacity: 1, y: 0,
+              duration: 2.2, ease: "expo.out"
+            }, 30.6)
+
+            // Fireworks launch
+            .add(() => { if (fireworks) { fireworks.start(); fireworks.launch(); } }, 32.2)
+            .add(() => { if (fireworks) fireworks.launch(); }, 33.6)
+            .add(() => { if (fireworks) fireworks.launch(); }, 35.0)
+
+            // Flower glow
+            .to(flowerWrap, {
+              filter: 'drop-shadow(0 0 70px rgba(200, 220, 240, 0.6)) drop-shadow(0 0 140px rgba(180, 200, 230, 0.4))',
+              duration: 2.6, ease: "power2.inOut"
+            }, 36.0)
+
+            // Footer
+            .to(hbFooter, {
+              opacity: 1, duration: 2.4, ease: "expo.out"
+            }, 37.2)
+
+            // Replay button
+            .add(() => { setTimeout(() => replayBtn.classList.add('visible'), 3200); }, 39.0);
+
           masterTimeline = tl;
         }
 
@@ -1998,7 +2195,8 @@
           centralLight.style.opacity = '0';
           centralLight.style.transform = 'translate(-50%, -50%) scale(1)';
           centralLight.style.transition = 'none';
-          whisperWait.style.opacity = '0'; whisperMore.style.opacity = '0';
+          whisperWait.style.opacity = '0'; whisperWait.style.transform = '';
+          whisperMore.style.opacity = '0'; whisperMore.style.transform = '';
           countdownScene.style.opacity = '0'; countdownText.textContent = '3';
           finaleContent.style.opacity = '0';
           flowerWrap.style.opacity = '0'; flowerWrap.style.transform = 'scale(0.6)'; flowerWrap.style.filter = 'none';
@@ -2056,7 +2254,7 @@
       // ============================================================
       function init() {
         initOceanScene();
-        console.log('September Birthday · Moonlit Garden ready.', deviceInfo);
+        console.log('September Birthday · Moonlit Garden (Pro Animation) ready.', deviceInfo);
       }
 
       if (document.readyState === 'loading') {
