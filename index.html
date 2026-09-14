@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>September Birthday · A Cosmic Journey</title>
 
     <!-- Google Fonts -->
@@ -13,6 +13,9 @@
     <!-- GSAP + ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -30,12 +33,31 @@
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
             background: #000;
             color: #f0e6d8;
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+
+        /* ============================================================
+           HIDDEN SCROLLBAR (global)
+           ============================================================ */
+        ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: transparent;
+        }
+
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
 
         /* ============================================================
@@ -49,21 +71,32 @@
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transition: opacity 1.2s ease, visibility 1.2s ease;
+            transform: scale(1.02);
+            filter: blur(6px);
+            transition:
+                opacity 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                visibility 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                transform 1.6s cubic-bezier(0.65, 0, 0.35, 1),
+                filter 1.6s cubic-bezier(0.65, 0, 0.35, 1);
             overflow: hidden;
             z-index: 10;
+            will-change: opacity, transform, filter;
         }
 
         .scene-container.active {
             opacity: 1;
             visibility: visible;
             pointer-events: auto;
+            transform: scale(1);
+            filter: blur(0px);
             z-index: 20;
         }
 
         .scene-container.prev {
             opacity: 0;
             visibility: hidden;
+            transform: scale(0.98);
+            filter: blur(8px);
             z-index: 5;
         }
 
@@ -151,7 +184,6 @@
             opacity: 0;
         }
 
-        /* Shared button style */
         .btn-primary {
             pointer-events: auto;
             margin-top: 1.5rem;
@@ -166,7 +198,7 @@
             letter-spacing: 0.5em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(4px);
@@ -175,7 +207,8 @@
             opacity: 0;
             transform: scale(0.95);
             outline: none;
-            will-change: transform, opacity;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
         .btn-primary:focus-visible {
@@ -216,7 +249,6 @@
             }
         }
 
-        /* Fallback stars */
         #scene-gateway .fallback-stars {
             position: absolute;
             inset: 0;
@@ -301,7 +333,7 @@
             aspect-ratio: 1.6 / 1;
             margin-bottom: 2rem;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         #scene-envelope .envelope {
@@ -309,7 +341,7 @@
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease;
+            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.8s ease, filter 0.8s ease;
             filter: drop-shadow(0 30px 50px rgba(0,0,0,0.7));
         }
 
@@ -362,7 +394,7 @@
             backface-visibility: hidden;
             transform-style: preserve-3d;
             transform-origin: top center;
-            transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 1.0s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         #scene-envelope .envelope-flap {
@@ -375,7 +407,7 @@
             z-index: 5;
             backface-visibility: hidden;
             transform-style: preserve-3d;
-            transition: transform 0.9s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.9s ease;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 1.2s ease;
             box-shadow:
                 inset 0 -2px 6px rgba(0,0,0,0.1),
                 0 6px 16px rgba(0,0,0,0.35);
@@ -395,7 +427,7 @@
             z-index: 2;
             transform: translateY(0) rotate(0deg);
             transform-origin: center center;
-            transition: transform 0.9s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.9s ease, opacity 0.8s ease;
+            transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 1.2s ease, opacity 1.0s ease;
             opacity: 0;
             pointer-events: none;
             overflow: hidden;
@@ -410,7 +442,7 @@
         #scene-envelope .letter-content {
             opacity: 0;
             transform: translateY(10px);
-            transition: opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s;
+            transition: opacity 1.0s ease 0.4s, transform 1.0s ease 0.4s;
             max-width: 90%;
         }
 
@@ -451,7 +483,7 @@
                 0 4px 12px rgba(0,0,0,0.5),
                 inset 0 -3px 8px rgba(0,0,0,0.4),
                 inset 0 3px 8px rgba(255,255,255,0.2);
-            transition: transform 0.3s ease, box-shadow 0.4s ease, opacity 0.6s ease;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease, opacity 0.8s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -462,7 +494,9 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.5);
             border: 1px solid rgba(180, 130, 80, 0.3);
             clip-path: polygon(2% 5%, 10% 0%, 20% 3%, 30% 0%, 40% 2%, 50% 0%, 60% 2%, 70% 0%, 80% 3%, 90% 0%, 98% 5%, 100% 15%, 99% 30%, 100% 45%, 99% 60%, 100% 75%, 98% 90%, 90% 98%, 80% 100%, 70% 98%, 60% 100%, 50% 98%, 40% 100%, 30% 98%, 20% 100%, 10% 98%, 2% 90%, 0% 75%, 1% 60%, 0% 45%, 1% 30%, 0% 15%);
-            will-change: transform, opacity;
+            min-width: 44px;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
         #scene-envelope .wax-seal:hover {
@@ -522,11 +556,13 @@
             z-index: 30;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.8s ease, transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+            transition: opacity 1.0s ease, transform 0.6s ease, box-shadow 0.6s ease, background 0.6s ease;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             white-space: nowrap;
             overflow: hidden;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
         #scene-envelope .continue-btn.visible {
@@ -548,16 +584,20 @@
         }
 
         /* ============================================================
-           SCENE 3 · LETTER (PESAN)
+           SCENE 3 · LETTER (PESAN) — SCROLL ENABLED
            ============================================================ */
         #scene-letter {
             background:
                 radial-gradient(ellipse at 50% 20%, rgba(60, 40, 30, 0.5) 0%, transparent 60%),
                 radial-gradient(ellipse at 80% 80%, rgba(50, 30, 20, 0.3) 0%, transparent 50%),
                 linear-gradient(180deg, #0a0604 0%, #0f0906 50%, #0a0604 100%);
-            overflow-y: auto;
+            overflow-y: auto !important;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            position: fixed;
+            inset: 0;
+            overscroll-behavior: contain;
         }
 
         #scene-letter::before {
@@ -597,9 +637,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 4rem 1.5rem 6rem;
+            padding: 4rem 1.5rem 8rem;
             padding-top: max(4rem, env(safe-area-inset-top));
-            padding-bottom: max(6rem, env(safe-area-inset-bottom));
+            padding-bottom: max(8rem, env(safe-area-inset-bottom));
         }
 
         #scene-letter .letter-card {
@@ -700,7 +740,7 @@
             opacity: 1;
             transform: translateY(0);
             filter: blur(0);
-            transition: opacity 1s ease, transform 1s ease, filter 1s ease;
+            transition: opacity 1.4s cubic-bezier(0.23, 1, 0.32, 1), transform 1.4s cubic-bezier(0.23, 1, 0.32, 1), filter 1.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         #scene-letter .letter-signature {
@@ -730,7 +770,7 @@
             margin-top: 5rem;
             opacity: 0;
             transform: translateY(30px);
-            transition: opacity 1.5s ease, transform 1.5s ease;
+            transition: opacity 1.8s cubic-bezier(0.23, 1, 0.32, 1), transform 1.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         #scene-letter .final-section.visible {
@@ -784,8 +824,10 @@
             overflow: hidden;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
             outline: none;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
         #scene-letter .next-btn:hover {
@@ -807,7 +849,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 240, 200, 0.15), transparent);
-            transition: left 0.8s ease;
+            transition: left 0.9s ease;
             pointer-events: none;
         }
 
@@ -828,7 +870,7 @@
             text-transform: uppercase;
             color: rgba(220, 190, 150, 0.4);
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 1.2s ease;
             pointer-events: none;
             display: flex;
             flex-direction: column;
@@ -853,7 +895,7 @@
         }
 
         /* ============================================================
-           SCENE 4 · FINALE (ANIMASI)
+           SCENE 4 · FINALE
            ============================================================ */
         #scene-finale {
             background: radial-gradient(ellipse at 50% 50%, #0a0812 0%, #030307 70%, #000 100%);
@@ -1002,28 +1044,6 @@
             opacity: 0;
         }
 
-        #scene-finale .photo-card {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9) rotate(0deg);
-            max-width: min(70vw, 420px);
-            max-height: 55vh;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-            opacity: 0;
-            will-change: transform, opacity, filter;
-        }
-
-        #scene-finale .photo-card img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
         #scene-finale .hb-line {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 300;
@@ -1114,8 +1134,10 @@
             pointer-events: none;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            transition: opacity 0.8s ease, transform 0.5s ease, box-shadow 0.5s ease;
+            transition: opacity 1.0s ease, transform 0.7s ease, box-shadow 0.7s ease;
             outline: none;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
         #scene-finale .replay-btn.visible {
@@ -1140,8 +1162,8 @@
             position: absolute;
             top: 1.5rem;
             right: 1.5rem;
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 1px solid rgba(220, 190, 140, 0.3);
             background: rgba(10, 8, 12, 0.5);
@@ -1153,6 +1175,7 @@
             align-items: center;
             justify-content: center;
             outline: none;
+            touch-action: manipulation;
         }
 
         #scene-finale .audio-toggle.visible {
@@ -1188,6 +1211,43 @@
         }
 
         /* ============================================================
+           TOUCH DEVICE OPTIMIZATION
+           ============================================================ */
+        .touch-device .btn-primary,
+        .touch-device .continue-btn,
+        .touch-device .next-btn,
+        .touch-device .replay-btn,
+        .touch-device .wax-seal {
+            min-height: 44px;
+            min-width: 44px;
+            touch-action: manipulation;
+        }
+
+        .touch-device .btn-primary:hover,
+        .touch-device .continue-btn:hover,
+        .touch-device .next-btn:hover,
+        .touch-device .replay-btn:hover {
+            transform: none;
+        }
+
+        .touch-device .btn-primary:active,
+        .touch-device .continue-btn:active,
+        .touch-device .next-btn:active,
+        .touch-device .replay-btn:active {
+            transform: scale(0.96);
+            transition: transform 0.1s ease;
+        }
+
+        .touch-device .envelope-scene:hover .envelope {
+            transform: none;
+            filter: drop-shadow(0 30px 50px rgba(0,0,0,0.7));
+        }
+
+        .touch-device .wax-seal:hover {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* ============================================================
            REDUCED MOTION
            ============================================================ */
         @media (prefers-reduced-motion: reduce) {
@@ -1196,6 +1256,7 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
+            .scene-container { transition-duration: 0.3s !important; }
             #scene-gateway .content,
             #scene-gateway .date,
             #scene-gateway .main-text,
@@ -1221,18 +1282,153 @@
         }
 
         /* ============================================================
-           RESPONSIVE
+           REDUCED DATA (save bandwidth)
            ============================================================ */
+        @media (prefers-reduced-data: reduce) {
+            #scene-finale #starfield-canvas,
+            #scene-finale #petals-canvas,
+            #scene-finale #fireworks-canvas {
+                display: none;
+            }
+            #scene-envelope #particle-canvas,
+            #scene-letter #dust-canvas {
+                display: none;
+            }
+        }
+
+        /* ============================================================
+           RESPONSIVE — ENHANCED MULTI-DEVICE
+           ============================================================ */
+
+        /* ---- Large Desktop (ultra-wide) ---- */
+        @media (min-width: 1600px) {
+            #scene-gateway .content { max-width: 900px; }
+            #scene-letter .page { max-width: 1400px; margin: 0 auto; }
+        }
+
+        /* ---- Small Laptop ---- */
+        @media (max-width: 1200px) and (min-width: 993px) {
+            #scene-envelope .envelope-scene { width: min(85vw, 500px); }
+        }
+
+        /* ---- Tablet (portrait & landscape) ---- */
+        @media (max-width: 992px) and (min-width: 769px) {
+            #scene-gateway .main-text { font-size: clamp(2.2rem, 7vw, 4rem); }
+            #scene-envelope .envelope-scene { width: min(80vw, 460px); }
+            #scene-envelope .top-label { top: 6%; }
+            #scene-letter .letter-card { max-width: 600px; }
+            #scene-finale .flower-wrap { width: clamp(130px, 22vw, 220px); height: clamp(130px, 22vw, 220px); }
+            #scene-finale .hb-line { font-size: clamp(2.5rem, 9vw, 5rem); }
+        }
+
+        /* ---- Large Mobile / Small Tablet ---- */
+        @media (max-width: 768px) {
+            #scene-gateway .content { gap: 1.4rem; padding: 0 1rem; }
+            #scene-gateway .main-text { font-size: clamp(1.8rem, 8vw, 3rem); }
+            #scene-envelope .envelope-scene { width: min(88vw, 420px); aspect-ratio: 1.55/1; }
+            #scene-envelope .top-label { font-size: clamp(0.55rem, 2vw, 0.7rem); letter-spacing: 0.45em; }
+            #scene-envelope .instruction { font-size: clamp(0.55rem, 2vw, 0.7rem); bottom: 20%; }
+            #scene-letter .letter-card { padding: 2rem 1.5rem; }
+            #scene-letter .letter-body { font-size: clamp(1rem, 3.5vw, 1.15rem); }
+            #scene-letter .final-greeting { font-size: clamp(2rem, 8vw, 3rem); }
+            #scene-finale .hb-line { font-size: clamp(2.2rem, 11vw, 4.5rem); }
+            #scene-finale .hb-name { font-size: clamp(1.5rem, 6vw, 2.5rem); }
+            #scene-finale .hb-message { font-size: clamp(0.9rem, 3vw, 1.1rem); max-width: 90%; }
+        }
+
+        /* ---- Standard Mobile ---- */
         @media (max-width: 480px) {
-            #scene-envelope .envelope-scene { width: 95vw; aspect-ratio: 1.5/1; }
-            #scene-envelope .wax-seal { width: 48px; height: 48px; font-size: 1.1rem; }
-            #scene-envelope .continue-btn { bottom: 8%; padding: 0.8rem 2rem; letter-spacing: 0.3em; }
-            #scene-envelope .instruction { bottom: 22%; }
-            #scene-letter .page { padding: 3rem 1rem 5rem; }
-            #scene-letter .letter-card { padding: 2rem 1.25rem; }
-            #scene-finale .flower-wrap { width: 130px; height: 130px; margin-bottom: 1.2rem; }
-            #scene-finale .hb-message { margin-top: 1.4rem; font-size: 0.95rem; }
-            #scene-finale .replay-btn { bottom: 2rem; padding: 0.7rem 1.8rem; letter-spacing: 0.3em; }
+            #scene-gateway .main-text { font-size: clamp(1.7rem, 9vw, 2.6rem); }
+            #scene-gateway .btn-primary { padding: 0.85rem 2.4rem; font-size: 0.78rem; letter-spacing: 0.4em; }
+            #scene-envelope .envelope-scene { width: 92vw; }
+            #scene-envelope .wax-seal { width: 52px; height: 52px; font-size: 1.15rem; }
+            #scene-envelope .continue-btn { padding: 0.75rem 1.8rem; font-size: 0.68rem; letter-spacing: 0.28em; }
+            #scene-letter .page { padding: 2.5rem 1rem 7rem; }
+            #scene-letter .letter-card { padding: 1.75rem 1.15rem; border-radius: 4px; }
+            #scene-letter .letter-body p:first-child::first-letter { font-size: 2.4em; }
+            #scene-letter .letter-signature { font-size: 0.95rem; }
+            #scene-letter .signature-name { font-size: 1.6rem; }
+            #scene-letter .next-btn { padding: 0.8rem 1.8rem; font-size: 0.62rem; letter-spacing: 0.3em; }
+            #scene-finale .flower-wrap { width: 110px; height: 110px; margin-bottom: 1rem; }
+            #scene-finale .hb-line { font-size: clamp(1.8rem, 12vw, 3rem); letter-spacing: 0.04em; }
+            #scene-finale .hb-name { font-size: clamp(1.3rem, 7vw, 2rem); margin-top: 0.5rem; }
+            #scene-finale .hb-message { font-size: 0.88rem; margin-top: 1rem; line-height: 1.55; }
+            #scene-finale .hb-footer { bottom: 12%; }
+            #scene-finale .replay-btn { padding: 0.65rem 1.6rem; font-size: 0.6rem; letter-spacing: 0.28em; }
+            #scene-finale .audio-toggle { width: 40px; height: 40px; top: 1rem; right: 1rem; }
+        }
+
+        /* ---- Small Mobile (iPhone SE, older Android) ---- */
+        @media (max-width: 375px) {
+            #scene-gateway .main-text { font-size: 1.55rem; }
+            #scene-gateway .date { font-size: 0.75rem; letter-spacing: 0.3em; }
+            #scene-gateway .subtitle { font-size: 0.68rem; letter-spacing: 0.2em; }
+            #scene-gateway .btn-primary { padding: 0.75rem 2rem; font-size: 0.7rem; letter-spacing: 0.35em; }
+            #scene-envelope .envelope-scene { width: 94vw; }
+            #scene-envelope .top-label { font-size: 0.55rem; letter-spacing: 0.4em; }
+            #scene-envelope .continue-btn { padding: 0.7rem 1.5rem; font-size: 0.62rem; letter-spacing: 0.24em; }
+            #scene-envelope .wax-seal { width: 46px; height: 46px; font-size: 1rem; }
+            #scene-letter .letter-body { font-size: 0.98rem; line-height: 1.7; }
+            #scene-letter .letter-title { font-size: 1.7rem; }
+            #scene-letter .letter-date { font-size: 0.55rem; letter-spacing: 0.35em; }
+            #scene-finale .hb-line { font-size: 1.6rem; }
+            #scene-finale .hb-name { font-size: 1.2rem; }
+            #scene-finale .hb-message { font-size: 0.82rem; }
+            #scene-finale .replay-btn { padding: 0.6rem 1.4rem; font-size: 0.55rem; }
+        }
+
+        /* ---- Extra Small (Galaxy Fold outer, very old phones) ---- */
+        @media (max-width: 320px) {
+            #scene-gateway .main-text { font-size: 1.35rem; }
+            #scene-gateway .btn-primary { padding: 0.7rem 1.6rem; font-size: 0.62rem; letter-spacing: 0.3em; }
+            #scene-envelope .envelope-scene { width: 96vw; }
+            #scene-envelope .continue-btn { padding: 0.65rem 1.2rem; font-size: 0.58rem; }
+            #scene-letter .letter-card { padding: 1.5rem 1rem; }
+            #scene-letter .letter-body { font-size: 0.92rem; }
+            #scene-finale .flower-wrap { width: 90px; height: 90px; }
+            #scene-finale .hb-line { font-size: 1.4rem; }
+            #scene-finale .hb-message { font-size: 0.78rem; }
+        }
+
+        /* ---- Landscape Mobile (height < 500px) ---- */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #scene-gateway .overlay { padding: 1rem; }
+            #scene-gateway .content { gap: 0.8rem; }
+            #scene-gateway .main-text { font-size: clamp(1.4rem, 5vw, 2.2rem); }
+            #scene-gateway .date { font-size: 0.7rem; margin-bottom: 0.3rem; }
+            #scene-gateway .btn-primary { margin-top: 0.8rem; padding: 0.7rem 2rem; font-size: 0.7rem; }
+
+            #scene-envelope .envelope-scene { width: min(50vw, 340px); aspect-ratio: 1.6/1; margin-bottom: 0.5rem; }
+            #scene-envelope .top-label { top: 4%; font-size: 0.55rem; }
+            #scene-envelope .instruction { bottom: 8%; font-size: 0.55rem; }
+            #scene-envelope .continue-btn { bottom: 4%; padding: 0.6rem 1.6rem; font-size: 0.6rem; }
+            #scene-envelope .wax-seal { width: 42px; height: 42px; font-size: 0.95rem; }
+
+            #scene-letter .page { padding: 1.5rem 1rem 4rem; }
+            #scene-letter .letter-card { padding: 1.5rem 1.25rem; }
+            #scene-letter .letter-header { margin-bottom: 1.5rem; }
+            #scene-letter .letter-divider { margin-top: 1rem; }
+
+            #scene-finale .flower-wrap { width: 90px; height: 90px; margin-bottom: 0.6rem; }
+            #scene-finale .hb-line { font-size: clamp(1.6rem, 8vw, 2.6rem); }
+            #scene-finale .hb-name { font-size: clamp(1.1rem, 5vw, 1.8rem); margin-top: 0.4rem; }
+            #scene-finale .hb-message { font-size: 0.85rem; margin-top: 0.8rem; }
+            #scene-finale .hb-footer { bottom: 4%; }
+            #scene-finale .replay-btn { bottom: 1rem; padding: 0.55rem 1.4rem; font-size: 0.55rem; }
+        }
+
+        /* ---- Foldable / very tall phones ---- */
+        @media (min-height: 900px) and (max-width: 500px) {
+            #scene-gateway .content { gap: 2.2rem; }
+            #scene-letter .page { padding-top: 5rem; padding-bottom: 10rem; }
+            #scene-finale .finale-content { justify-content: center; gap: 0.5rem; }
+        }
+
+        /* ---- Print (fallback) ---- */
+        @media print {
+            .scene-container { position: relative; height: auto; }
+            #scene-letter { display: block !important; }
+            #scene-letter .letter-card { box-shadow: none; }
         }
     </style>
 </head>
@@ -1341,7 +1537,7 @@
     </div>
 
     <!-- ============================================================
-         SCENE 4 · FINALE (ANIMASI)
+         SCENE 4 · FINALE
          ============================================================ -->
     <div class="scene-container" id="scene-finale">
         <canvas id="starfield-canvas"></canvas>
@@ -1417,6 +1613,49 @@
             'use strict';
 
             // ============================================================
+            // DEVICE DETECTION & OPTIMIZATION
+            // ============================================================
+            const deviceInfo = {
+                isMobile: window.innerWidth < 768,
+                isTablet: window.innerWidth >= 768 && window.innerWidth < 1024,
+                isDesktop: window.innerWidth >= 1024,
+                isSmallMobile: window.innerWidth < 480,
+                isTinyMobile: window.innerWidth < 375,
+                isLandscape: window.matchMedia('(orientation: landscape)').matches,
+                isTouchDevice: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+                hasHover: window.matchMedia('(hover: hover) and (pointer: fine)').matches,
+                pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+                cores: navigator.hardwareConcurrency || 4,
+                memory: navigator.deviceMemory || 4,
+                connection: navigator.connection ? navigator.connection.effectiveType : 'unknown',
+                prefersReducedData: window.matchMedia('(prefers-reduced-data: reduce)').matches
+            };
+
+            // Adjust particle count based on device power
+            function getOptimalParticleCount() {
+                let base;
+                if (deviceInfo.isMobile) {
+                    base = 900;
+                    if (deviceInfo.isSmallMobile) base = 700;
+                    if (deviceInfo.isTinyMobile) base = 500;
+                } else if (deviceInfo.isTablet) {
+                    base = 1800;
+                } else {
+                    base = 3200;
+                }
+
+                // Reduce if low-end device
+                if (deviceInfo.cores <= 2) base = Math.floor(base * 0.5);
+                if (deviceInfo.memory <= 2) base = Math.floor(base * 0.6);
+                if (deviceInfo.prefersReducedData) base = Math.floor(base * 0.4);
+                if (deviceInfo.connection === '2g' || deviceInfo.connection === 'slow-2g') {
+                    base = Math.floor(base * 0.3);
+                }
+
+                return base;
+            }
+
+            // ============================================================
             // GLOBAL CONFIG
             // ============================================================
             const birthdayConfig = {
@@ -1427,12 +1666,76 @@
                 audio: null
             };
 
-            const isMobile = window.innerWidth < 768;
+            const isMobile = deviceInfo.isMobile;
+            const isTablet = deviceInfo.isTablet;
+            const isDesktop = deviceInfo.isDesktop;
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const gsapAvailable = typeof gsap !== 'undefined';
             const scrollTriggerAvailable = typeof ScrollTrigger !== 'undefined';
+            const lenisAvailable = typeof Lenis !== 'undefined';
 
+            // Add touch-device class to body
+            if (deviceInfo.isTouchDevice) {
+                document.body.classList.add('touch-device');
+            }
+
+            // ============================================================
+            // LENIS SMOOTH SCROLL
+            // ============================================================
+            let lenis = null;
+
+            function initLenisForLetter() {
+                if (!lenisAvailable || prefersReducedMotion) return;
+
+                const letterScene = document.getElementById('scene-letter');
+                if (!letterScene) return;
+
+                if (lenis) {
+                    try { lenis.destroy(); } catch(e) {}
+                    lenis = null;
+                }
+
+                lenis = new Lenis({
+                    wrapper: letterScene,
+                    content: letterScene.querySelector('.page') || letterScene,
+                    duration: 1.4,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    orientation: 'vertical',
+                    gestureOrientation: 'vertical',
+                    smoothWheel: true,
+                    smoothTouch: false,
+                    touchMultiplier: 1.5,
+                    wheelMultiplier: 1.1,
+                    infinite: false,
+                    autoResize: true
+                });
+
+                if (gsapAvailable && scrollTriggerAvailable) {
+                    lenis.on('scroll', ScrollTrigger.update);
+
+                    gsap.ticker.add((time) => {
+                        lenis.raf(time * 1000);
+                    });
+                    gsap.ticker.lagSmoothing(0);
+                } else {
+                    function raf(time) {
+                        lenis.raf(time);
+                        requestAnimationFrame(raf);
+                    }
+                    requestAnimationFrame(raf);
+                }
+            }
+
+            function destroyLenis() {
+                if (lenis) {
+                    try { lenis.destroy(); } catch(e) {}
+                    lenis = null;
+                }
+            }
+
+            // ============================================================
             // DOM
+            // ============================================================
             const globalTransition = document.getElementById('globalTransition');
             const scenes = {
                 gateway: document.getElementById('scene-gateway'),
@@ -1460,7 +1763,11 @@
                     return;
                 }
 
-                // function to actually switch scenes
+                if (sceneName === 'letter') {
+                    const sceneLetter = document.getElementById('scene-letter');
+                    if (sceneLetter) sceneLetter.scrollTop = 0;
+                }
+
                 function doSwitch() {
                     fromScene.classList.remove('active');
                     fromScene.classList.add('prev');
@@ -1468,63 +1775,66 @@
                     toScene.classList.add('active');
                     toScene.classList.remove('prev');
 
-                    // force reflow
                     void toScene.offsetWidth;
 
-                    // callback for scene-specific init
                     setTimeout(() => {
                         if (sceneName === 'envelope') {
                             initEnvelopeScene();
                         } else if (sceneName === 'letter') {
                             initLetterScene();
+                            setTimeout(() => {
+                                initLenisForLetter();
+                                if (scrollTriggerAvailable) {
+                                    ScrollTrigger.refresh();
+                                }
+                            }, 300);
                         } else if (sceneName === 'finale') {
                             initFinaleScene();
                         }
-                        isTransitioning = false;
-                    }, 300);
 
-                    // cleanup prev scene after transition
+                        setTimeout(() => {
+                            isTransitioning = false;
+                        }, 400);
+                    }, 400);
+
                     setTimeout(() => {
                         if (fromScene.classList.contains('prev')) {
                             fromScene.classList.remove('prev');
                         }
-                    }, 1500);
+                    }, 1800);
 
                     currentScene = sceneName;
                 }
 
-                // transition style
                 if (prefersReducedMotion) {
                     doSwitch();
                     return;
                 }
 
                 if (transitionStyle === 'flash') {
-                    // warm ivory flash transition
                     if (gsapAvailable) {
                         gsap.timeline()
                             .to(globalTransition, {
                                 opacity: 0.95,
-                                duration: 0.8,
+                                duration: 1.0,
                                 ease: 'power2.in',
                                 onComplete: doSwitch
                             })
                             .to(globalTransition, {
                                 opacity: 0,
-                                duration: 1.0,
+                                duration: 1.4,
                                 ease: 'power2.out'
-                            }, '+=0.3');
+                            }, '+=0.5');
                     } else {
-                        globalTransition.style.transition = 'opacity 0.8s ease';
+                        globalTransition.style.transition = 'opacity 1.0s ease';
                         globalTransition.style.opacity = '0.95';
                         setTimeout(() => {
                             doSwitch();
-                            globalTransition.style.transition = 'opacity 1.0s ease';
+                            globalTransition.style.transition = 'opacity 1.4s ease';
                             globalTransition.style.opacity = '0';
-                        }, 800);
+                        }, 1000);
                     }
                 } else {
-                    // simple cross-fade
                     doSwitch();
                 }
             }
@@ -1541,18 +1851,16 @@
                 const gatewaySubtitle = document.getElementById('gatewaySubtitle');
                 const gatewayBtn = document.getElementById('gatewayBtn');
 
-                const particleCount = isMobile ? 900 : 3200;
+                const particleCount = getOptimalParticleCount();
 
                 let scene, camera, renderer, galaxyGroup, starField, centralLight;
                 let threeJSAvailable = typeof THREE !== 'undefined';
-                let clock = new THREE.Clock();
                 let mouseX = 0, mouseY = 0;
                 let targetMouseX = 0, targetMouseY = 0;
 
-                // fallback stars
                 function setupFallbackStars() {
                     if (!fallbackStars) return;
-                    const count = isMobile ? 120 : 300;
+                    const count = deviceInfo.isMobile ? 120 : 300;
                     let html = '';
                     for (let i = 0; i < count; i++) {
                         const size = Math.random() * 2.5 + 0.5;
@@ -1583,15 +1891,14 @@
                         camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
                         camera.position.set(0, 0, 14);
 
-                        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-                        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                        renderer = new THREE.WebGLRenderer({ antialias: !deviceInfo.isSmallMobile, alpha: false });
+                        renderer.setPixelRatio(deviceInfo.pixelRatio);
                         renderer.setSize(window.innerWidth, window.innerHeight);
                         canvasContainer.appendChild(renderer.domElement);
 
                         galaxyGroup = new THREE.Group();
                         scene.add(galaxyGroup);
 
-                        // star field
                         const starGeometry = new THREE.BufferGeometry();
                         const positions = new Float32Array(particleCount * 3);
                         const colors = new Float32Array(particleCount * 3);
@@ -1628,7 +1935,6 @@
                         starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
                         starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-                        // circle texture
                         const canvasTex = document.createElement('canvas');
                         canvasTex.width = 16;
                         canvasTex.height = 16;
@@ -1655,7 +1961,6 @@
                         starField = new THREE.Points(starGeometry, starMaterial);
                         galaxyGroup.add(starField);
 
-                        // nebula
                         const nebCanvas = document.createElement('canvas');
                         nebCanvas.width = 256;
                         nebCanvas.height = 256;
@@ -1696,7 +2001,6 @@
                         neb3.material.opacity = 0.12;
                         galaxyGroup.add(neb3);
 
-                        // central light
                         const clCanvas = document.createElement('canvas');
                         clCanvas.width = 128;
                         clCanvas.height = 128;
@@ -1735,7 +2039,7 @@
                                 galaxyGroup.rotation.x += 0.0001;
                             }
 
-                            if (!isMobile && !prefersReducedMotion) {
+                            if (!deviceInfo.isTouchDevice && !prefersReducedMotion) {
                                 targetMouseX += (mouseX - targetMouseX) * 0.03;
                                 targetMouseY += (mouseY - targetMouseY) * 0.03;
 
@@ -1770,11 +2074,11 @@
                                 camera.aspect = window.innerWidth / window.innerHeight;
                                 camera.updateProjectionMatrix();
                                 renderer.setSize(window.innerWidth, window.innerHeight);
-                                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                                renderer.setPixelRatio(deviceInfo.pixelRatio);
                             }
                         });
 
-                        if (!isMobile && !prefersReducedMotion) {
+                        if (!deviceInfo.isTouchDevice && !prefersReducedMotion) {
                             window.addEventListener('mousemove', (e) => {
                                 mouseX = (e.clientX / window.innerWidth) * 2 - 1;
                                 mouseY = (e.clientY / window.innerHeight) * 2 - 1;
@@ -1792,7 +2096,6 @@
                 setupFallbackStars();
                 if (!initThree()) activateFallback();
 
-                // intro
                 if (prefersReducedMotion) {
                     gatewayContent.style.opacity = '1';
                     gatewayContent.style.transform = 'none';
@@ -1809,11 +2112,11 @@
                     gsap.set(gatewaySubtitle, { opacity: 0, y: 10 });
                     gsap.set(gatewayBtn, { opacity: 0, scale: 0.9 });
 
-                    tl.to(gatewayDate, { opacity: 1, y: 0, duration: 1.2, delay: 2.5 })
-                      .to(gatewayMainText, { opacity: 1, y: 0, duration: 1.5 }, '-=0.6')
-                      .to(gatewaySubtitle, { opacity: 1, y: 0, duration: 1.2 }, '-=0.8')
-                      .to(gatewayBtn, { opacity: 1, scale: 1, duration: 1.2, ease: 'back.out(1.2)' }, '-=0.6')
-                      .to(gatewayContent, { opacity: 1, y: 0, duration: 1.0 }, '-=1.0');
+                    tl.to(gatewayDate, { opacity: 1, y: 0, duration: 1.4, delay: 2.0 })
+                      .to(gatewayMainText, { opacity: 1, y: 0, duration: 1.8 }, '-=0.8')
+                      .to(gatewaySubtitle, { opacity: 1, y: 0, duration: 1.4 }, '-=1.0')
+                      .to(gatewayBtn, { opacity: 1, scale: 1, duration: 1.4, ease: 'back.out(1.2)' }, '-=0.8')
+                      .to(gatewayContent, { opacity: 1, y: 0, duration: 1.2 }, '-=1.2');
                 } else {
                     setTimeout(() => {
                         gatewayContent.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
@@ -1825,10 +2128,9 @@
                         gatewayBtn.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
                         gatewayBtn.style.opacity = '1';
                         gatewayBtn.style.transform = 'scale(1)';
-                    }, 2500);
+                    }, 2000);
                 }
 
-                // button action
                 gatewayBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     gatewayBtn.disabled = true;
@@ -1845,13 +2147,13 @@
                             }
                         });
 
-                        tl.to(gatewayBtn, { opacity: 0, scale: 0.9, duration: 0.6, ease: 'power2.in' })
-                          .to(galaxyGroup.scale, { x: 3, y: 3, z: 3, duration: 2.0, ease: 'power2.in' }, '-=0.2')
-                          .to(camera.position, { z: 6, duration: 2.0, ease: 'power2.in' }, '-=2.0')
-                          .to(centralLight.material, { opacity: 1, duration: 1.2 }, '-=1.8')
-                          .to(centralLight.scale, { x: 15, y: 15, duration: 1.5 }, '-=1.8')
-                          .to(globalTransition, { opacity: 0.95, duration: 0.8, ease: 'power2.in' }, '-=0.9')
-                          .to(gatewayContent, { opacity: 0, duration: 0.5 }, '-=1.0');
+                        tl.to(gatewayBtn, { opacity: 0, scale: 0.9, duration: 0.8, ease: 'power2.in' })
+                          .to(galaxyGroup.scale, { x: 3, y: 3, z: 3, duration: 2.4, ease: 'power2.in' }, '-=0.4')
+                          .to(camera.position, { z: 6, duration: 2.4, ease: 'power2.in' }, '-=2.4')
+                          .to(centralLight.material, { opacity: 1, duration: 1.4 }, '-=2.0')
+                          .to(centralLight.scale, { x: 15, y: 15, duration: 1.8 }, '-=2.0')
+                          .to(globalTransition, { opacity: 0.95, duration: 1.0, ease: 'power2.in' }, '-=1.0')
+                          .to(gatewayContent, { opacity: 0, duration: 0.6 }, '-=1.2');
                     } else {
                         gatewayContent.style.transition = 'opacity 0.8s ease';
                         gatewayContent.style.opacity = '0';
@@ -1877,7 +2179,6 @@
                 const topLabel = document.getElementById('envelopeTopLabel');
                 const envelope = document.getElementById('envelope');
                 const letter = document.getElementById('envelopeLetter');
-                const letterText = document.getElementById('envelopeLetterText');
                 const envelopeFlap = document.getElementById('envelopeFlap');
                 const waxSeal = document.getElementById('waxSeal');
                 const instruction = document.getElementById('envelopeInstruction');
@@ -1889,8 +2190,7 @@
                 let particles = [];
                 let ctx = null;
 
-                // particles
-                if (canvas) {
+                if (canvas && !deviceInfo.prefersReducedData) {
                     ctx = canvas.getContext('2d');
                     let w, h;
                     function resize() {
@@ -1900,7 +2200,7 @@
                     resize();
                     window.addEventListener('resize', resize);
 
-                    const count = isMobile ? 40 : 90;
+                    const count = deviceInfo.isMobile ? 40 : 90;
                     for (let i = 0; i < count; i++) {
                         particles.push({
                             x: Math.random() * w,
@@ -1951,7 +2251,6 @@
                     animateParticles();
                 }
 
-                // entrance animation
                 if (prefersReducedMotion) {
                     topLabel.style.opacity = '1';
                     instruction.style.opacity = '0.6';
@@ -1965,11 +2264,11 @@
 
                     tl.to(envelope, {
                         opacity: 1, scale: 1, y: 0, filter: 'blur(0px)',
-                        duration: 2.0, ease: 'power3.out', delay: 0.5
+                        duration: 2.4, ease: 'power3.out', delay: 0.6
                     })
-                    .to(waxSeal, { opacity: 1, scale: 1, duration: 1.0, ease: 'back.out(1.4)' }, '-=0.8')
-                    .to(topLabel, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, '-=0.6')
-                    .to(instruction, { opacity: 0.6, duration: 1.5 }, '-=0.4');
+                    .to(waxSeal, { opacity: 1, scale: 1, duration: 1.2, ease: 'back.out(1.4)' }, '-=1.0')
+                    .to(topLabel, { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' }, '-=0.8')
+                    .to(instruction, { opacity: 0.6, duration: 1.8 }, '-=0.6');
                 } else {
                     envelope.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
                     envelope.style.opacity = '1';
@@ -1980,15 +2279,12 @@
                         waxSeal.style.opacity = '1';
                         topLabel.style.opacity = '1';
                         instruction.style.opacity = '0.6';
-                    }, 1200);
+                    }, 1400);
                 }
 
-                // open envelope
                 function openEnvelope() {
                     if (isOpening || isOpened) return;
                     isOpening = true;
-
-                    waxSeal.classList.add('clicked');
 
                     if (prefersReducedMotion) {
                         waxSeal.style.opacity = '0';
@@ -2009,25 +2305,25 @@
                             onComplete: () => { isOpened = true; isOpening = false; }
                         });
 
-                        tl.to(waxSeal, { scale: 1.08, duration: 0.15, ease: 'power2.out' })
-                          .to(waxSeal, { scale: 0.96, duration: 0.15, ease: 'power2.in' })
-                          .to(waxSeal, { scale: 1, duration: 0.2, ease: 'power2.out' })
-                          .to(waxSeal, { opacity: 0, y: -30, scale: 0.8, duration: 0.8, ease: 'power2.in' }, '+=0.1')
-                          .to(envelopeFlap, { rotateX: -180, duration: 1.2, ease: 'power3.inOut' }, '-=0.5')
-                          .to(letter, { opacity: 1, y: -35, rotate: -2, duration: 1.4, ease: 'power3.out' }, '-=0.8')
-                          .add(() => { letter.classList.add('revealed'); }, '-=0.6')
+                        tl.to(waxSeal, { scale: 1.1, duration: 0.2, ease: 'power2.out' })
+                          .to(waxSeal, { scale: 0.94, duration: 0.2, ease: 'power2.in' })
+                          .to(waxSeal, { scale: 1, duration: 0.25, ease: 'power2.out' })
+                          .to(waxSeal, { opacity: 0, y: -30, scale: 0.8, duration: 1.0, ease: 'power2.in' }, '+=0.15')
+                          .to(envelopeFlap, { rotateX: -180, duration: 1.6, ease: 'power3.inOut' }, '-=0.7')
+                          .to(letter, { opacity: 1, y: -35, rotate: -2, duration: 1.8, ease: 'power3.out' }, '-=1.1')
+                          .add(() => { letter.classList.add('revealed'); }, '-=0.9')
                           .to(continueBtn, {
-                              opacity: 1, y: 0, duration: 1.0, ease: 'power2.out',
+                              opacity: 1, y: 0, duration: 1.3, ease: 'power2.out',
                               onStart: () => { continueBtn.classList.add('visible'); }
-                          }, '-=0.2')
-                          .to(instruction, { opacity: 0, duration: 0.6 }, '-=1.0');
+                          }, '-=0.4')
+                          .to(instruction, { opacity: 0, duration: 0.8 }, '-=1.3');
                     } else {
-                        waxSeal.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                        waxSeal.style.transition = 'opacity 1.0s ease, transform 1.0s ease';
                         waxSeal.style.opacity = '0';
-                        envelopeFlap.style.transition = 'transform 1.2s ease-in-out';
+                        envelopeFlap.style.transition = 'transform 1.5s ease-in-out';
                         envelopeFlap.style.transform = 'rotateX(-180deg)';
                         setTimeout(() => {
-                            letter.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+                            letter.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
                             letter.style.opacity = '1';
                             letter.style.transform = 'translateY(-35%) rotate(-2deg)';
                             letter.classList.add('revealed');
@@ -2036,8 +2332,8 @@
                                 instruction.style.opacity = '0';
                                 isOpened = true;
                                 isOpening = false;
-                            }, 800);
-                        }, 600);
+                            }, 1000);
+                        }, 800);
                     }
                 }
 
@@ -2049,7 +2345,6 @@
                     }
                 });
 
-                // continue to letter
                 continueBtn.addEventListener('click', () => {
                     if (prefersReducedMotion) {
                         transitionToScene('letter', 'flash');
@@ -2063,15 +2358,15 @@
                             }
                         });
 
-                        tl.to(continueBtn, { opacity: 0, y: -10, duration: 0.6, ease: 'power2.in' })
+                        tl.to(continueBtn, { opacity: 0, y: -10, duration: 0.8, ease: 'power2.in' })
                           .to(letter, {
                               boxShadow: '0 20px 80px rgba(220, 180, 120, 0.5), 0 0 120px rgba(220, 180, 120, 0.3)',
-                              duration: 1.0, ease: 'power2.in'
-                          }, '-=0.3')
+                              duration: 1.4, ease: 'power2.in'
+                          }, '-=0.5')
                           .to(letter, {
-                              scale: 1.4, y: -20, duration: 1.5, ease: 'power2.in'
-                          }, '-=0.8')
-                          .to(globalTransition, { opacity: 0.95, duration: 1.0, ease: 'power2.in' }, '-=0.6');
+                              scale: 1.4, y: -20, duration: 2.0, ease: 'power2.in'
+                          }, '-=1.2')
+                          .to(globalTransition, { opacity: 0.95, duration: 1.2, ease: 'power2.in' }, '-=1.0');
                     } else {
                         continueBtn.style.transition = 'opacity 0.6s ease';
                         continueBtn.style.opacity = '0';
@@ -2092,7 +2387,6 @@
                     }
                 });
 
-                // cleanup
                 window.addEventListener('beforeunload', () => {
                     if (particleAnimId) cancelAnimationFrame(particleAnimId);
                 });
@@ -2117,8 +2411,7 @@
                 let dustAnimId = null;
                 let dustParticles = [];
 
-                // dust particles
-                if (dustCanvas) {
+                if (dustCanvas && !deviceInfo.prefersReducedData) {
                     const ctx = dustCanvas.getContext('2d');
                     let w, h;
                     function resize() {
@@ -2128,7 +2421,7 @@
                     resize();
                     window.addEventListener('resize', resize);
 
-                    const count = isMobile ? 30 : 60;
+                    const count = deviceInfo.isMobile ? 30 : 60;
                     for (let i = 0; i < count; i++) {
                         dustParticles.push({
                             x: Math.random() * w,
@@ -2178,11 +2471,9 @@
                     animateDust();
                 }
 
-                // set paragraph reveal states
                 const paragraphs = letterBody.querySelectorAll('p');
                 paragraphs.forEach(p => p.classList.add('reveal-init'));
 
-                // intro
                 if (prefersReducedMotion) {
                     letterCard.style.opacity = '1';
                     letterCard.style.transform = 'none';
@@ -2198,20 +2489,20 @@
 
                     tl.to(letterCard, {
                         opacity: 1, y: 0, filter: 'blur(0px)',
-                        duration: 2.0, ease: 'power3.out', delay: 0.4
+                        duration: 2.4, ease: 'power3.out', delay: 0.5
                     });
 
                     tl.add(() => {
                         revealLetterParagraphs();
-                    }, '-=0.8');
+                    }, '-=1.0');
 
                     tl.add(() => {
                         scrollHint.classList.add('visible');
-                    }, '-=0.5');
+                    }, '-=0.6');
 
                     tl.add(() => {
                         letterFinalSection.classList.add('visible');
-                    }, '+=2.5');
+                    }, '+=3.0');
                 } else {
                     setTimeout(() => {
                         letterCard.style.transition = 'opacity 2s ease, transform 2s ease, filter 2s ease';
@@ -2221,11 +2512,11 @@
                         setTimeout(() => {
                             revealLetterParagraphs();
                             scrollHint.classList.add('visible');
-                        }, 800);
+                        }, 1000);
                         setTimeout(() => {
                             letterFinalSection.classList.add('visible');
-                        }, 3000);
-                    }, 400);
+                        }, 3500);
+                    }, 500);
                 }
 
                 function revealLetterParagraphs() {
@@ -2245,15 +2536,16 @@
                         ps.forEach((p, i) => {
                             gsap.to(p, {
                                 opacity: 1, y: 0, filter: 'blur(0px)',
-                                duration: 1.2, ease: 'power2.out',
+                                duration: 1.6, ease: 'power2.out',
                                 scrollTrigger: {
                                     trigger: p,
-                                    start: 'top 88%',
+                                    scroller: '#scene-letter',
+                                    start: 'top 90%',
                                     end: 'top 60%',
                                     toggleActions: 'play none none none',
                                     once: true
                                 },
-                                delay: i * 0.05
+                                delay: i * 0.06
                             });
                         });
                     } else if ('IntersectionObserver' in window) {
@@ -2265,7 +2557,11 @@
                                     observer.unobserve(entry.target);
                                 }
                             });
-                        }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+                        }, {
+                            threshold: 0.15,
+                            rootMargin: '0px 0px -10% 0px',
+                            root: document.getElementById('scene-letter')
+                        });
                         ps.forEach(p => observer.observe(p));
                     } else {
                         ps.forEach(p => {
@@ -2275,20 +2571,18 @@
                     }
                 }
 
-                // scroll hint
                 let hintHidden = false;
+                const sceneLetter = document.getElementById('scene-letter');
                 function checkScroll() {
                     if (hintHidden) return;
-                    const sceneLetter = document.getElementById('scene-letter');
                     if (sceneLetter.scrollTop > 100) {
                         scrollHint.classList.remove('visible');
                         hintHidden = true;
                         sceneLetter.removeEventListener('scroll', checkScroll);
                     }
                 }
-                document.getElementById('scene-letter').addEventListener('scroll', checkScroll, { passive: true });
+                sceneLetter.addEventListener('scroll', checkScroll, { passive: true });
 
-                // next button
                 letterNextBtn.addEventListener('click', () => {
                     if (prefersReducedMotion) {
                         transitionToScene('finale', 'flash');
@@ -2302,15 +2596,15 @@
                             }
                         });
 
-                        tl.to(letterNextBtn, { opacity: 0, y: -10, duration: 0.6, ease: 'power2.in' })
+                        tl.to(letterNextBtn, { opacity: 0, y: -10, duration: 0.8, ease: 'power2.in' })
                           .to(letterCard, {
                               boxShadow: '0 30px 120px rgba(220, 180, 120, 0.5)',
-                              duration: 1.2, ease: 'power2.in'
-                          }, '-=0.3')
+                              duration: 1.6, ease: 'power2.in'
+                          }, '-=0.4')
                           .to([letterCard, letterFinalSection], {
-                              opacity: 0.3, duration: 1.0, ease: 'power2.in'
-                          }, '-=1.0')
-                          .to(globalTransition, { opacity: 0.95, duration: 1.0, ease: 'power2.in' }, '-=0.8');
+                              opacity: 0.3, duration: 1.4, ease: 'power2.in'
+                          }, '-=1.4')
+                          .to(globalTransition, { opacity: 0.95, duration: 1.2, ease: 'power2.in' }, '-=1.2');
                     } else {
                         letterNextBtn.style.transition = 'opacity 0.6s ease';
                         letterNextBtn.style.opacity = '0';
@@ -2332,14 +2626,13 @@
                     }
                 });
 
-                // cleanup
                 window.addEventListener('beforeunload', () => {
                     if (dustAnimId) cancelAnimationFrame(dustAnimId);
                 });
             }
 
             // ============================================================
-            // SCENE 4 · FINALE (ANIMASI)
+            // SCENE 4 · FINALE
             // ============================================================
             let finaleInitialized = false;
             let finaleStarted = false;
@@ -2362,7 +2655,6 @@
                 const hbMessage = document.getElementById('hbMessage');
                 const hbFooter = document.getElementById('hbFooter');
                 const hbDate = document.getElementById('hbDate');
-                const photoStage = document.getElementById('photoStage');
                 const flashOverlay = document.getElementById('flashOverlay');
                 const replayBtn = document.getElementById('replayBtn');
 
@@ -2370,22 +2662,25 @@
                 const petalsCanvas = document.getElementById('petals-canvas');
                 const fireworksCanvas = document.getElementById('fireworks-canvas');
 
-                // apply config
                 hbName.textContent = birthdayConfig.name;
                 hbDate.textContent = birthdayConfig.date;
                 hbMessage.textContent = birthdayConfig.finalMessage;
 
-                const STAR_COUNT = isMobile ? 500 : 1800;
-                const PETAL_COUNT = isMobile ? 12 : 28;
+                // Adaptive particle counts
+                const STAR_COUNT = deviceInfo.isSmallMobile ? 300 :
+                                   deviceInfo.isMobile ? 500 :
+                                   deviceInfo.isTablet ? 1000 : 1800;
+                const PETAL_COUNT = deviceInfo.isSmallMobile ? 8 :
+                                    deviceInfo.isMobile ? 12 :
+                                    deviceInfo.isTablet ? 18 : 28;
 
                 let starfieldAnimId = null;
                 let petalsAnimId = null;
                 let fireworksAnimId = null;
-                let loadedPhotos = [];
 
-                // ----- STARFIELD -----
+                // STARFIELD
                 let starfield = null;
-                if (starfieldCanvas) {
+                if (starfieldCanvas && !deviceInfo.prefersReducedData) {
                     const ctx = starfieldCanvas.getContext('2d');
                     let w, h;
                     function resize() {
@@ -2467,9 +2762,9 @@
                     };
                 }
 
-                // ----- PETALS -----
+                // PETALS
                 let petals = null;
-                if (petalsCanvas) {
+                if (petalsCanvas && !deviceInfo.prefersReducedData) {
                     const ctx = petalsCanvas.getContext('2d');
                     let w, h;
                     function resize() {
@@ -2549,9 +2844,9 @@
                     };
                 }
 
-                // ----- FIREWORKS -----
+                // FIREWORKS
                 let fireworks = null;
-                if (fireworksCanvas) {
+                if (fireworksCanvas && !deviceInfo.prefersReducedData) {
                     const ctx = fireworksCanvas.getContext('2d');
                     let w, h;
                     function resize() {
@@ -2626,12 +2921,11 @@
                         launch: () => {
                             const cx = w * (0.2 + Math.random() * 0.6);
                             const cy = h * (0.2 + Math.random() * 0.4);
-                            createBurst(cx, cy, isMobile ? 30 : 55);
+                            createBurst(cx, cy, deviceInfo.isMobile ? 30 : 55);
                         }
                     };
                 }
 
-                // ----- RUN FINALE -----
                 function runFinale() {
                     if (finaleStarted) return;
                     finaleStarted = true;
@@ -2651,86 +2945,62 @@
                     }
 
                     if (!gsapAvailable) {
-                        // simple fallback
                         runFinaleFallback();
                         return;
                     }
 
                     const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
 
-                    // SCENE 01: central light
-                    tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.0 }, 0)
-                      .add(() => { if (starfield) starfield.burst(2500); }, 0.5)
-
-                      // SCENE 03: whispers
-                      .to(whisperWait, { opacity: 1, duration: 1.2 }, 2.5)
-                      .to(whisperWait, { opacity: 0, duration: 1.0 }, 4.5)
-                      .to(whisperMore, { opacity: 1, duration: 1.4 }, 6.0)
-                      .to(whisperMore, { opacity: 0, duration: 1.0 }, 8.8)
-
-                      // SCENE 04: countdown
-                      .to(countdownScene, { opacity: 1, duration: 0.6 }, 10.0)
+                    tl.to(centralLight, { opacity: 1, scale: 1, duration: 2.4 }, 0)
+                      .add(() => { if (starfield) starfield.burst(2800); }, 0.6)
+                      .to(whisperWait, { opacity: 1, duration: 1.6 }, 3.0)
+                      .to(whisperWait, { opacity: 0, duration: 1.4 }, 5.4)
+                      .to(whisperMore, { opacity: 1, duration: 1.8 }, 7.2)
+                      .to(whisperMore, { opacity: 0, duration: 1.4 }, 10.4)
+                      .to(countdownScene, { opacity: 1, duration: 0.8 }, 11.8)
                       .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)' },
-                              { scale: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power3.out' }, 10.0)
+                              { scale: 1, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out' }, 11.8)
                       .to(countdownText, {
-                          scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.7, ease: 'power2.in',
+                          scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in',
                           onStart: () => { countdownText.textContent = '2'; }
-                      }, 11.2)
+                      }, 13.2)
                       .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 },
-                              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 0.8, ease: 'power3.out' }, 11.9)
+                              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 14.1)
                       .to(countdownText, {
-                          scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.7, ease: 'power2.in',
+                          scale: 1.4, filter: 'blur(16px)', opacity: 0, duration: 0.9, ease: 'power2.in',
                           onStart: () => { countdownText.textContent = '1'; }
-                      }, 13.1)
+                      }, 15.5)
                       .fromTo(countdownText, { scale: 0.6, filter: 'blur(12px)', opacity: 0 },
-                              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 0.8, ease: 'power3.out' }, 13.8)
-                      .to(countdownText, { scale: 1.6, filter: 'blur(20px)', opacity: 0, duration: 0.8, ease: 'power2.in' }, 15.0)
-                      .to(countdownScene, { opacity: 0, duration: 0.4 }, 15.4)
-
-                      // SCENE 05: explosion
-                      .to(centralLight, { scale: 80, opacity: 1, duration: 1.2, ease: 'power3.in' }, 15.4)
-                      .to(flashOverlay, { opacity: 0.9, duration: 0.6 }, 15.8)
-                      .to(flashOverlay, { opacity: 0, duration: 1.2, ease: 'power2.out' }, 16.4)
-
-                      // SCENE 06: flower
-                      .add(() => { finaleContent.style.opacity = '1'; }, 16.5)
-                      .to(flowerWrap, { opacity: 1, scale: 1, duration: 2.0, ease: 'power3.out' }, 16.8)
-                      .to('.flower-svg .stem', { strokeDashoffset: 0, duration: 1.8, ease: 'power2.out' }, 16.8)
-                      .to('.flower-svg .leaf', { opacity: 1, scale: 1, duration: 1.2, stagger: 0.3, ease: 'back.out(1.4)' }, 17.5)
-                      .to('.flower-svg .petal', { opacity: 0.95, scale: 1, duration: 1.4, stagger: 0.08, ease: 'back.out(1.2)' }, 18.2)
-                      .to('.flower-svg .center', { opacity: 1, scale: 1, duration: 1.0, ease: 'back.out(1.8)' }, 19.2)
-
-                      // SCENE 07: petals
-                      .add(() => { if (petals) petals.start(); }, 19.5)
-
-                      // SCENE 09-10: HAPPY / BIRTHDAY / NAME
-                      .to(hbHappy, { opacity: 1, y: 0, duration: 1.4, ease: 'power3.out' }, 21.5)
-                      .to(hbBirthday, { opacity: 1, y: 0, duration: 1.4, ease: 'power3.out' }, 22.7)
-                      .to(hbName, { opacity: 1, y: 0, duration: 1.4, ease: 'power3.out' }, 24.1)
-
-                      // SCENE 11: message
-                      .to(hbMessage, { opacity: 1, y: 0, duration: 1.6, ease: 'power2.out' }, 25.5)
-
-                      // SCENE 12: fireworks
+                              { scale: 1, filter: 'blur(0px)', opacity: 1, duration: 1.0, ease: 'power3.out' }, 16.4)
+                      .to(countdownText, { scale: 1.6, filter: 'blur(20px)', opacity: 0, duration: 1.0, ease: 'power2.in' }, 17.8)
+                      .to(countdownScene, { opacity: 0, duration: 0.6 }, 18.4)
+                      .to(centralLight, { scale: 80, opacity: 1, duration: 1.4, ease: 'power3.in' }, 18.4)
+                      .to(flashOverlay, { opacity: 0.9, duration: 0.8 }, 18.9)
+                      .to(flashOverlay, { opacity: 0, duration: 1.4, ease: 'power2.out' }, 19.7)
+                      .add(() => { finaleContent.style.opacity = '1'; }, 19.8)
+                      .to(flowerWrap, { opacity: 1, scale: 1, duration: 2.4, ease: 'power3.out' }, 20.2)
+                      .to('.flower-svg .stem', { strokeDashoffset: 0, duration: 2.2, ease: 'power2.out' }, 20.2)
+                      .to('.flower-svg .leaf', { opacity: 1, scale: 1, duration: 1.4, stagger: 0.4, ease: 'back.out(1.4)' }, 21.0)
+                      .to('.flower-svg .petal', { opacity: 0.95, scale: 1, duration: 1.6, stagger: 0.1, ease: 'back.out(1.2)' }, 21.8)
+                      .to('.flower-svg .center', { opacity: 1, scale: 1, duration: 1.2, ease: 'back.out(1.8)' }, 23.0)
+                      .add(() => { if (petals) petals.start(); }, 23.4)
+                      .to(hbHappy, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, 25.5)
+                      .to(hbBirthday, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, 27.0)
+                      .to(hbName, { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, 28.6)
+                      .to(hbMessage, { opacity: 1, y: 0, duration: 2.0, ease: 'power2.out' }, 30.2)
                       .add(() => {
                           if (fireworks) { fireworks.start(); fireworks.launch(); }
-                      }, 27.0)
-                      .add(() => { if (fireworks) fireworks.launch(); }, 28.3)
-                      .add(() => { if (fireworks) fireworks.launch(); }, 29.5)
-
-                      // SCENE 14: flower glow
+                      }, 31.8)
+                      .add(() => { if (fireworks) fireworks.launch(); }, 33.2)
+                      .add(() => { if (fireworks) fireworks.launch(); }, 34.5)
                       .to(flowerWrap, {
                           filter: 'drop-shadow(0 0 60px rgba(255, 220, 160, 0.6)) drop-shadow(0 0 120px rgba(220, 180, 220, 0.4))',
-                          duration: 2.0, ease: 'power2.inOut'
-                      }, 30.5)
-
-                      // SCENE 15: footer
-                      .to(hbFooter, { opacity: 1, duration: 1.8, ease: 'power2.out' }, 31.5)
-
-                      // SCENE 16: replay
+                          duration: 2.4, ease: 'power2.inOut'
+                      }, 35.5)
+                      .to(hbFooter, { opacity: 1, duration: 2.2, ease: 'power2.out' }, 36.5)
                       .add(() => {
-                          setTimeout(() => replayBtn.classList.add('visible'), 3000);
-                      }, 33.5);
+                          setTimeout(() => replayBtn.classList.add('visible'), 3500);
+                      }, 38.5);
 
                     masterTimeline = tl;
                 }
@@ -2740,22 +3010,22 @@
                     centralLight.style.opacity = '1';
                     if (starfield) starfield.burst(2500);
 
-                    setTimeout(() => { whisperWait.style.opacity = '1'; }, 2500);
-                    setTimeout(() => { whisperWait.style.opacity = '0'; }, 4500);
-                    setTimeout(() => { whisperMore.style.opacity = '1'; }, 6000);
-                    setTimeout(() => { whisperMore.style.opacity = '0'; }, 8800);
+                    setTimeout(() => { whisperWait.style.opacity = '1'; }, 3000);
+                    setTimeout(() => { whisperWait.style.opacity = '0'; }, 5400);
+                    setTimeout(() => { whisperMore.style.opacity = '1'; }, 7200);
+                    setTimeout(() => { whisperMore.style.opacity = '0'; }, 10400);
 
                     setTimeout(() => {
                         countdownScene.style.opacity = '1';
                         countdownText.textContent = '3';
-                    }, 10000);
-                    setTimeout(() => { countdownText.textContent = '2'; }, 11800);
-                    setTimeout(() => { countdownText.textContent = '1'; }, 13600);
+                    }, 11800);
+                    setTimeout(() => { countdownText.textContent = '2'; }, 14100);
+                    setTimeout(() => { countdownText.textContent = '1'; }, 16400);
                     setTimeout(() => {
                         countdownScene.style.opacity = '0';
                         flashOverlay.style.opacity = '0.9';
-                        setTimeout(() => { flashOverlay.style.opacity = '0'; }, 600);
-                    }, 15400);
+                        setTimeout(() => { flashOverlay.style.opacity = '0'; }, 800);
+                    }, 18400);
 
                     setTimeout(() => {
                         finaleContent.style.opacity = '1';
@@ -2766,22 +3036,21 @@
                         document.querySelectorAll('.flower-svg .petal').forEach(el => el.style.opacity = '0.95');
                         document.querySelectorAll('.flower-svg .center').forEach(el => el.style.opacity = '1');
                         if (petals) petals.start();
-                    }, 16500);
+                    }, 20200);
 
-                    setTimeout(() => { hbHappy.style.opacity = '1'; }, 21500);
-                    setTimeout(() => { hbBirthday.style.opacity = '1'; }, 22700);
-                    setTimeout(() => { hbName.style.opacity = '1'; }, 24100);
-                    setTimeout(() => { hbMessage.style.opacity = '1'; }, 25500);
+                    setTimeout(() => { hbHappy.style.opacity = '1'; }, 25500);
+                    setTimeout(() => { hbBirthday.style.opacity = '1'; }, 27000);
+                    setTimeout(() => { hbName.style.opacity = '1'; }, 28600);
+                    setTimeout(() => { hbMessage.style.opacity = '1'; }, 30200);
                     setTimeout(() => {
                         if (fireworks) { fireworks.start(); fireworks.launch(); }
-                    }, 27000);
-                    setTimeout(() => { if (fireworks) fireworks.launch(); }, 28300);
-                    setTimeout(() => { if (fireworks) fireworks.launch(); }, 29500);
-                    setTimeout(() => { hbFooter.style.opacity = '1'; }, 31500);
-                    setTimeout(() => { replayBtn.classList.add('visible'); }, 35000);
+                    }, 31800);
+                    setTimeout(() => { if (fireworks) fireworks.launch(); }, 33200);
+                    setTimeout(() => { if (fireworks) fireworks.launch(); }, 34500);
+                    setTimeout(() => { hbFooter.style.opacity = '1'; }, 36500);
+                    setTimeout(() => { replayBtn.classList.add('visible'); }, 40000);
                 }
 
-                // REPLAY
                 function handleReplay() {
                     finaleStarted = false;
                     if (masterTimeline) { masterTimeline.kill(); masterTimeline = null; }
@@ -2802,21 +3071,10 @@
                     flowerWrap.style.transform = 'scale(0.6)';
                     flowerWrap.style.filter = 'none';
 
-                    document.querySelectorAll('.flower-svg .stem').forEach(el => {
-                        el.style.strokeDashoffset = '300';
-                    });
-                    document.querySelectorAll('.flower-svg .leaf').forEach(el => {
-                        el.style.opacity = '0';
-                        el.style.transform = 'scale(0.3)';
-                    });
-                    document.querySelectorAll('.flower-svg .petal').forEach(el => {
-                        el.style.opacity = '0';
-                        el.style.transform = 'scale(0.2)';
-                    });
-                    document.querySelectorAll('.flower-svg .center').forEach(el => {
-                        el.style.opacity = '0';
-                        el.style.transform = 'scale(0.1)';
-                    });
+                    document.querySelectorAll('.flower-svg .stem').forEach(el => { el.style.strokeDashoffset = '300'; });
+                    document.querySelectorAll('.flower-svg .leaf').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.3)'; });
+                    document.querySelectorAll('.flower-svg .petal').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.2)'; });
+                    document.querySelectorAll('.flower-svg .center').forEach(el => { el.style.opacity = '0'; el.style.transform = 'scale(0.1)'; });
 
                     hbHappy.style.opacity = '0';
                     hbHappy.style.transform = 'translateY(20px)';
@@ -2833,7 +3091,7 @@
                     setTimeout(() => {
                         void centralLight.offsetWidth;
                         runFinale();
-                    }, 400);
+                    }, 500);
                 }
 
                 replayBtn.addEventListener('click', handleReplay);
@@ -2844,25 +3102,59 @@
                     }
                 });
 
-                // cleanup
                 window.addEventListener('beforeunload', () => {
                     if (starfieldAnimId) cancelAnimationFrame(starfieldAnimId);
                     if (petalsAnimId) cancelAnimationFrame(petalsAnimId);
                     if (fireworksAnimId) cancelAnimationFrame(fireworksAnimId);
                 });
 
-                // start
                 setTimeout(() => {
                     runFinale();
-                }, 500);
+                }, 600);
             }
+
+            // ============================================================
+            // GLOBAL RESIZE & ORIENTATION HANDLER
+            // ============================================================
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (typeof ScrollTrigger !== 'undefined') {
+                        ScrollTrigger.refresh();
+                    }
+                    if (lenis) {
+                        try { lenis.resize(); } catch(e) {}
+                    }
+                }, 250);
+            }, { passive: true });
+
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+                    if (lenis) { try { lenis.resize(); } catch(e) {} }
+                }, 400);
+            }, { passive: true });
+
+            // Prevent pull-to-refresh on mobile
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 1) e.preventDefault();
+            }, { passive: false });
+
+            // Prevent double-tap zoom on buttons
+            let lastTap = 0;
+            document.addEventListener('touchend', (e) => {
+                const now = Date.now();
+                if (now - lastTap < 300) e.preventDefault();
+                lastTap = now;
+            }, { passive: false });
 
             // ============================================================
             // INIT
             // ============================================================
             function init() {
                 initGatewayScene();
-                console.log('September Birthday · Single Page Experience ready.');
+                console.log('September Birthday · Multi-device Optimized ready.', deviceInfo);
             }
 
             if (document.readyState === 'loading') {
